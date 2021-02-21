@@ -28,7 +28,7 @@ def equals {α : Type} : stree α → stree α → bool
 | stree.empty stree.empty := tt
 | (stree.node l k a r) stree.empty := ff
 | stree.empty (stree.node l k a r) := ff
-| (stree.node xl x a xr) (stree.node yl y b yr) := 
+| (stree.node xl x a xr) (stree.node yl y b yr) :=
     (x = y) ∧ (equals xl yl) ∧ (equals xr yr)
 
 def subtree_of {α : Type} (s : stree α) : stree α → stree α → bool
@@ -45,7 +45,6 @@ def subtree_proper {α : Type} (s : stree α) : stree α → stree α → bool
 def contains {α : Type} (k : nat) : stree α → bool
 | stree.empty := ff
 | (stree.node l k a r) := (k = k) ∨ (contains l) ∨ (contains r)
-
 
 
 /- # Ordered Subtrees -/
