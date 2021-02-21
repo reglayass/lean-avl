@@ -1,5 +1,3 @@
-namespace treedef
-
 /- # Search Trees -/
 
 /--
@@ -17,8 +15,9 @@ inductive stree (α : Type) : Type
 def empty_tree {α : Type} : stree α :=
   stree.empty
 
+/----------------------------------------------------------------------------------------------------------------------------------/
 
-/- # Tree Equality -/
+/- # Search Trees and Occurence of Keys -/
 /- 
   Formal descriptions of properties of search trees and operations on them depend on subtrees, proper
   subtrees, concepts of equality between trees, and the occurence of keys in trees 
@@ -47,7 +46,9 @@ def contains {α : Type} (k : nat) : stree α → bool
 | (stree.node l k a r) := (k = k) ∨ (contains l) ∨ (contains r)
 
 
-/- # Ordered Subtrees -/
+/-------------------------------------------------------------------------------------------------------------------------------/
+
+/- # Ordered Search Trees and Tree Induction -/
 
 /- 
   A search tree is ordered if the key in each non-leaf node is greater than
@@ -73,5 +74,3 @@ def treeElems {α : Type} (x : nat) (elems : list α) : stree α → list α
 | (stree.node l k a r) := 
   if k = x then sorry
   else sorry
-
-end treedef
