@@ -55,9 +55,9 @@ def contains {α : Type} (k : nat) : stree α → bool
   keys that occur in the right subtree. 
 -/
 
-def ordered {α : Type} : stree α → bool
+def ordered {α : Type} (p : nat → α → Prop) : stree α → Prop
 | stree.empty := tt
-| (stree.node l k a t) := sorry
+| (stree.node l k a r) := (p k a) ∧ ordered l ∧ ordered r
 
 /-
   An ordered subtree cannot contain duplicate keys
@@ -68,9 +68,9 @@ def ordered {α : Type} : stree α → bool
   If the key doesn't occur in the tree, the list is empty.
 -/
 
-def treeElems {α : Type} (x : nat) : stree α → list α
+def treeElems {α : Type} (x : nat) (elems : list α) : stree α → list α
 | stree.empty := []
-| (stree.node l k a t) := 
+| (stree.node l k a r) := 
   if k = x then sorry
   else sorry
 
