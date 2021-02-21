@@ -1,4 +1,4 @@
-import tree
+import practice.tree
 
 namespace bst_invariant
 open simple_tree
