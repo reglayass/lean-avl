@@ -1,4 +1,5 @@
 import practice.tree
+set_option pp.generalized_field_notation false
 
 namespace bst_invariant
 open simple_tree
@@ -37,7 +38,13 @@ inductive bst {α : Type} (l : btree α) (x : nat) (v : α) (r : btree α): btre
 
 lemma forallt_insert {α : Type} (t' : nat → α → Prop) (t : btree α) (k : nat) (v: α) :
   t' k v → forallt t' (insert k v t) :=
-sorry
+begin
+  intro h₁,
+  induction t,
+  case empty {
+    sorry
+  }
+end
 
 -- Theorem insert_BST : ∀ (V : Type) (k : key) (v : V) (t : tree V),
 --     BST t → BST (insert k v t).
@@ -103,7 +110,9 @@ begin
     { exfalso, linarith },
     { simp [if_neg h, lookup] },
   },
-  sorry
+  case node : tl tk a' tr ihl ihr {
+    simp only [simple_tree.insert],
+  }
 end
 
 /- If you check the bound on a key just inserted into the tree, it will return false -/
@@ -142,14 +151,39 @@ begin
   case node : l k' a r ihl ihr {
     simp only [lookup],
     by_cases (k < k'),
-    { simp only [if_pos h], sorry },
+    { simp only [if_pos h], 
+      rw bound at h₁,
+      simp only [if_pos h] at h₁, apply ihl, assumption, },
     { simp only [if_neg h],
       by_cases h' : (k > k'),
-      { simp only [if_pos h'], sorry }, 
+      { simp only [if_pos h'],
+      rw bound at h₁, simp only [if_neg h, if_pos h'] at h₁, apply ihr, assumption, }, 
       { simp only [if_neg h'], sorry }
     }
   }
 end
 
+lemma bound_rl {α : Type} (k k' : nat) (a : α) (l r : btree α) :
+  bound k (btree.node l k' a r) = ff → bound k l = ff :=
+begin 
+  intro h₁, 
+  rw bound at h₁,
+  by_cases (k < k'),
+  {
+    simp only [if_pos h] at h₁,
+    apply h₁,
+  },
+  {
+    simp only [if_neg h] at h₁,
+    by_cases (k > k'),
+    { 
+      simp only [if_pos h] at h₁,
+
+    },
+    {
+
+    }
+  }
+end
 
 end bst_correctness
