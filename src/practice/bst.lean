@@ -163,27 +163,4 @@ begin
   }
 end
 
-lemma bound_rl {α : Type} (k k' : nat) (a : α) (l r : btree α) :
-  bound k (btree.node l k' a r) = ff → bound k l = ff :=
-begin 
-  intro h₁, 
-  rw bound at h₁,
-  by_cases (k < k'),
-  {
-    simp only [if_pos h] at h₁,
-    apply h₁,
-  },
-  {
-    simp only [if_neg h] at h₁,
-    by_cases (k > k'),
-    { 
-      simp only [if_pos h] at h₁,
-
-    },
-    {
-
-    }
-  }
-end
-
 end bst_correctness
