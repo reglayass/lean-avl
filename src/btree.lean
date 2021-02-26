@@ -49,25 +49,4 @@ def insert {α : Type} (x : nat) (a : α) : btree α → btree α
   else if x > k then btree.node l k a' (insert r)
   else btree.node l x a r
 
-
-
-/- # Binary Search Tree Invariant -/
-
-/-- 
-Definition the BST invariant:
-1. An empty btree is a BST
-2. A non-empty btree is a BST if all its left nodes have a lesser key,
-  its right nodes have a greater key, and the left and right subtrees 
-  are themselves BSTs. 
--/
-def bst_inv {α: Type} (p : nat → α → Prop) : btree α → Prop
-| btree.empty := tt
-| (btree.node l k a r) := (p k a) ∧ (bst_inv l) ∧ (bst_inv r)
-
-inductive bst (α : Type) (l : btree α) (x : nat) (v : α) (r : btree α) : btree α → Prop
-| empty : bst btree.empty
-| btree : bst_inv (λ y _, (y < x)) l → 
-          bst_inv (λ y _, (y > x)) r →
-          bst l → bst r → bst (btree.node l x v r)
-
 end btree_def
