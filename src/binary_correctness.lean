@@ -1,5 +1,6 @@
 import btree
 import tactic.linarith
+set_option pp.generalized_field_notation false
 
 namespace bin_correct
 open btree_def
@@ -50,17 +51,30 @@ end
 lemma lookup_insert_shadow {α : Type} (t : btree α) (v v' d : α) (k k' : nat) :
   lookup k' (insert k v (insert k v t)) = lookup k' (insert k v t) :=
 begin 
-  induction t, 
+  induction t,
   case empty {
     simp only [btree_def.insert, lookup],
     by_cases (k < k),
-    { exfalso, linarith, },
-    { simp [if_neg h, lookup], }
+    { exfalso, linarith },
+    { simp [if_neg h, lookup] }
   },
-  case node: tl tk a' tr ihl ihr {
-    simp only [btree_def.insert],
-    sorry
-  }
+  case node : tl tk a' tr ihl ihr {
+    simp only [btree_def.insert, lookup],
+    by_cases h₁ : (k < tk),
+    { simp [if_pos h₁, btree_def.insert, lookup],
+      by_cases h₂ : (k' < tk),
+      { simp [if_pos h₂], assumption, },
+      { simp [if_neg h₂], } },
+    { simp [if_neg h₁, btree_def.insert, lookup],
+      by_cases h₃ : (tk < k),
+      { simp [if_pos h₃, btree_def.insert, if_neg h₁, btree_def.insert, lookup],
+        by_cases h₄ : (k' < tk),
+        { simp [if_pos h₄], },
+        { simp [if_neg h₄],
+          by_cases h₅ : (tk < k'),
+          { simp [if_pos h₅], assumption },
+          { simp [if_neg h₅] } } },
+      { simp [if_neg h₃, btree_def.insert] } } },
 end
 
 /- If you check the bound on a key just inserted into the tree, it will return false -/
