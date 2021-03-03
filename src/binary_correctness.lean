@@ -121,7 +121,7 @@ begin
       { simp only [if_pos h'],
       rw bound at h₁, simp only [if_neg h, if_pos h'] at h₁, apply ihr, assumption, }, 
       { simp only [if_neg h'], rw bound at h₁, 
-        simp only [if_neg h, if_neg h'] at h₁, sorry }
+        simp only [if_neg h, if_neg h'] at h₁, exfalso, apply h₁, }
     }
   }
 end
