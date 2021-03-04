@@ -12,49 +12,74 @@ begin
   case empty {
     simp only [btree_def.insert, ordered],
     apply and.intro,
-    { sorry },
+    { simp, },
     { apply and.intro, 
-      { sorry },
-      { apply and.intro, apply h₂, apply h₂, } }
+      { simp, },
+      { apply and.intro, apply h₂, exact h₂, }, 
+    },
   },
   case node : tl tk ta tr ihl ihr {
     simp only [btree_def.insert],
     by_cases h₃ : (k < tk),
-    { simp only [if_pos h₃, btree_def.insert, ordered],
-      apply and.intro, 
+    { simp only [if_pos h₃, ordered],
+      apply and.intro,
       { sorry }, 
-      { apply and.intro, 
-        { sorry }, 
-        { sorry } 
+      { apply and.intro,
+        { simp only [ordered] at h₁,
+          sorry, },
+        { apply and.intro,
+          { sorry },
+          { sorry },
+        } 
+      } 
+    },
+    { simp only [if_neg h₃, ordered], 
+      by_cases h₄ : (k > tk),
+      { simp only [if_pos h₄, ordered],
+        apply and.intro,
+        { sorry },
+        { apply and.intro,
+          { sorry },
+          { apply and.intro,
+            { sorry },
+            { sorry }, 
+          }, 
+        }, 
+      },
+      { simp only [if_neg h₄, ordered],
+        apply and.intro,
+        { sorry },
+        { apply and.intro, 
+          { sorry }, 
+          { apply and.intro, 
+            { sorry }, 
+            { sorry }, 
+          },
+        }, 
       }, 
     },
-    { simp only [if_neg h₃],
-      by_cases h₄ : (k > tk),
-      { simp only [if_pos h₄], sorry },
-      { simp only [if_neg h₄], sorry }
-    }
   },
 end
 
 lemma ordered_lookup {α : Type} (p : nat → btree α → Prop) (s : btree α) (k : nat) (v : α):
-  (ordered p s ∧ (bound k s)) → ((lookup k s) = v) :=
+  (ordered p s ∧ (bound k s)) → ((lookup k s) = some v) :=
 begin
   intro h₁,
   induction s,
   case empty {
-    simp only [lookup],
-    sorry,
+    sorry
   },
   case node : sl sk sa sr ihl ihr {
     simp only [lookup],
     by_cases h₂ : (k < sk),
-    { sorry },
+    { simp only [if_pos h₂], apply ihl, 
+    simp [ordered] at h₁, sorry },
     { simp only [if_neg h₂],
       by_cases h₃ : (k > sk),
-      { sorry },
-      { sorry } 
-    },
-  },
+      { simp [if_pos h₃],
+        apply ihr, sorry },
+      { simp [if_neg h₃], sorry } }
+  }
 end
 
 end ordered_lemmas
