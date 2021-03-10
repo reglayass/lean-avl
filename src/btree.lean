@@ -49,12 +49,17 @@ def insert {α : Type} (x : nat) (a : α) : btree α → btree α
   else if x > k then btree.node l k a' (insert r)
   else btree.node l x a r
 
-
-/- # Ordered binary tree -/
-
 def ordered {α: Type} (p : nat → btree α → Prop) : btree α → Prop
 | btree.empty := tt
 | (btree.node l k a r) := (ordered l) ∧ (ordered r) ∧ (p k l) ∧ (p k r)
+
+def treeElems {α : Type} : btree α → nat → list α
+| btree.empty x := []
+| (btree.node l k a r) x := 
+  if x = k then append (a :: (treeElems l x)) (treeElems r x)
+  else append (treeElems l x) (treeElems r x)
+
+/- # Ordered binary tree -/
 
 inductive bst {α : Type} (l : btree α) (x : nat) (a : α) (r : btree α) : btree α → Prop
 | empty : bst btree.empty
