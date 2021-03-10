@@ -114,30 +114,19 @@ begin
 end
 
 lemma unique_keys_nb {α : Type} (p : nat → btree α → Prop) (s : btree α) (k : nat) :
-  (ordered p s ∧ ((bound k s) = ff)) → (list.length (treeElems s k ) = 0) :=
+  (ordered p s ∧ ((bound k s) = ff)) → ((treeElems s k ) = []) :=
 begin
   intro h₁,
   induction s,
   case empty {
-    simp only [treeElems],
     refl,
   },
   case node : sl sk sa sr ihl ihr {
     simp only [treeElems],
     by_cases c₁ : (k = sk),
-    { simp only [if_pos c₁], 
-      sorry 
-    },
-    { simp only [if_neg c₁],
-      sorry 
-    },
-  },
-end
-
-lemma unique_keys {α : Type} (p : nat → btree α → Prop) (s : btree α) (k : nat) :
-  (ordered p s ∧ ((bound k s) = tt)) → (list.length (treeElems s k) = 1) :=
-begin
-  sorry
+    { simp only [if_pos c₁], sorry },
+    { simp only [if_neg c₁], sorry },
+  }
 end
 
 end ordered_lemmas
