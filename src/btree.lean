@@ -82,12 +82,4 @@ def height {α : Type} : btree α → nat
 | (btree.node l k a r) :=
   1 + (max (height l) (height r))
 
-/- # Ordered binary tree -/
-
-inductive bst {α : Type} (l : btree α) (x : nat) (a : α) (r : btree α) : btree α → Prop
-| empty : bst btree.empty
-| btree : ordered (λ y _, (y < x)) l →
-          ordered (λ y _, (y > x)) r → 
-          bst l → bst r → bst (btree.node l x a r)
-
 end btree_def
