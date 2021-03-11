@@ -87,4 +87,11 @@ def height {α : Type} : btree α → nat
 | (btree.node l k a r) :=
   1 + (max (height l) (height r))
 
+/--
+  Definition of a balanced tree
+-/
+def balanced {α : Type}: btree α → bool
+| btree.empty := tt
+| (btree.node l k a r) := (height l + height r) ≤ 1
+
 end btree_def
