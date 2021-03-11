@@ -54,14 +54,19 @@ def insert {α : Type} (x : nat) (a : α) : btree α → btree α
   else if x > k then btree.node l k a' (insert r)
   else btree.node l x a r
 
+def forall_keys {α : Type} (p : nat → nat → Prop) : nat → btree α → Prop
+| x btree.empty := tt
+| x (btree.node l k a r) := 
+  forall_keys k l ∧ (p x k) ∧ forall_keys k r
+
 /--
   A binary tree is ordered when both left and right subtrees of the
   root node satisfy the predicate that each left subtree has keys
   less than the root, and each right subtree has keys more than the root.
 -/
-def ordered {α: Type} (p : nat → btree α → Prop) : btree α → Prop
+def ordered {α: Type} : btree α → Prop
 | btree.empty := tt
-| (btree.node l k a r) := (ordered l) ∧ (ordered r) ∧ (p k l) ∧ (p k r)
+| (btree.node l k a r) := ordered l ∧ ordered r ∧ (forall_keys (<) k l) ∧ (forall_keys (>) k r)
 
 /--
   Number of elements that are bound to a specific key
