@@ -40,11 +40,17 @@ begin
           exact h },
         { apply and.intro, 
           { sorry },
-          { sorry }
+          { simp only [ordered] at h₁,
+            apply and.elim h₁,
+            intros h h',
+            apply and.elim h',
+            clear h h', intros h h',
+            apply and.elim_right h', 
+          }
         },
       }
     },
-    { simp [if_neg c₁],
+    { simp only [if_neg c₁],
       by_cases c₂ : (k > tk),
       { simp only [if_pos c₂, ordered],
         apply and.intro,
@@ -65,7 +71,24 @@ begin
           }
         }, 
       },
-      { sorry }
+      { simp only [if_neg c₂, ordered],
+        apply and.intro, 
+        { simp only [ordered] at h₁,
+          apply and.elim h₁, 
+          intros h h', exact h,
+        },
+        { apply and.intro,
+          { simp only [ordered] at h₁,
+            apply and.elim h₁,
+            intros h h',
+            apply and.elim h',
+            clear h h', intros h h', exact h },
+          { apply and.intro,
+            { sorry },
+            { sorry }
+          }
+        }
+      }
     }
   }
 end
