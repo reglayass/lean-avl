@@ -131,7 +131,12 @@ begin
           clear h h', intros h h', 
           exact h 
         },
-        { sorry } 
+        { apply and.elim h₁,
+          intros h h',
+          simp only [bound] at h',
+          simp only [if_neg c₁, if_pos c₂] at h',
+          exact h'
+        } 
       },
       { simp only [if_neg c₂],
         sorry, 
