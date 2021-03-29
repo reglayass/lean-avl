@@ -53,7 +53,9 @@ begin
       by_cases c₂ : (k > tk),
       { simp only [if_pos c₂, ordered],
         apply and.intro,
-        { sorry },
+        { simp only [ordered] at h₁, 
+          apply and.elim_left h₁
+        },
         { apply and.intro, 
           { apply ihr, 
             simp only [ordered] at h₁,
@@ -111,9 +113,9 @@ end
 
 lemma ordered_lookup {α : Type} (t : btree α) (k : nat) (a : α) :
   ordered t ∧ bound k t → (lookup k t = some a) :=
-begin 
+begin
   intro h₁,
-  induction t, 
+  induction t,
   case empty {
     simp only [lookup],
     sorry
@@ -121,41 +123,51 @@ begin
   case node : tl tk ta tr ihl ihr {
     simp only [lookup],
     by_cases c₁ : (k < tk),
-    { simp only [if_pos c₁],
+    { simp only [if_pos c₁], 
       apply ihl,
+      apply and.intro,
       apply and.elim h₁,
-      intros h h',
-      apply and.intro, 
-      { simp only [ordered] at h,
-        apply and.elim h, 
-        clear h h', intros h h',
-        exact h
+      { intros h₂ h₃,
+        simp only [ordered] at h₂,
+        apply and.elim_left h₂ 
       },
-      { sorry },
+      { apply and.elim h₁, 
+        intros h₂ h₃,
+        simp only [bound] at h₃,
+        by_cases c₂ : (k > tk),
+        { simp only [if_pos c₂] at h₃, 
+          simp only [if_pos c₁] at h₃,
+          exact h₃
+        },
+        { simp only [if_neg c₂] at h₃,
+          simp only [if_pos c₁] at h₃,
+          exact h₃
+        }
+      }
     },
     { simp only [if_neg c₁],
       by_cases c₂ : (k > tk),
-      { simp only [if_pos c₂],
+      { simp only [if_pos c₂], 
         apply ihr,
         apply and.intro,
-        apply and.elim h₁,
-        intros h h',
-        { simp only [ordered] at h, 
-          apply and.elim h, 
-          clear h h', intros h h',
-          apply and.elim h', 
-          clear h h', intros h h', 
-          exact h 
+        { apply and.elim h₁, 
+          intros h₂ h₃,
+          simp only [ordered] at h₂,
+          apply and.elim h₂,
+          intros h₃ h₄,
+          apply and.elim_left h₄
         },
         { apply and.elim h₁,
-          intros h h',
-          simp only [bound] at h',
-          simp only [if_neg c₁, if_pos c₂] at h',
-          exact h'
-        } 
+          intros h₂ h₃,
+          simp only [bound] at h₃,
+          simp only [if_pos c₂] at h₃,
+          simp only [if_neg c₁] at h₃,
+          exact h₃ 
+        }
       },
-      { simp only [if_neg c₂],
-        sorry, 
+      { simp only [if_neg c₂], 
+        simp only [coe, lift_t, has_lift_t.lift, coe_t, has_coe_t.coe],
+        sorry 
       }
     }
   }
