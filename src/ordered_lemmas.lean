@@ -14,11 +14,11 @@ begin
     simp only [btree_def.insert, ordered],
     apply and.intro,
     { simp },
-    { apply and.intro, 
+    { apply and.intro,
       { simp },
       { apply and.intro, 
-        { simp [forall_keys] }, 
-        { simp [forall_keys] } 
+        simp [forall_keys],
+        simp [forall_keys]
       }
     }
   },
@@ -27,70 +27,86 @@ begin
     by_cases c₁ : (k < tk),
     { simp only [if_pos c₁, ordered],
       apply and.intro,
-      { apply ihl,
+      { apply ihl, 
         simp only [ordered] at h₁,
-        apply and.elim h₁,
-        intros h h', exact h },
+        apply and.elim_left h₁,
+      },
       { apply and.intro,
         { simp only [ordered] at h₁,
-          apply and.elim h₁, 
-          intros h h',
-          apply and.elim h', 
-          clear h h', intros h h',
-          exact h },
-        { apply and.intro, 
+          apply and.elim h₁,
+          intros h₂ h₃,
+          apply and.elim_left h₃
+        },
+        { apply and.intro,
           { sorry },
           { simp only [ordered] at h₁,
             apply and.elim h₁,
-            intros h h',
-            apply and.elim h',
-            clear h h', intros h h',
-            apply and.elim_right h', 
-          }
-        },
-      }
+            intros h₂ h₃,
+            apply and.elim h₃,
+            intros h₄ h₅,
+            apply and.elim_right h₅
+          } 
+        }
+      } 
     },
-    { simp only [if_neg c₁],
+    { simp only [if_neg c₁], 
       by_cases c₂ : (k > tk),
       { simp only [if_pos c₂, ordered],
         apply and.intro,
-        { simp only [ordered] at h₁,
-          apply and.elim h₁,
-          intros h h', exact h },
+        { sorry },
         { apply and.intro, 
-          { simp only [ordered] at h₁,
+          { apply ihr, 
+            simp only [ordered] at h₁,
             apply and.elim h₁,
-            intros h h',
-            apply ihr,
-            apply and.elim h',
-            clear h h', intros h h',
-            exact h },
-          { apply and.intro, 
-            { sorry },
-            { sorry }
-          }
-        }, 
-      },
-      { simp only [if_neg c₂, ordered],
-        apply and.intro, 
-        { simp only [ordered] at h₁,
-          apply and.elim h₁, 
-          intros h h', exact h,
-        },
-        { apply and.intro,
-          { simp only [ordered] at h₁,
-            apply and.elim h₁,
-            intros h h',
-            apply and.elim h',
-            clear h h', intros h h', exact h },
+            intros h₂ h₃,
+            apply and.elim_left h₃
+          },
           { apply and.intro,
-            { sorry },
-            { sorry }
+            { simp only [ordered] at h₁,
+              apply and.elim h₁,
+              intros h₂ h₃,
+              apply and.elim h₃,
+              intros h₄ h₅,
+              apply and.elim_left h₅
+            },
+            { sorry } 
           }
         }
+      },
+      { simp only [if_neg c₂, ordered],
+        apply and.intro,
+        { simp only [ordered] at h₁,
+          apply and.elim_left h₁ 
+        },
+        { apply and.intro, 
+          { apply and.elim h₁,
+            intros h₂ h₃,
+            apply and.elim_left h₃ 
+          },
+          { apply and.intro,
+            { sorry },
+            { sorry } 
+          }
+        } 
       }
     }
   }
+end
+
+lemma forall_insert_lt {α: Type} (k k' : nat) (a : α) (l r: btree α) (h₁ : ordered (btree.node l k' a r)) :
+  (forall_keys (<) k' (insert k a l)) ∧ (forall_keys (>) k' r) :=
+begin
+  apply and.intro,
+  { simp only [ordered] at h₁, 
+    sorry, 
+  },
+  { simp only [ordered] at h₁, 
+    apply and.elim h₁,
+    intros h h',
+    apply and.elim h',
+    clear h h', intros h h',
+    apply and.elim_right h'
+  },
 end
 
 lemma ordered_lookup {α : Type} (t : btree α) (k : nat) (a : α) :
@@ -141,26 +157,6 @@ begin
       { simp only [if_neg c₂],
         sorry, 
       }
-    }
-  }
-end
-
-lemma unique_keys_nb {α : Type} (t : btree α) (k : nat) :
-  ordered t ∧ bound k t = ff → treeElems t k = [] :=
-begin
-  intro h₁,
-  induction t, 
-  case empty {
-    simp [treeElems],
-  },
-  case node : tl tk ta tr ihl ihr {
-    simp only [treeElems],
-    by_cases c₁ : (k = tk),
-    { simp only [if_pos c₁],
-      sorry 
-    },
-    { simp only [if_neg c₁],
-      sorry
     }
   }
 end

@@ -68,17 +68,6 @@ def ordered {α: Type} : btree α → Prop
 | btree.empty := tt
 | (btree.node l k a r) := ordered l ∧ ordered r ∧ (forall_keys (<) k l) ∧ (forall_keys (>) k r)
 
-/--
-  Number of elements that are bound to a specific key
-  In any search tree, if a key is bound to a tree then the list 
-  of elements will be one
--/
-def treeElems {α : Type} : btree α → nat → list α
-| btree.empty x := []
-| (btree.node l k a r) x := 
-  if x = k then append (a :: (treeElems l x)) (treeElems r x)
-  else append (treeElems l x) (treeElems r x)
-
 /-- 
   Height of a tree 
 -/
@@ -101,7 +90,5 @@ def balanced {α : Type}: btree α → bool
 /- outLeft (btree (btree xl xk xa xr) k a r) = 
    (height xl ≥ height xr) ∧ (height xl ≤ (height xr + 1))
    ∧ (height xr ≥ height r) ∧ (height xl = (height r + 1)) -/
-
-#check btree
 
 end btree_def
