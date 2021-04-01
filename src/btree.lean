@@ -83,12 +83,4 @@ def balanced {α : Type}: btree α → bool
 | btree.empty := tt
 | (btree.node l k a r) := (height l + height r) ≤ 1
 
-/-  # Easy right rotation: -/
-/- easyR (btree (btree xl xk xa xr) k a r) = btree xl xk a (btree l k a xr) -/
-
-/- # Outside left-heavy tree -/
-/- outLeft (btree (btree xl xk xa xr) k a r) = 
-   (height xl ≥ height xr) ∧ (height xl ≤ (height xr + 1))
-   ∧ (height xr ≥ height r) ∧ (height xl = (height r + 1)) -/
-
 end btree_def
