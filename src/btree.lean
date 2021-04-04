@@ -85,14 +85,14 @@ def balanced {α : Type} : btree α → bool
 
 -- easyR (Cel z d (Cel x a xL xR) zR) = (Cel x a xL (Cel z d xR zR))
 def easyR {α : Type} : btree α → btree α
-| btree.empty := empty_tree
+| btree.empty := btree.empty
 | (btree.node (btree.node xL x a xR) z d zR) := 
   (btree.node xL x a (btree.node xR z d zR))
 | (btree.node l k a r) := btree.node l k a r
 
 -- easyL (Cel z d zL (Cel y b yL yR)) = (Cel y b (Cel z d zL yL) yR)
 def easyL {α : Type} : btree α → btree α
-| btree.empty := empty_tree
+| btree.empty := btree.empty
 | (btree.node zL z d (btree.node yL y b yR)) := 
   (btree.node (btree.node zL z d yL) y b yR)
 | (btree.node l k a r) := btree.node l k a r
@@ -113,8 +113,9 @@ def insert_balanced {α : Type} (x : nat) (a : α) : btree α → btree α
   if x < k then 
     if outLeft (btree.node (insert x a l) k a' r) then sorry
     else btree.node (insert x a l) k a' r
+  else if x < k then sorry
   else btree.node l x a r
-  
+
 -- def insert_balanced {α : Type} (x : nat) (a : α) : btree α → btree α
 -- | btree.empty := btree.node btree.empty x a btree.empty
 -- | (btree.node l k a' r) :=
