@@ -2,7 +2,7 @@ import btree
 import tactic.linarith
 set_option pp.generalized_field_notation false
 
-namespace rebalancing
+namespace balanced
 open btree_def
 
 /-- 
@@ -62,6 +62,20 @@ def easyL {α : Type} : btree α → btree α
   (btree.node (btree.node zL z d yL) y b yR)
 | (btree.node l k a r) := btree.node l k a r
 
+def rotR {α : Type} : btree α → btree α
+| btree.empty := btree.empty
+| (btree.node (btree.node xL x a xR) z d zR) := 
+  if height xL < height xR then easyR (btree.node (easyL (btree.node xL x a xR)) z d zR)
+  else easyR (btree.node (btree.node xL x a xR) z d zR)
+| (btree.node l k a r) := btree.node l k a r
+
+def rotL {α : Type} : btree α → btree α
+| btree.empty := btree.empty
+| (btree.node zL z d (btree.node yL y b yR)) :=
+  if height yR < height yL then easyL (btree.node zL z d (easyR (btree.node yL y b yR)))
+  else easyL (btree.node zL z d (btree.node yL y b yR))
+| (btree.node l k a r) := btree.node l k a r
+
 /--
   Insertion with balancing
 -/
@@ -69,11 +83,11 @@ def insert {α : Type} (x : nat) (a : α) : btree α → btree α
 | btree.empty := btree.node btree.empty x a btree.empty
 | (btree.node l k a' r) :=
   if x < k then 
-    if outLeft (btree.node (insert l) k a' r) then easyR (btree.node (insert l) k a' r)
+    if outLeft (btree.node (insert l) k a' r) then rotR (btree.node (insert l) k a' r)
     else btree.node (insert l) k a' r
   else if x > k then
-    if outRight (btree.node l k a' (insert r)) then easyL (btree.node l k a' (insert r))
+    if outRight (btree.node l k a' (insert r)) then rotL (btree.node l k a' (insert r))
     else btree.node l k a' (insert r)
   else btree.node l x a r
 
-end rebalancing
+end balanced
