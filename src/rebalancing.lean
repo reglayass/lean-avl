@@ -62,4 +62,18 @@ def easyL {α : Type} : btree α → btree α
   (btree.node (btree.node zL z d yL) y b yR)
 | (btree.node l k a r) := btree.node l k a r
 
+/--
+  Insertion with balancing
+-/
+def insert {α : Type} (x : nat) (a : α) : btree α → btree α
+| btree.empty := btree.node btree.empty x a btree.empty
+| (btree.node l k a' r) :=
+  if x < k then 
+    if outLeft (btree.node (insert l) k a' r) then easyR (btree.node (insert l) k a' r)
+    else btree.node (insert l) k a' r
+  else if x > k then
+    if outRight (btree.node l k a' (insert r)) then easyL (btree.node l k a' (insert r))
+    else btree.node l k a' (insert r)
+  else btree.node l x a r
+
 end rebalancing
