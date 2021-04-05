@@ -11,6 +11,10 @@ inductive btree (α: Type) : Type
 | empty {} : btree
 | node (l : btree) (k : nat) (a : α) (r : btree) : btree
 
+def tostring : btree string → string
+| btree.empty := "_"
+| (btree.node l k a r) := "[" ++ " " ++ to_string k ++ " " ++ tostring l ++ " " ++ tostring r ++ " " ++ "]"
+
 /--
   Definition of an empty tree
 -/
@@ -67,20 +71,5 @@ def forall_keys {α : Type} (p : nat → nat → Prop) : nat → btree α → Pr
 def ordered {α: Type} : btree α → Prop
 | btree.empty := tt
 | (btree.node l k a r) := ordered l ∧ ordered r ∧ (forall_keys (<) k l) ∧ (forall_keys (>) k r)
-
-/-- 
-  Height of a tree 
--/
-def height {α : Type} : btree α → nat
-| btree.empty := 0
-| (btree.node l k a r) :=
-  1 + (max (height l) (height r))
-
-/--
-  Definition of a balanced tree
--/
-def balanced {α : Type} : btree α → bool
-| btree.empty := tt
-| (btree.node l k a r) := (height l - height r) ≤ 1
 
 end btree_def
