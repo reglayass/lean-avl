@@ -32,11 +32,16 @@ begin
       },
       { apply and.intro,
         { simp [ordered] at h₁,
-          apply and.elim h₁,
-          intros h₂ h₃,
-          apply and.elim_left h₃
+          apply and.elim_left (and.elim_right h₁),
         },
-        { sorry }
+        { apply and.intro, 
+          { sorry },
+          { simp only [ordered] at h₁,
+            apply and.elim_right 
+              (and.elim_right 
+                (and.elim_right h₁)),
+          }
+        }
       }
     },
     { simp only [if_neg c₁], 
@@ -49,11 +54,14 @@ begin
         { apply and.intro,
           { apply ihr, 
             simp [ordered] at h₁,
-            apply and.elim h₁,
-            intros h₂ h₃,
-            apply and.elim_left h₃
+            apply and.elim_left (and.elim_right h₁),
           },
-          { sorry }
+          { apply and.intro,
+            { simp [ordered] at h₁,
+              apply and.elim_left (and.elim_right (and.elim_right h₁)), 
+            },
+            { sorry }
+          }
         } 
       },
       { simp only [if_neg c₂, ordered], 
@@ -62,12 +70,13 @@ begin
           apply and.elim_left h₁,
         },
         { apply and.intro,
-          { simp [ordered] at h₁, 
-            apply and.elim h₁,
-            intros h₂ h₃,
-            apply and.elim_left h₃,
+          { simp [ordered] at h₁,
+            apply and.elim_left (and.elim_right h₁), 
           },
-          { sorry } 
+          { apply and.intro,
+            { sorry },
+            { sorry } 
+          } 
         }
       }
     }
@@ -112,9 +121,7 @@ begin
         { apply and.elim h₁, 
           intros h₂ h₃,
           simp only [ordered] at h₂,
-          apply and.elim h₂,
-          intros h₄ h₅,
-          apply and.elim_left h₅
+          apply and.elim_left (and.elim_right h₂),
         },
         { apply and.elim h₁, 
           intros h₂ h₃,
@@ -140,6 +147,7 @@ begin
         }
       },
       { simp only [if_neg c₂], 
+        simp [coe, lift_t, has_lift_t.lift, coe_t, has_coe_t.coe],
         sorry
       }
     }
