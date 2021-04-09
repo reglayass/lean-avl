@@ -5,6 +5,44 @@ set_option pp.generalized_field_notation false
 namespace ordered_lemmas
 open btree_def
 
+-- lemma forall_insert {α : Type} (l : btree α) (k k' : nat) (a : α) (p : nat → nat → Prop) (h : p k k') :
+--   forall_keys p k' l → forall_keys p k' (insert k a l) :=
+-- begin
+--   intro h₁,
+--   induction l,
+--   case empty {
+--     simp [btree_def.insert, forall_keys],
+--     simp only [forall_keys] at h₁,
+--     sorry 
+--   },
+--   case node : tl tk ta tr ihl ihr {
+--     simp only [btree_def.insert],
+--     by_cases c₁ : (k < tk),
+--     { simp only [if_pos c₁], 
+--       sorry
+--     },
+--     { simp only [if_neg c₁], 
+--       by_cases c₂ : (k > tk),
+--       { simp only [if_pos c₂], 
+--         simp only [forall_keys],
+--         simp only [forall_keys] at h₁,
+--         apply and.intro,
+--         { apply and.elim_left h₁ },
+--         { apply and.intro, 
+--           { apply and.elim_left (and.elim_right h₁) },
+--           { sorry }
+--         }
+--       },
+--       { simp only [if_neg c₂, forall_keys], 
+--         simp only [forall_keys] at h₁,
+--         apply and.intro,
+--         {  },
+--         { sorry }
+--       }
+--     }
+--   }
+-- end
+
 lemma ordered_insert {α : Type} (t : btree α) (k : nat) (a : α) :
   ordered t → ordered (insert k a t) :=
 begin
@@ -35,7 +73,9 @@ begin
           apply and.elim_left (and.elim_right h₁),
         },
         { apply and.intro, 
-          { sorry },
+          { simp only [ordered] at h₁, 
+            sorry
+          },
           { simp only [ordered] at h₁,
             apply and.elim_right 
               (and.elim_right 
@@ -83,72 +123,44 @@ begin
   }
 end
 
-lemma ordered_lookup {α : Type} (t : btree α) (k : nat) (x : α) :
-  ∃v, ordered t ∧ bound k t → (lookup k t = some v) :=
+-- inversion lemmas!
+
+lemma ordered_lookup {α : Type} (t : btree α) (k : nat) :
+  ordered t → bound k t → ∃ (v: α), (lookup k t = some v) :=
 begin
-  existsi x,
-  intro h₁,
+  intros h₁ h₂,
   induction t,
   case empty {
     simp only [lookup],
-    apply and.elim h₁,
-    intros h₂ h₃,
-    simp [bound] at h₃,
-    exact h₃,
+    simp [bound] at h₂,
+    contradiction,
   },
   case node : tl tk ta tr ihl ihr {
     simp only [lookup],
-    by_cases c₁ : (k > tk),
+    by_cases c₁ : (k < tk),
     { simp only [if_pos c₁],
-      by_cases c₂: (k < tk),
-      { simp only [if_pos c₂],
-        apply ihl,
-        apply and.intro,
-        { apply and.elim h₁, 
-          intros h₂ h₃,
-          simp only [ordered] at h₂,
-          apply and.elim_left h₂
-        },
-        { apply and.elim h₁,
-          intros h₂ h₃,
-          simp only [bound, if_pos c₂] at h₃,
-          exact h₃, 
-        } 
+      apply ihl,
+      { simp only [ordered] at h₁, 
+        apply and.elim_left h₁,
       },
-      { simp only [if_neg c₂], 
-        apply ihr,
-        apply and.intro,
-        { apply and.elim h₁, 
-          intros h₂ h₃,
-          simp only [ordered] at h₂,
-          apply and.elim_left (and.elim_right h₂),
-        },
-        { apply and.elim h₁, 
-          intros h₂ h₃,
-          simp only [bound, if_pos c₁, if_neg c₂] at h₃,
-          exact h₃
-        }
-      } 
+      { simp only [bound, if_pos c₁] at h₂,
+        exact h₂,
+      }
     },
     { simp only [if_neg c₁], 
-      by_cases c₂ : (k < tk),
-      { simp only [if_pos c₂], 
-        apply ihl,
-        apply and.intro,
-        { apply and.elim h₁,
-          intros h₂ h₃,
-          simp only [ordered] at h₂,
-          apply and.elim_left h₂, 
+      by_cases c₂ : (k > tk),
+      { simp only [if_pos c₂],
+        apply ihr,
+        { simp only [ordered] at h₁,
+          apply and.elim_left (and.elim_right h₁),
         },
-        { apply and.elim h₁,
-          intros h₂ h₃,
-          simp only [bound, if_neg c₁, if_pos c₂] at h₃,
-          exact h₃
-        }
+        { simp only [bound, if_neg c₁, if_pos c₂] at h₂,
+          exact h₂,
+        },
       },
       { simp only [if_neg c₂], 
-        simp [coe, lift_t, has_lift_t.lift, coe_t, has_coe_t.coe],
-        sorry
+        existsi ta,
+        refl,
       }
     }
   }
