@@ -5,44 +5,6 @@ set_option pp.generalized_field_notation false
 namespace ordered_lemmas
 open btree_def
 
--- lemma forall_insert {α : Type} (l : btree α) (k k' : nat) (a : α) (p : nat → nat → Prop) (h : p k k') :
---   forall_keys p k' l → forall_keys p k' (insert k a l) :=
--- begin
---   intro h₁,
---   induction l,
---   case empty {
---     simp [btree_def.insert, forall_keys],
---     simp only [forall_keys] at h₁,
---     sorry 
---   },
---   case node : tl tk ta tr ihl ihr {
---     simp only [btree_def.insert],
---     by_cases c₁ : (k < tk),
---     { simp only [if_pos c₁], 
---       sorry
---     },
---     { simp only [if_neg c₁], 
---       by_cases c₂ : (k > tk),
---       { simp only [if_pos c₂], 
---         simp only [forall_keys],
---         simp only [forall_keys] at h₁,
---         apply and.intro,
---         { apply and.elim_left h₁ },
---         { apply and.intro, 
---           { apply and.elim_left (and.elim_right h₁) },
---           { sorry }
---         }
---       },
---       { simp only [if_neg c₂, forall_keys], 
---         simp only [forall_keys] at h₁,
---         apply and.intro,
---         {  },
---         { sorry }
---       }
---     }
---   }
--- end
-
 lemma ordered_insert {α : Type} (t : btree α) (k : nat) (a : α) :
   ordered t → ordered (insert k a t) :=
 begin
@@ -74,6 +36,7 @@ begin
         },
         { apply and.intro, 
           { simp only [ordered] at h₁, 
+            -- forall_insert gt
             sorry
           },
           { simp only [ordered] at h₁,
@@ -100,7 +63,10 @@ begin
             { simp [ordered] at h₁,
               apply and.elim_left (and.elim_right (and.elim_right h₁)), 
             },
-            { sorry }
+            { simp [ordered] at h₁, 
+              -- forall_insert gt
+              sorry 
+            }
           }
         } 
       },
@@ -114,8 +80,12 @@ begin
             apply and.elim_left (and.elim_right h₁), 
           },
           { apply and.intro,
-            { sorry },
-            { sorry } 
+            { simp [ordered] at h₁, 
+              sorry 
+            },
+            { simp [ordered] at h₁, 
+              sorry  
+            } 
           } 
         }
       }
