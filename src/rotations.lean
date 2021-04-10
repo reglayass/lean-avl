@@ -39,11 +39,10 @@ begin
 end
 
 lemma easyR_restores_balance {α : Type} (xL xR zR : btree α) (z x : nat) (d a : α) :
-  balanced xL ∧ balanced xR ∧ balanced zR ∧ outLeft (btree.node (btree.node xL x a xR) z d zR) → 
+  outLeft (btree.node (btree.node xL x a xR) z d zR) → 
     balanced (easyR (btree.node (btree.node xL x a xR) z d zR)) :=
 begin
   intro h₁,
-  simp only [easyR],
   sorry
 end
 

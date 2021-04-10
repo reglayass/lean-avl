@@ -1,9 +1,11 @@
 import btree
+import forall_keys
 import tactic.linarith
 set_option pp.generalized_field_notation false
 
 namespace ordered_lemmas
 open btree_def
+open forall_keys_lemmas
 
 lemma ordered_insert {α : Type} (t : btree α) (k : nat) (a : α) :
   ordered t → ordered (insert k a t) :=
@@ -36,7 +38,6 @@ begin
         },
         { apply and.intro, 
           { simp only [ordered] at h₁, 
-            -- forall_insert gt
             sorry
           },
           { simp only [ordered] at h₁,
@@ -64,8 +65,7 @@ begin
               apply and.elim_left (and.elim_right (and.elim_right h₁)), 
             },
             { simp [ordered] at h₁, 
-              -- forall_insert gt
-              sorry 
+              sorry
             }
           }
         } 
