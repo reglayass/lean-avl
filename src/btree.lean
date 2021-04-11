@@ -60,7 +60,7 @@ def insert {α : Type} (x : nat) (a : α) : btree α → btree α
 
 def forall_keys {α : Type} (p : nat → nat → Prop) : nat → btree α → Prop
 | x btree.empty := tt
-| x (btree.node l k a r) := 
+| x (btree.node l k a r) :=
   forall_keys x l ∧ (p x k) ∧ forall_keys x r
 
 /--

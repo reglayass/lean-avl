@@ -15,83 +15,67 @@ begin
   case empty {
     simp only [btree_def.insert, ordered],
     apply and.intro,
-    { simp },
-    { apply and.intro,
-      simp,
-      apply and.intro,
-      { simp [forall_keys] },
-      { simp [forall_keys] }
+    { simp, },
+    { apply and.intro, 
+      { simp, },
+      { apply and.intro, 
+        { simp only [forall_keys], simp, },
+        { simp only [forall_keys], simp, }
+      }
     }
   },
   case node : tl tk ta tr ihl ihr {
     simp only [btree_def.insert],
+    simp only [ordered] at h₁,
     by_cases c₁ : (k < tk),
-    { simp only [if_pos c₁, ordered],
+    { simp only [if_pos c₁, ordered], 
       apply and.intro,
       { apply ihl,
-        simp [ordered] at h₁,
-        apply and.elim_left h₁ 
+        apply and.elim_left h₁,
       },
-      { apply and.intro,
-        { simp [ordered] at h₁,
-          apply and.elim_left (and.elim_right h₁),
-        },
-        { apply and.intro, 
-          { simp only [ordered] at h₁, 
-            sorry
+      { apply and.intro, 
+        { apply and.elim_left (and.elim_right h₁), },
+        { apply and.intro,
+          { apply forall_insert, 
+            { sorry },
+            { apply and.elim_left (and.elim_right (and.elim_right h₁)), }
           },
-          { simp only [ordered] at h₁,
-            apply and.elim_right 
-              (and.elim_right 
-                (and.elim_right h₁)),
-          }
+          { apply and.elim_right (and.elim_right (and.elim_right h₁)), } 
         }
       }
     },
     { simp only [if_neg c₁], 
       by_cases c₂ : (k > tk),
-      { simp [if_pos c₂, ordered],
+      { simp only [if_pos c₂, ordered], 
         apply and.intro,
-        { simp [ordered] at h₁, 
-          apply and.elim_left h₁
-        },
+        { apply and.elim_left h₁, },
         { apply and.intro,
           { apply ihr, 
-            simp [ordered] at h₁,
             apply and.elim_left (and.elim_right h₁),
           },
-          { apply and.intro,
-            { simp [ordered] at h₁,
-              apply and.elim_left (and.elim_right (and.elim_right h₁)), 
-            },
-            { simp [ordered] at h₁, 
-              sorry
+          { apply and.intro, 
+            { apply and.elim_left (and.elim_right (and.elim_right h₁)), },
+            { apply forall_insert,
+              { sorry },
+              { apply and.elim_right (and.elim_right (and.elim_right h₁)), } 
             }
-          }
-        } 
-      },
-      { simp only [if_neg c₂, ordered], 
-        apply and.intro,
-        { simp [ordered] at h₁, 
-          apply and.elim_left h₁,
-        },
-        { apply and.intro,
-          { simp [ordered] at h₁,
-            apply and.elim_left (and.elim_right h₁), 
-          },
-          { apply and.intro,
-            { simp [ordered] at h₁, 
-              sorry 
-            },
-            { simp [ordered] at h₁, 
-              sorry  
-            } 
           } 
+        }
+      },
+      { simp only [if_neg c₂, ordered],
+        apply and.intro,
+        { apply and.elim_left h₁, },
+        { apply and.intro, 
+          { apply and.elim_left (and.elim_right h₁), },
+          { apply and.intro, 
+            { sorry },
+            { sorry }
+          }
         }
       }
     }
   }
-end
+end 
 
 -- inversion lemmas!
 

@@ -5,7 +5,7 @@ set_option pp.generalized_field_notation false
 namespace forall_keys_lemmas
 open btree_def
 
-lemma forall_insert {α : Type} (k' k : nat) (t : btree α) (a : α) (p : nat → nat → Prop) (h₀ : p k' k) :
+lemma forall_insert {α : Type} (k k' : nat) (t : btree α) (a : α) (p : nat → nat → Prop) (h₀ : p k' k) :
   forall_keys p k' t → forall_keys p k' (insert k a t) :=
 begin
   intro h₁,
