@@ -3,7 +3,7 @@ import balanced
 import tactic.linarith
 set_option pp.generalized_field_notation false
 
-namespace rotations_lemmas
+namespace right_rotations_lemmas
 open balanced
 open btree_def
 
@@ -34,4 +34,20 @@ begin
   }
 end
 
-end rotations_lemmas
+end right_rotations_lemmas
+
+namespace left_rotations_lemmas
+open balanced
+open btree_def
+
+lemma easyL_order {α : Type} (yL yR zL : btree α) (z y : nat) (d b : α) :
+  ordered (btree.node zL z d (btree.node yL y b yR)) →
+    ordered (easyL (btree.node zL z d (btree.node yL y b yR))) :=
+begin
+  intros h₁,
+  simp only [easyL, ordered],
+  simp only [ordered] at h₁,
+  sorry
+end
+
+end left_rotations_lemmas

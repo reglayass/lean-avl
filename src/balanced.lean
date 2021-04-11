@@ -30,7 +30,17 @@ def outLeft {α : Type} : btree α → bool
 | (btree.node (btree.node xL x a xR) z d zR) := 
   (height xL ≥ height xR) ∧ (height xL ≤ height xR + 1) ∧ 
   (height xR ≥ height zR) ∧ (height xL = height zR + 1)
-| (btree.node l k a r) := ff
+| (btree.node l k a r) := outLeft l
+
+/--
+  Definition of a tree being outside right-heavy
+-/
+def outRight {α : Type} : btree α → bool
+| btree.empty := ff
+| (btree.node zL z d (btree.node yL y b yR)) :=
+  (height yL ≤ height yR) ∧ (height yL ≤ height yR + 1) ∧
+  (height yR ≥ height zL) ∧ (height zL + 1 = height yR)
+| (btree.node l k a r) := outRight r
 
 /--
   Simple right rotation
@@ -39,6 +49,15 @@ def easyR {α : Type} : btree α → btree α
 | btree.empty := btree.empty
 | (btree.node (btree.node xL x a xR) z d zR) := 
   (btree.node xL x a (btree.node xR z d zR))
+| (btree.node l k a r) := btree.node l k a r
+
+/--
+  Simple left rotation
+-/
+def easyL {α : Type} : btree α → btree α
+| btree.empty := btree.empty
+| (btree.node zL z d (btree.node yL y b yR)) :=
+  (btree.node (btree.node zL z d yL) y b yR)
 | (btree.node l k a r) := btree.node l k a r
 
 -- /--
