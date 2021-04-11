@@ -21,7 +21,9 @@ begin
     by_cases c₁ : (k < tk),
     { simp only [if_pos c₁, forall_keys], 
       apply and.intro,
-      { sorry },
+      { apply ihl, 
+        apply and.elim_left h₁,
+      },
       { apply and.elim_right h₁ }
     },
     { simp only [if_neg c₁],
@@ -32,19 +34,21 @@ begin
         { apply and.elim_left h₁ },
         { apply and.intro, 
           { apply and.elim_left (and.elim_right h₁) },
-          { sorry }
+          { apply ihr,
+            apply and.elim_right (and.elim_right h₁),
+          }
         }
       },
       { simp only [if_neg c₂, forall_keys],
         apply and.intro,
-        { sorry },
+        { apply and.elim_left h₁ },
         { apply and.intro,
           { exact h₀ },
-          { sorry } 
+          { apply and.elim_right (and.elim_right h₁) } 
         }
       } 
     }
-  }
+  },
 end
 
 end forall_keys_lemmas
