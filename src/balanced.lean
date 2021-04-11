@@ -60,6 +60,23 @@ def easyL {α : Type} : btree α → btree α
   (btree.node (btree.node zL z d yL) y b yR)
 | (btree.node l k a r) := btree.node l k a r
 
+/--
+  Definition of a right rotation
+-/
+def rotR {α : Type} : btree α → btree α
+| btree.empty := btree.empty
+| (btree.node (btree.node xL x a xR) z d zR) :=
+  if (height xL < height xR) then easyR (btree.node (easyL (btree.node xL x a xR)) z d zR)
+  else easyR (btree.node (btree.node xL x a xR) z d zR)
+| (btree.node l k a r) := btree.node (rotR l) k a r
+
+def rotL {α : Type} : btree α → btree α
+| btree.empty := btree.empty
+| (btree.node zL z d (btree.node yL y b yR)) :=
+  if (height yR < height yL) then easyL (btree.node zL z d (easyR (btree.node yL y b yR)))
+  else easyL (btree.node zL z d (btree.node yL y b yR))
+| (btree.node l k a r) := btree.node l k a (rotL r)
+
 -- /--
 --   Insertion with balancing
 -- -/
