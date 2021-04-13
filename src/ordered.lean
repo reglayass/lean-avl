@@ -14,15 +14,7 @@ begin
   induction t,
   case empty {
     simp only [btree_def.insert, ordered],
-    apply and.intro,
-    { simp, },
-    { apply and.intro, 
-      { simp, },
-      { apply and.intro, 
-        { simp only [forall_keys], simp, },
-        { simp only [forall_keys], simp, }
-      }
-    }
+    finish,
   },
   case node : tl tk ta tr ihl ihr {
     simp only [btree_def.insert],
@@ -30,17 +22,16 @@ begin
     by_cases c₁ : (k < tk),
     { simp only [if_pos c₁, ordered], 
       apply and.intro,
-      { apply ihl,
-        apply and.left h₁,
+      { apply ihl; finish,
       },
       { apply and.intro, 
-        { apply and.left (and.right h₁), },
+        { finish, },
         { apply and.intro,
           { apply forall_insert, 
-            { sorry },
-            { apply and.left (and.right (and.right h₁)), }
+            { exact c₁, },
+            { finish, }
           },
-          { apply and.right (and.right (and.right h₁)), } 
+          { finish, } 
         }
       }
     },
@@ -48,45 +39,45 @@ begin
       by_cases c₂ : (k > tk),
       { simp only [if_pos c₂, ordered], 
         apply and.intro,
-        { apply and.left h₁, },
+        { finish, },
         { apply and.intro,
-          { apply ihr, 
-            apply and.left (and.right h₁),
+          { apply ihr; finish,
           },
           { apply and.intro, 
-            { apply and.left (and.right (and.right h₁)), },
+            { finish, },
             { apply forall_insert,
-              { sorry },
-              { apply and.right (and.right (and.right h₁)), } 
+              { exact c₂, },
+              { finish, } 
             }
           } 
         }
       },
       { simp only [if_neg c₂, ordered],
         apply and.intro,
-        { apply and.left h₁, },
+        { finish, },
         { apply and.intro, 
-          { apply and.left (and.right h₁), },
-          { apply and.intro, 
-            { sorry },
-            { sorry }
+          { finish, },
+          { have h : k = tk := by linarith,
+            apply and.intro, 
+            { subst h, finish, },
+            { subst h, finish, }
           }
         }
       }
     }
   }
-end 
+end
 
 -- inversion lemmas!
 
-lemma ordered_lookup {α : Type} (t : btree α) (k : nat) :
-  ordered t → bound k t → ∃ (v: α), (lookup k t = some v) :=
+lemma bound_lookup {α : Type} (t : btree α) (k : nat) :
+  bound k t → ∃ (v : α), lookup k t = some v :=
 begin
-  intros h₁ h₂,
+  intros h₁,
   induction t,
   case empty {
     simp only [lookup],
-    simp [bound] at h₂,
+    simp [bound] at h₁,
     contradiction,
   },
   case node : tl tk ta tr ihl ihr {
@@ -94,28 +85,20 @@ begin
     by_cases c₁ : (k < tk),
     { simp only [if_pos c₁],
       apply ihl,
-      { simp only [ordered] at h₁, 
-        apply and.left h₁,
-      },
-      { simp only [bound, if_pos c₁] at h₂,
-        exact h₂,
-      }
+      simp only [bound, if_pos c₁] at h₁, 
+      finish,
     },
     { simp only [if_neg c₁], 
       by_cases c₂ : (k > tk),
       { simp only [if_pos c₂],
         apply ihr,
-        { simp only [ordered] at h₁,
-          apply and.left (and.right h₁),
-        },
-        { simp only [bound, if_neg c₁, if_pos c₂] at h₂,
-          exact h₂,
-        },
+        simp only [bound, if_pos c₂, if_neg c₁] at h₁,
+        finish, 
       },
       { simp only [if_neg c₂], 
         existsi ta,
         refl,
-      }
+      },
     }
   }
 end
