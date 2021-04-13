@@ -30,7 +30,15 @@ def outLeft {α : Type} : btree α → bool
 | (btree.node (btree.node xL x a xR) z d zR) := 
   (height xL ≥ height xR) ∧ (height xL ≤ height xR + 1) ∧ 
   (height xR ≥ height zR) ∧ (height xL = height zR + 1)
-| (btree.node l k a r) := outLeft l
+| (btree.node l k a r) := ff
+
+inductive outLeft' {α : Type} : btree α → Prop
+| intro (xL xR zR : btree α) (x z : nat) (a d : α) :  
+    (height xL ≥ height xR) → 
+    (height xL ≤ height xR + 1) → 
+    (height xR ≥ height zR) → 
+    (height xL = height zR + 1) → 
+    outLeft' (btree.node (btree.node xL x a xR) z d zR)
 
 /--
   Definition of a tree being outside right-heavy
@@ -40,7 +48,7 @@ def outRight {α : Type} : btree α → bool
 | (btree.node zL z d (btree.node yL y b yR)) :=
   (height yL ≤ height yR) ∧ (height yL ≤ height yR + 1) ∧
   (height yR ≥ height zL) ∧ (height zL + 1 = height yR)
-| (btree.node l k a r) := outRight r
+| (btree.node l k a r) := ff
 
 /--
   Simple right rotation
