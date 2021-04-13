@@ -62,6 +62,9 @@ def easyL {α : Type} : btree α → btree α
 
 /--
   Definition of a right rotation
+  If the right subtree is bigger in height than the 
+  left subtree, then a double rotation is done.
+  Otherwise, a simple right rotation will do.
 -/
 def rotR {α : Type} : btree α → btree α
 | btree.empty := btree.empty
@@ -70,23 +73,17 @@ def rotR {α : Type} : btree α → btree α
   else easyR (btree.node (btree.node xL x a xR) z d zR)
 | (btree.node l k a r) := btree.node (rotR l) k a r
 
+/--
+  Definition of a left rotation
+  If the left subtree is bigger in height
+  than the right subtree, then a double rotation is done.
+  Otherwise, a simple left rotation will do. 
+-/
 def rotL {α : Type} : btree α → btree α
 | btree.empty := btree.empty
 | (btree.node zL z d (btree.node yL y b yR)) :=
   if (height yR < height yL) then easyL (btree.node zL z d (easyR (btree.node yL y b yR)))
   else easyL (btree.node zL z d (btree.node yL y b yR))
 | (btree.node l k a r) := btree.node l k a (rotL r)
-
--- /--
---   Insertion with balancing
--- -/
--- def insert {α : Type} (x : nat) (a : α) : btree α → btree α
--- | btree.empty := btree.node btree.empty x a btree.empty
--- | (btree.node l k a' r) :=
---   if x < k then 
---     if outLeft (btree.node (insert l) k a' r) then easyR (btree.node (insert l) k a' r)
---     else btree.node (insert l) k a' r
---   else if x > k then sorry
---   else btree.node l x a r
 
 end balanced
