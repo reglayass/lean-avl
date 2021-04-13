@@ -1,6 +1,9 @@
-namespace btree_def
+import tactic.linarith
+set_option pp.generalized_field_notation false
 
-/- # Binary Tree -/
+namespace btree
+
+/- # A Simple Binary tree -/
 
 /--
   Inductive type: Binary Tree 
@@ -11,15 +14,7 @@ inductive btree (α: Type) : Type
 | empty {} : btree
 | node (l : btree) (k : nat) (a : α) (r : btree) : btree
 
-def tostring : btree string → string
-| btree.empty := "_"
-| (btree.node l k a r) := "[" ++ " " ++ to_string k ++ " " ++ tostring l ++ " " ++ tostring r ++ " " ++ "]"
-
-/--
-  Definition of an empty tree
--/
-def empty_tree {α : Type} : btree α :=
-  btree.empty
+def empty_tree {α : Type} : btree α := btree.empty
 
 /--
   Looking up in a tree
@@ -45,6 +40,82 @@ def bound {α : Type} (x : nat) : btree α → bool
   else if x > k then bound r 
   else tt
 
+/- 
+  If we lookup empty btree then return none -/
+lemma lookup_empty {α : Type} (k : nat) : 
+  lookup k (@empty_tree α) = none := 
+begin
+  refl,
+end
+
+/- If you check if a key is bound on an empty tree, bound will return false -/
+lemma bound_empty {α : Type} (k : nat) :
+  bound k (@empty_tree α) = ff :=
+begin
+  refl,
+end
+
+/- If bound returns false, then the key is not in the tree therefore
+  The lookup will return none -/
+lemma bound_false {α : Type} (k : nat) (t : btree α) :
+  bound k t = ff → lookup k t = none :=
+begin
+  intro h₁,
+  induction t,
+  case empty {
+    refl,
+  },
+  case node : l k' a r ihl ihr {
+    simp only [lookup],
+    by_cases (k < k'),
+    { simp only [if_pos h], 
+      rw bound at h₁,
+      simp only [if_pos h] at h₁, apply ihl, assumption, },
+    { simp only [if_neg h],
+      by_cases h' : (k > k'),
+      { simp only [if_pos h'],
+      rw bound at h₁, simp only [if_neg h, if_pos h'] at h₁, apply ihr, assumption, }, 
+      { simp only [if_neg h'], rw bound at h₁, 
+        simp only [if_neg h, if_neg h'] at h₁, exfalso, apply h₁, }
+    }
+  }
+end
+
+lemma bound_lookup {α : Type} (t : btree α) (k : nat) :
+  bound k t → ∃ (v : α), lookup k t = some v :=
+begin
+  intros h₁,
+  induction t,
+  case empty {
+    simp only [lookup],
+    simp [bound] at h₁,
+    contradiction,
+  },
+  case node : tl tk ta tr ihl ihr {
+    simp only [lookup],
+    by_cases c₁ : (k < tk),
+    { simp only [if_pos c₁],
+      apply ihl,
+      simp only [bound, if_pos c₁] at h₁, 
+      finish,
+    },
+    { simp only [if_neg c₁], 
+      by_cases c₂ : (k > tk),
+      { simp only [if_pos c₂],
+        apply ihr,
+        simp only [bound, if_pos c₂, if_neg c₁] at h₁,
+        finish, 
+      },
+      { simp only [if_neg c₂], 
+        existsi ta,
+        refl,
+      },
+    }
+  }
+end
+
+/- # Inserting intro a binary tree -/
+
 /--
   Insertion into a binary search tree
   If the tree is empty, then you insert one node with empty subtrees
@@ -58,18 +129,83 @@ def insert {α : Type} (x : nat) (a : α) : btree α → btree α
   else if x > k then btree.node l k a' (insert r)
   else btree.node l x a r
 
-def forall_keys {α : Type} (p : nat → nat → Prop) : nat → btree α → Prop
-| x btree.empty := tt
-| x (btree.node l k a r) :=
-  forall_keys x l ∧ (p x k) ∧ forall_keys x r
-
-/--
-  A binary tree is ordered when both left and right subtrees of the
-  root node satisfy the predicate that each left subtree has keys
-  less than the root, and each right subtree has keys more than the root.
+/-
+  If we lookup the same key that we just inserted, we should get the value
+  inserted with it: 
+  __lookup d k (insert k v t ) = v__
 -/
-def ordered {α: Type} : btree α → Prop
-| btree.empty := tt
-| (btree.node l k a r) := ordered l ∧ ordered r ∧ (forall_keys (>) k l) ∧ (forall_keys (<) k r)
+lemma lookup_insert_eq {α: Type} (k : nat) (t : btree α) (v : α) :
+  lookup k (insert k v t) = v :=
+begin
+  induction t,
+  case empty {
+    simp only [insert, lookup],
+    by_cases (k < k), 
+    { exfalso, linarith },
+    { simp [if_neg h] },
+  },
+  case node : l k' a' r ihl ihr {
+    simp only [insert],
+    by_cases (k < k'),
+    { simp only [if_pos h, lookup, ihl] },
+    { simp only [if_neg h], 
+      by_cases h' : (k > k'), 
+      { simp only [if_pos h', lookup, if_neg h, ihr] },
+      { simp only [if_neg h', lookup, if_neg (lt_irrefl k)], }
+    },
+  },
+end
 
-end btree_def
+lemma lookup_insert_shadow {α : Type} (t : btree α) (v v' d : α) (k k' : nat) :
+  lookup k' (insert k v (insert k v t)) = lookup k' (insert k v t) :=
+begin 
+  induction t,
+  case empty {
+    simp only [insert, lookup],
+    by_cases (k < k),
+    { exfalso, linarith },
+    { simp [if_neg h, lookup] }
+  },
+  case node : tl tk a' tr ihl ihr {
+    simp only [insert, lookup],
+    by_cases h₁ : (k < tk),
+    { simp [if_pos h₁, insert, lookup],
+      by_cases h₂ : (k' < tk),
+      { simp [if_pos h₂], assumption, },
+      { simp [if_neg h₂], } },
+    { simp [if_neg h₁, insert, lookup],
+      by_cases h₃ : (tk < k),
+      { simp [if_pos h₃, insert, if_neg h₁, insert, lookup],
+        by_cases h₄ : (k' < tk),
+        { simp [if_pos h₄], },
+        { simp [if_neg h₄],
+          by_cases h₅ : (tk < k'),
+          { simp [if_pos h₅], assumption },
+          { simp [if_neg h₅] } } },
+      { simp [if_neg h₃, insert] } } },
+end
+
+/- If you check the bound on a key just inserted into the tree, it will return false -/
+lemma bound_insert_eq {α : Type} (k : nat) (t : btree α) (v : α) :
+  bound k (insert k v t) = tt :=
+begin
+  induction t,
+  case empty {
+    simp only [insert, bound],
+    by_cases (k < k),
+    { exfalso, linarith },
+    { simp[if_neg h] },
+  },
+  case node : l k' a' r ihl ihr {
+    simp only [insert],
+    by_cases (k < k'),
+    { simp only [if_pos h, insert, bound, ihl] },
+    { simp only [if_neg h],
+      by_cases h' : (k > k'),
+      { simp only [if_pos h', bound, if_neg h, ihr] },
+      { simp only [if_neg h', bound, if_neg (lt_irrefl k)] } 
+    }
+  }
+end
+
+end btree

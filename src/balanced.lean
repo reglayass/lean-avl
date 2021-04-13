@@ -1,9 +1,10 @@
 import btree
+import ordered
 import tactic.linarith
 set_option pp.generalized_field_notation false
 
 namespace balanced
-open btree_def
+open btree ordered
 
 /-- 
   Height of a tree 
@@ -20,8 +21,6 @@ def balanced {α : Type} : btree α → bool
 | btree.empty := tt
 | (btree.node l k a r) := (height l - height r) ≤ 1
 
-def leftHeavy : btree string := btree.node (btree.node (btree.node btree.empty 1 "c" btree.empty) 2 "b" btree.empty) 3 "a" btree.empty
-
 /-- 
   Definition of a tree being outside left-heavy
 -/
@@ -32,13 +31,13 @@ def outLeft {α : Type} : btree α → bool
   (height xR ≥ height zR) ∧ (height xL = height zR + 1)
 | (btree.node l k a r) := ff
 
-inductive outLeft' {α : Type} : btree α → Prop
-| intro (xL xR zR : btree α) (x z : nat) (a d : α) :  
-    (height xL ≥ height xR) → 
-    (height xL ≤ height xR + 1) → 
-    (height xR ≥ height zR) → 
-    (height xL = height zR + 1) → 
-    outLeft' (btree.node (btree.node xL x a xR) z d zR)
+-- inductive outLeft' {α : Type} : btree α → Prop
+-- | intro (xL xR zR : btree α) (x z : nat) (a d : α) :  
+--     (height xL ≥ height xR) → 
+--     (height xL ≤ height xR + 1) → 
+--     (height xR ≥ height zR) → 
+--     (height xL = height zR + 1) → 
+--     outLeft' (btree.node (btree.node xL x a xR) z d zR)
 
 /--
   Definition of a tree being outside right-heavy
@@ -58,6 +57,21 @@ def easyR {α : Type} : btree α → btree α
 | (btree.node (btree.node xL x a xR) z d zR) := 
   (btree.node xL x a (btree.node xR z d zR))
 | (btree.node l k a r) := btree.node l k a r
+
+
+lemma easyR_order {α : Type} (xL xR zR : btree α) (x z : nat) (a d : α) :
+  ordered (btree.node (btree.node xL x a xR) z d zR) → 
+    ordered (easyR (btree.node (btree.node xL x a xR) z d zR)) :=
+begin
+  sorry
+end
+
+lemma easyR_balance {α : Type} (xL xR zR : btree α) (x z : nat) (a d : α) :
+  outLeft (btree.node (btree.node xL x a xR) z d zR) → 
+    balanced (easyR (btree.node (btree.node xL x a xR) z d zR)) :=
+begin
+  sorry
+end
 
 /--
   Simple left rotation
