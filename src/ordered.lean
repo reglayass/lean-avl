@@ -31,16 +31,16 @@ begin
     { simp only [if_pos c₁, ordered], 
       apply and.intro,
       { apply ihl,
-        apply and.elim_left h₁,
+        apply and.left h₁,
       },
       { apply and.intro, 
-        { apply and.elim_left (and.elim_right h₁), },
+        { apply and.left (and.right h₁), },
         { apply and.intro,
           { apply forall_insert, 
             { sorry },
-            { apply and.elim_left (and.elim_right (and.elim_right h₁)), }
+            { apply and.left (and.right (and.right h₁)), }
           },
-          { apply and.elim_right (and.elim_right (and.elim_right h₁)), } 
+          { apply and.right (and.right (and.right h₁)), } 
         }
       }
     },
@@ -48,25 +48,25 @@ begin
       by_cases c₂ : (k > tk),
       { simp only [if_pos c₂, ordered], 
         apply and.intro,
-        { apply and.elim_left h₁, },
+        { apply and.left h₁, },
         { apply and.intro,
           { apply ihr, 
-            apply and.elim_left (and.elim_right h₁),
+            apply and.left (and.right h₁),
           },
           { apply and.intro, 
-            { apply and.elim_left (and.elim_right (and.elim_right h₁)), },
+            { apply and.left (and.right (and.right h₁)), },
             { apply forall_insert,
               { sorry },
-              { apply and.elim_right (and.elim_right (and.elim_right h₁)), } 
+              { apply and.right (and.right (and.right h₁)), } 
             }
           } 
         }
       },
       { simp only [if_neg c₂, ordered],
         apply and.intro,
-        { apply and.elim_left h₁, },
+        { apply and.left h₁, },
         { apply and.intro, 
-          { apply and.elim_left (and.elim_right h₁), },
+          { apply and.left (and.right h₁), },
           { apply and.intro, 
             { sorry },
             { sorry }
@@ -95,7 +95,7 @@ begin
     { simp only [if_pos c₁],
       apply ihl,
       { simp only [ordered] at h₁, 
-        apply and.elim_left h₁,
+        apply and.left h₁,
       },
       { simp only [bound, if_pos c₁] at h₂,
         exact h₂,
@@ -106,7 +106,7 @@ begin
       { simp only [if_pos c₂],
         apply ihr,
         { simp only [ordered] at h₁,
-          apply and.elim_left (and.elim_right h₁),
+          apply and.left (and.right h₁),
         },
         { simp only [bound, if_neg c₁, if_pos c₂] at h₂,
           exact h₂,

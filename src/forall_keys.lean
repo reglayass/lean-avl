@@ -22,30 +22,27 @@ begin
     { simp only [if_pos c₁, forall_keys], 
       apply and.intro,
       { apply ihl, 
-        apply and.elim_left h₁,
+        apply and.left h₁,
       },
-      { apply and.elim_right h₁ }
+      { apply and.right h₁ }
     },
     { simp only [if_neg c₁],
       by_cases c₂ : (k > tk),
       { simp only [if_pos c₂], 
         simp only [forall_keys],
         apply and.intro,
-        { apply and.elim_left h₁ },
+        { apply and.left h₁ },
         { apply and.intro, 
-          { apply and.elim_left (and.elim_right h₁) },
+          { apply and.left (and.right h₁) },
           { apply ihr,
-            apply and.elim_right (and.elim_right h₁),
+            apply and.right (and.right h₁),
           }
         }
       },
       { simp only [if_neg c₂, forall_keys],
         apply and.intro,
-        { apply and.elim_left h₁ },
-        { apply and.intro,
-          { exact h₀ },
-          { apply and.elim_right (and.elim_right h₁) } 
-        }
+        { apply and.left h₁ },
+        { apply and.intro h₀ (and.right (and.right h₁)), }
       } 
     }
   },
