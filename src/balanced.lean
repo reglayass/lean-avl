@@ -7,9 +7,9 @@ universe u
 namespace balanced
 open btree
 
-variable {α : Type u}
+variables {α : Type u}
 
-lemma easyR_order {α : Type} (xL xR zR : btree α) (x z : nat) (a d : α) :
+lemma easyR_order (xL xR zR : btree α) (x z : nat) (a d : α) :
   ordered (btree.node (btree.node xL x a xR) z d zR) → 
     ordered (easyR (btree.node (btree.node xL x a xR) z d zR)) :=
 begin
@@ -35,7 +35,7 @@ begin
   }
 end
 
-lemma easyR_balance {α : Type} (xL xR zR : btree α) (x z : nat) (a d : α) :
+lemma easyR_balance (xL xR zR : btree α) (x z : nat) (a d : α) :
   outLeft (btree.node (btree.node xL x a xR) z d zR) → 
     balanced (easyR (btree.node (btree.node xL x a xR) z d zR)) :=
 begin
@@ -45,7 +45,7 @@ begin
   sorry
 end
 
-lemma easyR_keys {α : Type} (xL xR zR : btree α) (x z k : nat) (a d : α) :
+lemma easyR_keys (xL xR zR : btree α) (x z k : nat) (a d : α) :
   bound k (btree.node (btree.node xL x a xR) z d zR) → 
     bound k (easyR (btree.node (btree.node xL x a xR) z d zR)) :=
 begin

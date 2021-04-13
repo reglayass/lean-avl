@@ -139,7 +139,7 @@ begin
 end
 
 /- If you check the bound on a key just inserted into the tree, it will return false -/
-lemma bound_insert_eq {α : Type} (k : nat) (t : btree α) (v : α) :
+lemma bound_insert_eq (k : nat) (t : btree α) (v : α) :
   bound k (insert k v t) = tt :=
 begin
   induction t,

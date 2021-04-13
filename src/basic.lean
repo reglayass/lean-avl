@@ -66,7 +66,7 @@ def forall_keys (p : nat → nat → Prop) : nat → btree α → Prop
   root node satisfy the predicate that each left subtree has keys
   less than the root, and each right subtree has keys more than the root.
 -/
-def ordered {α: Type} : btree α → Prop
+def ordered : btree α → Prop
 | btree.empty := tt
 | (btree.node l k a r) := ordered l ∧ ordered r ∧ (forall_keys (>) k l) ∧ (forall_keys (<) k r)
 

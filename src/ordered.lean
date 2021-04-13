@@ -2,10 +2,14 @@ import basic
 import tactic.linarith
 set_option pp.generalized_field_notation false
 
+universe u
+
 namespace ordered
 open btree
 
-lemma forall_insert {α : Type} (k k' : nat) (t : btree α) (a : α) (p : nat → nat → Prop) (h₀ : p k' k) :
+variables {α : Type u}
+
+lemma forall_insert (k k' : nat) (t : btree α) (a : α) (p : nat → nat → Prop) (h₀ : p k' k) :
   forall_keys p k' t → forall_keys p k' (insert k a t) :=
 begin
   intro h₁,
@@ -48,7 +52,7 @@ begin
   },
 end
 
-lemma ordered_insert {α : Type} (t : btree α) (k : nat) (a : α) :
+lemma ordered_insert (t : btree α) (k : nat) (a : α) :
   ordered t → ordered (insert k a t) :=
 begin
   intro h₁,
