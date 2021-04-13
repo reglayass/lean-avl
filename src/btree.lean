@@ -70,6 +70,6 @@ def forall_keys {α : Type} (p : nat → nat → Prop) : nat → btree α → Pr
 -/
 def ordered {α: Type} : btree α → Prop
 | btree.empty := tt
-| (btree.node l k a r) := ordered l ∧ ordered r ∧ (forall_keys (<) k l) ∧ (forall_keys (>) k r)
+| (btree.node l k a r) := ordered l ∧ ordered r ∧ (forall_keys (>) k l) ∧ (forall_keys (<) k r)
 
 end btree_def
