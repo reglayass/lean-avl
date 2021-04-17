@@ -18,7 +18,10 @@ We begin by defining the \textit{balancing factor}, which defines what it means 
 \begin{definition}[Balancing factor] 
   The balancing factor $BF(N)$ of a node $N$ is defined as the height difference between its two subtrees. A tree is an AVL tree if the invariant
   $BF(N) \in \{-1, 0, 1\} $ for all nodes in the tree.
+  \label{def:balance}
 \end{definition}
 
+In plain language, Definition \ref{def:balance} means that the difference in heights of two child subtrees cannot differ by more than one. 
+
 In general, read-only operations on AVL trees function the same as in binary search trees. Modifications are made in the insertion operations, where 
-a change in the balancing factor needs to be observed and taken care of with rotation algorithms.
+a change in the balancing factor needs to be observed and taken care of with rotation algorithms. These modifications are what make AVL trees \textit{self-balancing}.
