@@ -8,3 +8,5 @@ paper/VU-CS-BSc-thesis-template.fls
 paper/VU-CS-BSc-thesis-template.log
 paper/VU-CS-BSc-thesis-template.synctex.gz
 paper/.DS_Store
+paper/VU-CS-BSc-thesis-template.bbl
+.gitignore
