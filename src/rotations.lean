@@ -36,4 +36,21 @@ begin
   }
 end
 
+lemma easyR_keys (xL xR zR : btree α) (k x z : nat) (a d : α) :
+  bound k (btree.node (btree.node xL x a xR) z d zR) →
+    bound k (easyR (btree.node (btree.node xL x a xR) z d zR)) :=
+begin
+  sorry
+end
+
+lemma easyR_preserves_order (xL xR zR : btree α) (k x z : nat) (a d : α) :
+  outLeft (btree.node (btree.node xL x a xR) z d zR) →
+    balanced (easyR (btree.node (btree.node xL x a xR) z d zR)) :=
+begin
+  intro h₁,
+  simp [easyR, balanced],
+  simp [outLeft] at h₁,
+  sorry
+end  
+
 end rotation_lemmas
