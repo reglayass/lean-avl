@@ -7,9 +7,6 @@ inductive btree (α : Type u)
 namespace btree
 variables {α : Type u}
 
-/-- 
-  Definition of an empty tree
--/
 def empty_tree : btree α := btree.empty
 
 def lookup (x : nat) : btree α → option α 
