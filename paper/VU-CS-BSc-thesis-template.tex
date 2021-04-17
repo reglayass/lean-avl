@@ -4,16 +4,19 @@
 \usepackage{amssymb}
 \usepackage{color}
 \usepackage[toc,page]{appendix}
-\usepackage[edges]{forest}
+\usepackage{forest}
+\usepackage[nottoc]{tocbibind}
+\usepackage{amsthm}
 
 \definecolor{keywordcolor}{rgb}{0.7, 0.1, 0.1}   % red
 \definecolor{commentcolor}{rgb}{0.4, 0.4, 0.4}   % grey
 \definecolor{symbolcolor}{rgb}{0.0, 0.1, 0.6}    % blue
 \definecolor{sortcolor}{rgb}{0.1, 0.5, 0.1}      % green
+\definecolor{tacticcolor}{rgb}{0.0, 0.1, 0.6}
 
 \usepackage{listings}
 \def\lstlanguagefiles{lstlean.tex}
-\lstset{language=lean, frame=single, belowskip=0pt}
+\lstset{language=lean}
 
 \textwidth 15cm
 \textheight 22cm
@@ -22,6 +25,9 @@
 \evensidemargin 0.37cm
 
 \newcommand\notes[1]{\textcolor{red}{#1}}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
 
 \begin{document}
 
@@ -78,6 +84,9 @@ Vrije Universiteit Amsterdam
 \newpage
 
 \input{content/avl.tex}
+
+\bibliographystyle{acm}
+\bibliography{content/references.bib}
 
 \input{content/appendix.tex}
 

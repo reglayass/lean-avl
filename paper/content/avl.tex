@@ -1,55 +1,24 @@
 \section{AVL Trees}
 
 \subsection{Binary Search Trees}
-While Lean does have a definition of a binary search tree, it is limited to the inductive
-definition \lstinline{bin_tree}, in which a node only contains its left and right subtree. For a search tree,
-it is important that at the very least a tree node has a key and maybe some value. 
+First we begin by defining what exactly a binary tree is. A binary tree is a tree data structure in which a node has at most two children. These children are called
+the left child and the right child. We can define binary trees recursively using set notation: a non-empty binary tree is a tuple $(L, S, R)$ where $L$ and $R$ are the left and right
+subtrees respectively, and $S$ is a singleton set containing only the root node \cite{tree:set_not}. A binary search tree is a special case of a binary tree. In a binary search tree, all keys 
+in the left subtree are lesser than of a node, and all keys in the right subtree are greater than of a node. This is sometimes called the \textit{binary search property}. This allows for faster lookup and insertion, as the ordering means that
+half of the tree can be skipped, so lookup and insertion takes in the worst case $\log_2 n$ time, with $n$ being the number of nodes in the tree.
 
-\begin{figure}[!h]
-  \lstinputlisting[language=lean, firstline=1, lastline=6]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
-  \caption{Inductive definition of a binary tree}
-  \label{fig:btree}
-\end{figure}
+Insertion and lookup can be done recursively or iteratively, where at each node a comparison is made between the new key and the key of the current node. If the new key is smaller, then we compare the left node. Otherwise, we compare with the right node.
 
-Figure \ref{fig:btree} shows the inductive definition of a binary tree. The definition has two constructors: an empty tree, and a node. 
-A node contains a left and right subtrees, a key and some data of type $\alpha$.
-In a binary search tree, lookup and insertion operations are recursive. Therefore, the definitions in Lean are recursive as well.
+AVL trees are built on a binary search trees. However, as AVL trees are \textit{self-balancing}, rotation algorithms need to be defined to be used during certain cases of insertion.
 
-\begin{figure}[!h]
-  \lstinputlisting[language=lean, firstline=15, lastline=20]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
-  \caption{Lookup operation}
-  \label{fig:btree_lookup}
-\end{figure}
+\subsection{AVL tree construction}
+Since AVL trees are based on binary search trees, there is not much that needs to be done in terms of construction. However, as mentioned previously, AVL trees are \textit{self-balancing}. 
+We begin by defining the \textit{balancing factor}, which defines what it means for a tree to be balanced in the first place.
 
-Figure \ref{fig:btree_lookup} shows the lookup operation for a binary search tree. The two arguments\notes{there is probably a different word for this} are the key 
-to search for and the tree itself. This definition will return an \lstinline{option}.  
-If the tree that the key is being search for is empty, 
-than \lstinline{none} is returned. If the key does exist, then the comparison to the node key is done. If the input key is smaller than that of the current node, then 
-the definition is called recursively on the left subtree of the node; if the input key is larger, then on the right. If it is neither larger or smaller, then we know that we have found the
-right key, and we can return the value of the node.
+\begin{definition}[Balancing factor] 
+  The balancing factor $BF(N)$ of a node $N$ is defined as the height difference between its two subtrees. A tree is an AVL tree if the invariant
+  $BF(N) \in \{-1, 0, 1\} $ for all nodes in the tree.
+\end{definition}
 
-\begin{figure}[!h]
-  \lstinputlisting[language=lean, firstline=29, lastline=34]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
-  \caption{Simple insert operation}
-  \label{fig:btree_insert_simple}
-\end{figure}
-
-An insertion operation in a binary search tree is similar to lookup. The three arguments for this definition are the new key and the new value of the node, 
-and the tree to insert this information in. If the new key is smaller than the key of the current node, then the insertion operation is done recursively on the left subtree; if larger, then on the right.
-If you cannot compare any further, then this means that the keys are the same. If you are inserting into a tree with an existing key, then only the value gets updated. If the insertion is done into an empty subtree, then a new node is created
-with empty left and right subtrees, with the new key and new node.
-
-% Insertion and lookup are done recursively, traveling through the tree and comparing keys.
-
-% \begin{figure}[!h]
-%   \centering
-%   \begin{forest}
-%     for tree={
-%       grow=south,
-%       circle, draw, minimum size=3ex, inner sep=1pt,
-%       s sep=7mm}
-%     [3 [1] [4]]
-%   \end{forest}
-% \end{figure}
-
-\subsection{Rotation}
+In general, read-only operations on AVL trees function the same as in binary search trees. Modifications are made in the insertion operations, where 
+a change in the balancing factor needs to be observed and taken care of with rotation algorithms.
