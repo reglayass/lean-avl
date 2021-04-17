@@ -1,0 +1,84 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage[utf8x]{inputenc}
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage[toc,page]{appendix}
+\usepackage[edges]{forest}
+
+\definecolor{keywordcolor}{rgb}{0.7, 0.1, 0.1}   % red
+\definecolor{commentcolor}{rgb}{0.4, 0.4, 0.4}   % grey
+\definecolor{symbolcolor}{rgb}{0.0, 0.1, 0.6}    % blue
+\definecolor{sortcolor}{rgb}{0.1, 0.5, 0.1}      % green
+
+\usepackage{listings}
+\def\lstlanguagefiles{lstlean.tex}
+\lstset{language=lean, frame=single}
+
+\textwidth 15cm
+\textheight 22cm
+\parindent 10pt
+\oddsidemargin 0.85cm
+\evensidemargin 0.37cm
+
+\newcommand\notes[1]{\textcolor{red}{#1}}
+
+\begin{document}
+
+\thispagestyle{empty}
+
+\begin{center}
+
+Vrije Universiteit Amsterdam
+
+\vspace{1mm}
+
+%\includegraphics[height=28mm]{vu-griffioen.pdf}
+
+\vspace{1.5cm}
+
+{\Large Bachelor Thesis}
+
+\vspace*{1.5cm}
+
+\rule{.9\linewidth}{.6pt}\\[0.4cm]
+{\huge \bfseries Logical Verification of AVL Trees\par}
+{\huge \bfseries in Lean\par}\vspace{0.4cm}
+\rule{.9\linewidth}{.6pt}\\[1.5cm]
+
+\vspace*{2mm}
+
+{\Large
+\begin{tabular}{l}
+{\bf Author:} ~~Sofia Konovalova ~~~~ (2635220)
+\end{tabular}
+}
+
+\vspace*{1.5cm}
+
+\begin{tabular}{ll}
+{\it 1st supervisor:}   & ~~Jasmin Blanchette \\
+{\it daily supervisor:} & ~~Jannis Limperg ~~~~ \\
+\end{tabular}
+
+\vspace*{2cm}
+
+\textit{A thesis submitted in fulfillment of the requirements for\\ the VU Bachelor of Science degree in Computer Science }
+
+\vspace*{1cm}
+
+\today\\[4cm] % Date
+
+\end{center}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\input{content/avl.tex}
+
+\input{content/appendix.tex}
+
+\end{document}

@@ -1,3 +1,10 @@
 *.olean
 /_target
 /leanpkg.path
+paper/VU-CS-BSc-thesis-template.toc
+paper/VU-CS-BSc-thesis-template.aux
+paper/VU-CS-BSc-thesis-template.fdb_latexmk
+paper/VU-CS-BSc-thesis-template.fls
+paper/VU-CS-BSc-thesis-template.log
+paper/VU-CS-BSc-thesis-template.synctex.gz
+paper/.DS_Store
