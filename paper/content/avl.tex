@@ -5,6 +5,40 @@ While Lean does have a definition of a binary search tree, it is limited to the 
 definition \lstinline{bin_tree}, in which a node only contains its left and right subtree. For a search tree,
 it is important that at the very least a tree node has a key and maybe some value. 
 
+\begin{figure}[!h]
+  \lstinputlisting[language=lean, firstline=1, lastline=6]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+  \caption{Inductive definition of a binary tree}
+  \label{fig:btree}
+\end{figure}
+
+Figure \ref{fig:btree} shows the inductive definition of a binary tree. The definition has two constructors: an empty tree, and a node. 
+A node contains a left and right subtrees, a key and some data of type $\alpha$.
+In a binary search tree, lookup and insertion operations are recursive. Therefore, the definitions in Lean are recursive as well.
+
+\begin{figure}[!h]
+  \lstinputlisting[language=lean, firstline=15, lastline=20]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+  \caption{Lookup operation}
+  \label{fig:btree_lookup}
+\end{figure}
+
+Figure \ref{fig:btree_lookup} shows the lookup operation for a binary search tree. The two arguments\notes{there is probably a different word for this} are the key 
+to search for and the tree itself. This definition will return an \lstinline{option}.  
+If the tree that the key is being search for is empty, 
+than \lstinline{none} is returned. If the key does exist, then the comparison to the node key is done. If the input key is smaller than that of the current node, then 
+the definition is called recursively on the left subtree of the node; if the input key is larger, then on the right. If it is neither larger or smaller, then we know that we have found the
+right key, and we can return the value of the node.
+
+\begin{figure}[!h]
+  \lstinputlisting[language=lean, firstline=29, lastline=34]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+  \caption{Simple insert operation}
+  \label{fig:btree_insert_simple}
+\end{figure}
+
+An insertion operation in a binary search tree is similar to lookup. The three arguments for this definition are the new key and the new value of the node, 
+and the tree to insert this information in. If the new key is smaller than the key of the current node, then the insertion operation is done recursively on the left subtree; if larger, then on the right.
+If you cannot compare any further, then this means that the keys are the same. If you are inserting into a tree with an existing key, then only the value gets updated. If the insertion is done into an empty subtree, then a new node is created
+with empty left and right subtrees, with the new key and new node.
+
 % Insertion and lookup are done recursively, traveling through the tree and comparing keys.
 
 % \begin{figure}[!h]
