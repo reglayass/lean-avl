@@ -41,6 +41,11 @@ def ordered : btree α → Prop
 | btree.empty := tt
 | (btree.node l k a r) := ordered l ∧ ordered r ∧ (forall_keys (>) k l) ∧ (forall_keys (<) k r)
 
+-- inductive bst {α : Type u} : btree α → Prop
+-- | empty {} : bst (btree.empty)
+-- | node (l : btree α) (k : nat) (v : α) (r : btree α) : 
+--   (forall_keys (>) k l) → (forall_keys (<) k r) → bst l → bst r
+
 end ordering
 
 section balancing
@@ -61,13 +66,14 @@ def outLeft : btree α → bool
   (height xR ≥ height zR) ∧ (height xL = height zR + 1)
 | (btree.node l k a r) := ff
 
--- inductive outLeft' {α : Type} : btree α → Prop
--- | intro (xL xR zR : btree α) (x z : nat) (a d : α) :  
+-- inductive outLeft {α : Type u} : btree α → Prop
+-- | empty {} : outLeft (btree.empty)
+-- | node (xL xR zR : btree α) (x z : nat) (a d : α) :  
 --     (height xL ≥ height xR) → 
 --     (height xL ≤ height xR + 1) → 
 --     (height xR ≥ height zR) → 
 --     (height xL = height zR + 1) → 
---     outLeft' (btree.node (btree.node xL x a xR) z d zR)
+--     outLeft (btree.node (btree.node xL x a xR) z d zR)
 
 def outRight : btree α → bool
 | btree.empty := ff
