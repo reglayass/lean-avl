@@ -30,6 +30,8 @@ The \lstinline{bound} is very similar to \lstinline{lookup}. The definition chec
   \lstinputlisting[language=lean, firstline=19, lastline=24, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
   \caption{}
   \label{fig:bound_simple}
-
-The insertion operation also does key comparisons in order to pick which child subtree to enter the new node into.
 \end{figure}
+
+The insertion operation also does key comparisons in order to pick which child subtree to enter the new node into. If the new key is smaller than the 
+key of the current tree node, the insertion is done recursively on the left subtree; if the new key is larger, then insertion is done recursively on the
+right subtree.
