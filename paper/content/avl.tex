@@ -1,27 +1,63 @@
 \section{AVL Trees}
+\notes{give a small introduction to the section}
 
-\subsection{Binary Search Trees}
-First we begin by defining what exactly a binary tree is. A binary tree is a tree data structure in which a node has at most two children. These children are called
-the left child and the right child. We can define binary trees recursively using set notation: a non-empty binary tree is a tuple $(L, S, R)$ where $L$ and $R$ are the left and right
-subtrees respectively, and $S$ is a singleton set containing only the root node \cite{tree:set_not}. A binary search tree is a special case of a binary tree. In a binary search tree, all keys 
-in the left subtree are lesser than of a node, and all keys in the right subtree are greater than of a node. This is sometimes called the \textit{binary search property}. This allows for faster lookup and insertion, as the ordering means that
-half of the tree can be skipped, so lookup and insertion takes in the worst case $\log_2 n$ time, with $n$ being the number of nodes in the tree.
+\subsection{Binary Search Trees} 
+I begin by defining a binary search tree. A binary tree is a tree data structure where each node can have no more than two children. These two children are 
+called the \textit{left child} and \textit{right child} subtree. In a binary search tree, nodes are placed according to their key. The 
+\textit{binary search property} states that given any node in the tree, all keys in the left child tree are smaller than that of the node, and all keys in the 
+right child tree are larger than that of the node \notes{reference}. When a tree holds this property, it can be called an \textit{ordered} tree. 
+This allows for lookup and insertion to be done in \notes{add complexity here} time in the worst case, as at any given node half of the tree is skipped.
 
-Insertion and lookup can be done recursively or iteratively, where at each node a comparison is made between the new key and the key of the current node. If the new key is smaller, then we compare the left node. Otherwise, we compare with the right node.
+\begin{figure}[!h]
+  \centering
+  \begin{subfigure}{.3\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \node[circle,draw,fill=gray!30](z){5}
+      child{ node[circle,draw]{4} }
+      child{
+        node[circle,draw]{6} child[missing] child[missing] };
+    \end{tikzpicture}
+    \caption{}
+    \label{fig:insert_1}
+  \end{subfigure}%
+  \begin{subfigure}{.3\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \node[circle,draw](z){5}
+      child{ node[circle, draw]{4} }
+      child{
+        node[circle,draw,fill=gray!30]{6} child[missing] child[missing] };
+    \end{tikzpicture}
+    \caption{}
+    \label{fig:insert_2}
+  \end{subfigure}%
+  \begin{subfigure}{.3\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \node[circle,draw](z){5}
+      child{ node[circle, draw]{4} }
+      child{
+        node[circle,draw]{6} child[missing] child{node[circle,draw,fill=gray!30]{7}} };
+    \end{tikzpicture}
+    \caption{}
+    \label{fig:insert_3}
+  \end{subfigure}
+  \caption{Insertion operation in a binary search tree.}
+  \label{fig:insert_demo}
+\end{figure}
 
-AVL trees are built on a binary search trees. However, as AVL trees are \textit{self-balancing}, rotation algorithms need to be defined to be used during certain cases of insertion.
+Search, insertion and retrieval can be done recursively. Starting at the root node, the input key and the node key are compared: if the input key is smaller,
+the operation is done recursively on the left subtree; if the input key is larger, then the operation is done recursively on the right subtree. Figure \ref{fig:insert_demo} shows 
+a node with key 7 being inserted into a binary search tree. At \ref{fig:insert_demo}(\ref{sub@fig:insert_1}), the new node is compared to the root. As $7 > 5$, the operation continues at 
+the right subtree. At \ref{fig:insert_demo}(\ref{sub@fig:insert_2}) the comparison is done again. As $7 > 6$, the operation continues at the right subtree. Because the node 6 doesn't have any children and $7 > 6$,
+a new right child node is created.
 
-\subsection{AVL tree construction}
-Since AVL trees are based on binary search trees, there is not much that needs to be done in terms of construction. However, as mentioned previously, AVL trees are \textit{self-balancing}. 
-We begin by defining the \textit{balancing factor}, which defines what it means for a tree to be balanced in the first place.
+\subsection{Balance and rotation}
+An AVL tree is based on a binary search tree, with one very important distinction - it is \textit{balanced}. To define what it means for a tree to be balanced, I will first
+define what the \textit{height} of a tree is. \notes{get concrete definition of tree height}. Balance is reliant on this definition - an AVL tree is only balanced when the 
+heights of any given left and right child subtrees does not differ by more than one \cite{avl:original}. By keeping balance, the structure ensures that there is a high ratio between the number of 
+nodes in the tree and the height. This allows for retrieval and search operations to be done in $O(\log n)$ time in the worst case, with $n$ being the amount of nodes in a tree \cite{avl:computer}.
 
-\begin{definition}[Balancing factor] 
-  The balancing factor $BF(N)$ of a node $N$ is defined as the height difference between its two subtrees. A tree is an AVL tree if the invariant
-  $BF(N) \in \{-1, 0, 1\} $ for all nodes in the tree.
-  \label{def:balance}
-\end{definition}
-
-In plain language, Definition \ref{def:balance} means that the difference in heights of two child subtrees cannot differ by more than one. 
-
-In general, read-only operations on AVL trees function the same as in binary search trees. Modifications are made in the insertion operations, where 
-a change in the balancing factor needs to be observed and taken care of with rotation algorithms. These modifications are what make AVL trees \textit{self-balancing}.
+During the insertion operation, the tree can become imbalanced, which can be mitigated
+with either a right rotation or a left rotation. 
