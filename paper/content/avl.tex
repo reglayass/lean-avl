@@ -1,12 +1,18 @@
-\section{AVL Trees}
 \notes{give a small introduction to the section}
 
 \subsection{Binary Search Trees} 
 \label{sec:bst}
 I begin by defining a binary search tree. A binary tree is a tree data structure where each node can have no more than two children. These two children are 
-called the \textit{left child} and \textit{right child} subtree. In a binary search tree, nodes are placed according to their key. The 
-\textit{binary search property} states that given any node in the tree, all keys in the left child tree are smaller than that of the node, and all keys in the 
-right child tree are larger than that of the node \notes{reference}. When a tree holds this property, it can be called an \textit{ordered} tree. 
+called the \textit{left child} and the \textit{right child} subtrees. In a binary \textit{search} tree, nodes are placed according to their key. 
+
+Where nodes are placed in a binary search tree is determined by what is often called the \textit{binary search property}.
+
+\begin{definition}[Binary Search Property]
+  \label{def:bst_property}
+  Given any node N in a binary search tree, all the keys in the left child subtree are smaller than that of N, and all keys in the right child subtree are greater than the 
+  key of N.
+\end{definition}
+
 This allows for lookup and insertion to be done in \notes{add complexity here} time in the worst case, as at any given node half of the tree is skipped.
 
 \begin{figure}[!h]
@@ -56,7 +62,14 @@ a new right child node is created.
 
 \subsection{Balance and rotation}
 An AVL tree is based on a binary search tree, with one very important distinction - it is \textit{balanced}. To define what it means for a tree to be balanced, I will first
-define what the \textit{height} of a tree is. \notes{get concrete definition of tree height}. Balance is reliant on this definition - an AVL tree is only balanced when the 
+define what the \textit{height} of a tree is.
+
+\begin{definition}[Tree height]
+  \label{def:height}
+  \notes{get concrete definition of tree height}.
+\end{definition} 
+ 
+Balance is reliant on this definition - an AVL tree is only balanced when the 
 heights of any given left and right child subtrees does not differ by more than one \cite{avl:original}. By keeping balance, the structure ensures that there is a high ratio between the number of 
 nodes in the tree and the height. This allows for retrieval and search operations to be done in $O(\log n)$ time in the worst case, with $n$ being the amount of nodes in a tree \cite{avl:computer}.
 
