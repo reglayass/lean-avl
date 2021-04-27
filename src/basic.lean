@@ -9,24 +9,24 @@ variables {α : Type u}
 
 def empty_tree : btree α := btree.empty
 
-def lookup (x : nat) : btree α → option α 
+def lookup (x : nat) : btree α → option α
 | btree.empty := none
-| (btree.node l k a r) :=
-  if x < k then lookup l
-  else if x > k then lookup r
+| (btree.node l k a r) := 
+  if x < k then lookup l 
+  else if x > k then lookup r 
   else a
 
 def bound (x : nat) : btree α → bool
 | btree.empty := ff
 | (btree.node l k a r) :=
   if x < k then bound l
-  else if x > k then bound r 
-  else tt 
+  else if x > k then bound r
+  else tt
 
 def insert (x : nat) (a : α) : btree α → btree α
 | btree.empty := btree.node btree.empty x a btree.empty
 | (btree.node l k a' r) :=
-  if x < k then btree.node (insert l) k a' r 
+  if x < k then btree.node (insert l) k a' r
   else if x > k then btree.node l k a' (insert r)
   else btree.node l x a r
 
@@ -34,12 +34,13 @@ section ordering
 
 def forall_keys (p : nat → nat → Prop) : nat → btree α → Prop
 | x btree.empty := tt
-| x (btree.node l k a r) :=
+| x (btree.node l k a r) := 
   forall_keys x l ∧ (p x k) ∧ forall_keys x r
 
 def ordered : btree α → Prop
-| btree.empty := tt
-| (btree.node l k a r) := ordered l ∧ ordered r ∧ (forall_keys (>) k l) ∧ (forall_keys (<) k r)
+| btree.empty := tt 
+| (btree.node l k a r) := 
+  ordered l ∧ ordered r ∧ (forall_keys (>) k l) ∧ (forall_keys (<) k r)
 
 end ordering
 
