@@ -27,6 +27,13 @@ begin
   case empty {
     refl,
   },
+  case leaf : tk ta {
+    simp only [lookup],
+    simp [bound] at h₁,
+    by_cases c₁ : (k = tk),
+    { simp [if_pos c₁], contradiction, },
+    { simp only [if_neg c₁], },
+  },
   case node : tl tk ta tr ihl ihr {
     simp only [lookup],
     by_cases c₁ : (k < tk),
@@ -62,6 +69,14 @@ begin
     simp [bound] at h₁,
     contradiction,
   },
+  case leaf : tk ta {
+    simp [bound] at h₁,
+    existsi ta,
+    simp only [lookup],
+    by_cases c₁ : (k = tk),
+    { simp [if_pos c₁, coe, lift_t, has_lift_t.lift, coe_t, has_coe_t.coe], },
+    { simp [if_neg c₁] at h₁, simp [if_neg c₁], finish, },
+  },
   case node : tl tk ta tr ihl ihr {
     simp only [lookup],
     by_cases c₁ : (k < tk),
@@ -95,6 +110,16 @@ begin
     { exfalso, linarith },
     { simp [if_neg h] },
   },
+  case leaf : tk ta {
+    simp only [btree.insert],
+    by_cases c₁ : (k < tk),
+    { simp [if_pos c₁, lookup], },
+    { simp only [if_neg c₁], 
+      by_cases c₂ : (k > tk),
+      { simp [if_pos c₂, if_neg c₁, lookup], },
+      { simp [if_neg c₂, lookup], },
+    },
+  },
   case node : l k' a' r ihl ihr {
     simp only [btree.insert],
     by_cases (k < k'),
@@ -116,6 +141,16 @@ begin
     by_cases c₁ : (k < k),
     { exfalso, linarith, },
     { simp [if_neg c₁, lookup], },
+  },
+  case leaf : tk ta {
+    simp only [btree.insert],
+    by_cases c₁ : (k < tk),
+    { simp [if_pos c₁, btree.insert], },
+    { simp [if_neg c₁], 
+      by_cases c₂ : (tk < k),
+      { simp [if_pos c₂, btree.insert, if_neg c₁], },
+      { simp [if_neg c₂, btree.insert], }
+    },
   },
   case node : tl tk ta tr ihl ihr {
     simp only [btree.insert, lookup],
@@ -151,6 +186,16 @@ begin
     by_cases (k < k),
     { exfalso, linarith, },
     { simp[if_neg h], },
+  },
+  case leaf : tk ta {
+    simp only [btree.insert],
+    by_cases c₁ : (k < tk),
+    { simp [if_pos c₁, bound], },
+    { simp [if_neg c₁], 
+      by_cases c₂ : (tk < k),
+      { simp only [if_pos c₂, bound, if_neg c₁], simp, },
+      { simp [if_neg c₂, bound], },
+    }
   },
   case node : l k' a' r ihl ihr {
     simp only [btree.insert],
