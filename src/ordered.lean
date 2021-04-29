@@ -19,17 +19,6 @@ begin
     simp only [forall_keys] at h₁,
     apply and.intro h₁ (and.intro h₀ h₁),
   },
-  case leaf : tk ta {
-    simp only [btree.insert],
-    simp only [forall_keys] at h₁,
-    by_cases c₁ : (k < tk),
-    { simp [if_pos c₁, forall_keys], finish, },
-    { simp [if_neg c₁],
-      by_cases c₂ : (tk < k),
-      { simp [if_pos c₂, forall_keys], finish, },
-      { simp [if_neg c₂, forall_keys], finish, } 
-    }
-  },
   case node : tl tk ta tr ihl ihr {
     simp only [btree.insert],
     simp only [forall_keys] at h₁,
@@ -67,24 +56,6 @@ begin
   case empty {
     simp only [btree.insert, ordered],
     finish,
-  },
-  case leaf : tk ta {
-    simp [btree.insert],
-    by_cases c₁ : (k < tk),
-    { simp [if_pos c₁, ordered], 
-      apply and.intro, 
-      { simp [forall_keys], finish, },
-      { simp [forall_keys], },
-    },
-    { simp [if_neg c₁], 
-      by_cases c₂ : (tk < k),
-      { simp [if_pos c₂, ordered], 
-        apply and.intro,
-        { simp [forall_keys], },
-        { simp [forall_keys], finish, },
-      },
-      { simp [if_neg c₂, ordered, if_neg c₂], },
-    },
   },
   case node : tl tk ta tr ihl ihr {
     simp only [btree.insert],

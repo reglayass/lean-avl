@@ -24,14 +24,22 @@ begin
       { apply and.intro, 
         { finish, },
         { apply and.intro,
-          { sorry },
+          { apply and.elim h₁, 
+            intros h₂ h₃,
+            apply and.elim h₃,
+            intros h₄ h₅,
+            apply and.elim h₅,
+            intros h₆ h₇,
+            rw forall_keys at h₆,
+            finish,
+          },
           { finish, } 
         }
       }
     },
     { apply and.intro, 
       { finish, },
-      { sorry }
+      { rw forall_keys, sorry }
     } 
   }
 end
@@ -43,14 +51,14 @@ begin
   sorry
 end
 
-lemma easyR_preserves_order (xL xR zR : btree α) (k x z : nat) (a d : α) :
-  outLeft (btree.node (btree.node xL x a xR) z d zR) →
-    balanced (easyR (btree.node (btree.node xL x a xR) z d zR)) :=
-begin
-  intro h₁,
-  simp [easyR, balanced],
-  simp [outLeft] at h₁,
-  sorry
-end  
+-- lemma easyR_preserves_order (xL xR zR : btree α) (k x z : nat) (a d : α) :
+--   outLeft (btree.node (btree.node xL x a xR) z d zR) →
+--     balanced (easyR (btree.node (btree.node xL x a xR) z d zR)) :=
+-- begin
+--   intro h₁,
+--   simp [easyR, balanced],
+--   simp [outLeft] at h₁,
+--   sorry
+-- end  
 
 end rotation_lemmas
