@@ -132,41 +132,51 @@ begin
   },
 end
 
-lemma easyR_keys (ll lr r : btree α) (k x z : nat) (a d : α) :
-  bound k (btree.node (btree.node ll x a lr) z d r) →
-    bound k (easyR (btree.node (btree.node ll x a lr) z d r)) :=
+lemma rotR_ordered (ll lr r : btree α) (x z : nat) (a d : α):
+  ordered (btree.node (btree.node ll x a lr) z d r) → 
+    ordered (rotR (btree.node (btree.node ll x a lr) z d r)) :=
 begin
   intro h₁,
-  simp only [bound] at h₁,
-  by_cases c₁ : (k < z),
-  { simp only [if_pos c₁] at h₁, 
-    by_cases c₂ : (k < x), 
-    { simp only [if_pos c₂] at h₁, 
-      simp only [easyR, bound, if_pos c₁, if_pos c₂],
-      finish,
-    },
-    { simp only [if_neg c₂] at h₁, 
-      by_cases c₃ : (k > x),
-      { simp only [if_pos c₃] at h₁, 
-        simp only [easyR, bound, if_neg c₂, if_pos c₃, if_pos c₁],
-        finish,
-      },
-      { simp only [if_neg c₃] at h₁,  
-        simp only [easyR, bound, if_neg c₂, if_neg c₃],
-        finish,
-      },
-    },
+  simp only [rotR],
+  by_cases c₁ : (height ll < height lr),
+  { simp only [if_pos c₁],
+    sorry,
   },
-  { simp only [if_neg c₁] at h₁, 
-    by_cases c₂ : (k > z),
-    { simp only [if_pos c₂] at h₁, 
-      simp only [easyR, bound, if_neg c₁, if_pos c₂],
-      sorry 
-    },
-    { simp only [if_neg c₂] at h₁, 
-      simp only [easyR, bound, if_neg c₁, if_neg c₂],
-      sorry
-    },
+  { simp only [if_neg c₁],
+    apply easyR_ordered,
+    finish, 
+  },
+end
+
+lemma rotL_ordered (rl rr l : btree α) (x z : nat) (a d : α) :
+  ordered (btree.node l z d (btree.node rl x a rr)) → 
+    ordered (rotL (btree.node l z d (btree.node rl x a rr))) :=
+begin
+  intro h₁,
+  simp only [rotL],
+  by_cases c₁ : (height rr < height rl),
+  { simp only [if_pos c₁], 
+    sorry,
+    -- cases easyR (node rl x a rr),
+    -- case empty { simp only [easyL, ordered], 
+    --   simp only [ordered] at h₁,
+    --   apply and.intro,
+    --   { finish, },
+    --   { apply and.intro, 
+    --     { simp, },
+    --     { apply and.intro, 
+    --       { finish, },
+    --       { simp [forall_keys], },
+    --     },
+    --   },
+    -- },
+    -- case node : l' k a r' {
+    --   simp only [easyL, ordered],
+    -- },
+  },
+  { simp only [if_neg c₁], 
+    apply easyL_ordered,
+    finish, 
   },
 end
 

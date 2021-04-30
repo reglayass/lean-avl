@@ -87,6 +87,26 @@ def easyL : btree α → btree α
   | (btree.node rl rk ra rr) := (btree.node (btree.node l k a rl) rk ra rr)
   end
 
+def rotR : btree α → btree α
+| btree.empty := btree.empty
+| (btree.node l k a r) :=
+  match l with
+  | btree.empty := (btree.node l k a r)
+  | (btree.node ll _ _ lr) :=
+    if (height ll < height lr) then easyR (btree.node (easyL l) k a r)
+    else easyR (btree.node l k a r)
+  end
+
+def rotL : btree α → btree α
+| btree.empty := btree.empty
+| (btree.node l k a r) :=
+  match r with 
+  | btree.empty := btree.empty
+  | (btree.node rl _ _ rr) :=
+    if (height rr < height rl) then easyL (btree.node l k a (easyR r))
+    else easyL (btree.node l k a r)
+  end
+
 end balancing
 
 end btree
