@@ -1,4 +1,4 @@
-\documentclass[11pt, oneside]{book}
+\documentclass[11pt, oneside, a4paper]{book}
 \usepackage{titlesec}
 \usepackage{graphicx}
 \usepackage[utf8x]{inputenc}
@@ -97,7 +97,16 @@ Vrije Universiteit Amsterdam
 \chapter{AVL Trees}
 \input{content/avl.tex}
 
+\chapter{Formalization}
+\input{content/formalization/main.tex}
+
 \bibliographystyle{acm}
 \bibliography{content/references.bib}
+
+\appendix
+% \appendixpage
+\noappendicestocpagenum
+\addappheadtotoc
+\input{content/appendix.tex}
 
 \end{document}
