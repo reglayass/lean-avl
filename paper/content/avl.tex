@@ -2,7 +2,7 @@
 
 \section{Binary Search Trees} 
 I begin by defining a binary search tree. A binary tree is a tree data structure where each node can have no more than two children. These two children are 
-called the \textit{left child} and the \textit{right child} subtrees. In a binary \textit{search} tree (BST), nodes are placed according to their key. 
+called the \textit{left child} and the \textit{right child} subtrees. In a \textit{binary search tree} (BST), nodes are placed according to their key. 
 
 Where nodes are placed in a binary search tree is determined by what is often called the \textit{binary search property}.
 
@@ -16,6 +16,57 @@ This allows for lookup and insertion to be done in $O \log n$ time in the worst 
 
 Search, insertion and retrieval can be done recursively. Starting at the root node, the input key and the node key are compared: if the input key is smaller,
 the operation is done recursively on the left subtree; if the input key is larger, then the operation is done recursively on the right subtree.
+
+\begin{figure}[!h]
+  \centering
+  \begin{tikzpicture}
+    \node[circle,draw,fill=gray!30](z){5}
+        child {
+          node[circle,draw]{2}
+          child[missing]
+          child[missing]
+        }
+        child{
+          node[circle,draw]{6}
+          child[missing]
+          child[missing]
+        };
+  \end{tikzpicture}%
+  \hspace{1cm}%
+      \begin{tikzpicture}
+      \node[circle,draw](z){5}
+        child {
+          node[circle,draw]{2}
+          child[missing]
+          child[missing]
+        }
+        child{
+          node[circle,draw,fill=gray!30]{6}
+          child[missing]
+          child[missing]
+        };
+    \end{tikzpicture}%
+    \hspace{1cm}%
+    \begin{tikzpicture}
+      \node[circle,draw](z){5}
+        child {
+          node[circle,draw]{2}
+          child[missing]
+          child[missing]
+        }
+        child{
+          node[circle,draw]{6}
+          child[missing]
+          child {
+            node[circle,draw,fill=gray!30]{8}
+            child[missing]
+            child[missing]
+          }
+        };
+    \end{tikzpicture}
+    \caption{Example of an insertion operation with key 7}
+    \label{fig:insert}
+\end{figure}
 
 \section{Balance and rotation}
 An AVL tree is based on a binary search tree, with one very important distinction - it is \textit{balanced}. To define what it means for a tree to be balanced, I will first
@@ -41,39 +92,33 @@ with either a right rotation or a left rotation.
 
 \begin{figure}[!h]
   \centering
-  \begin{subfigure}{.47\textwidth}
-    \centering
-    \begin{tikzpicture}
-      \node[circle,draw](z){3}
+  \begin{tikzpicture}
+    \node[circle,draw](z){3}
+      child {
+        node[circle,draw]{2}
         child {
-          node[circle,draw]{2}
-          child {
-            node[circle,draw]{1}
-            child[missing]
-            child[missing]
-          }
+          node[circle,draw]{1}
+          child[missing]
           child[missing]
         }
-        child[missing];
-    \end{tikzpicture}
-  \end{subfigure}%
-  {\LARGE$\xrightarrow{}$}%
-  \begin{subfigure}{.47\textwidth}
-    \centering
-    \begin{tikzpicture}
-      \node[circle,draw](z){2}
-      child{
-        node[circle,draw]{1}
-        child[missing]
         child[missing]
       }
-      child{
-        node[circle,draw]{3}
-        child[missing]
-        child[missing]
-      };
-    \end{tikzpicture}
-  \end{subfigure}
+      child[missing];
+  \end{tikzpicture}%
+  \hspace{1cm}%
+  \begin{tikzpicture}
+    \node[circle,draw](z){2}
+    child{
+      node[circle,draw]{1}
+      child[missing]
+      child[missing]
+    }
+    child{
+      node[circle,draw]{3}
+      child[missing]
+      child[missing]
+    };
+  \end{tikzpicture}
   \caption{Example of a single right rotation}
   \label{fig:right_rotation}
 \end{figure}
