@@ -1,14 +1,16 @@
-\documentclass[11pt]{article}
+\documentclass[11pt, oneside]{book}
+\usepackage{titlesec}
 \usepackage{graphicx}
 \usepackage[utf8x]{inputenc}
 \usepackage{amssymb}
 \usepackage{color}
-\usepackage[toc,page]{appendix}
+\usepackage{appendix}
 \usepackage{forest}
 \usepackage[nottoc]{tocbibind}
 \usepackage{amsthm}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{amsmath,algorithm,algpseudocode}
 
 \definecolor{keywordcolor}{rgb}{0.7, 0.1, 0.1}   % red
 \definecolor{commentcolor}{rgb}{0.4, 0.4, 0.4}   % grey
@@ -30,6 +32,13 @@
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
+
+\makeatletter
+\renewcommand{\Function}[2]{%
+  \csname ALG@cmd@\ALG@L @Function\endcsname{#1}{#2}%
+  \def\jayden@currentfunction{#1}%
+}
+\makeatother
 
 \begin{document}
 
@@ -79,31 +88,16 @@ Vrije Universiteit Amsterdam
 
 \end{center}
 
-\newpage
-
 \tableofcontents
 
-\newpage
+\chapter{Introduction}
 
-\section{Introduction}
+\chapter{Lean Theorem Prover}
 
-\section{Lean Theorem Prover}
-
-\section{AVL Trees}
+\chapter{AVL Trees}
 \input{content/avl.tex}
-
-\section{Formalization}
-\input{content/formalization.tex}
-
-\newpage
 
 \bibliographystyle{acm}
 \bibliography{content/references.bib}
-
-\newpage
-
-\begin{appendices}
-  \input{content/appendix.tex}
-\end{appendices}
 
 \end{document}
