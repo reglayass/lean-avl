@@ -1,60 +1,60 @@
-\subsection*{Binary Search Trees}
-The first thing to defining an AVL tree is to define a binary search tree. A binary tree 
-definition exists in Lean3 under the inductive type \lstinline{bin_tree}, however the definition is incomplete
-for the purpose of binary search. The \lstinline{bin_tree} constructor \lstinline{leaf} is the only one that includes a 
-definition for a key, and not the constructor dor \lstinline{node}. We want access to subtrees and the key at any given node 
-to define the binary search property, so we create our own definition for a binary tree. This definition can be seen in Figure \ref{lst:btree}.
-The type for the structure is inductive, which is useful for proofs as induction can be performed on any \lstinline{btree}.
+% \subsection*{Binary Search Trees}
+% The first thing to defining an AVL tree is to define a binary search tree. A binary tree 
+% definition exists in Lean3 under the inductive type \lstinline{bin_tree}, however the definition is incomplete
+% for the purpose of binary search. The \lstinline{bin_tree} constructor \lstinline{leaf} is the only one that includes a 
+% definition for a key, and not the constructor dor \lstinline{node}. We want access to subtrees and the key at any given node 
+% to define the binary search property, so we create our own definition for a binary tree. This definition can be seen in Figure \ref{lst:btree}.
+% The type for the structure is inductive, which is useful for proofs as induction can be performed on any \lstinline{btree}.
 
-\begin{figure}[!h]
-  \centering
-  \lstinputlisting[language=lean, firstline=3, lastline=5, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
-  \caption{}
-  \label{lst:btree}
-\end{figure}
+% \begin{figure}[!h]
+%   \centering
+%   \lstinputlisting[language=lean, firstline=3, lastline=5, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+%   \caption{}
+%   \label{lst:btree}
+% \end{figure}
 
-I also define the basic operations for a binary search tree: \lstinline{insert}, \lstinline{bound},
-and \lstinline{lookup}, shown in Figure \ref{lst:basic_ops}. The definition of \lstinline{bound} and \lstinline{lookup} are similar, with bound not serving much reason except for
-using it in later proofs to show that node keys are preserved after other operations.  
+% I also define the basic operations for a binary search tree: \lstinline{insert}, \lstinline{bound},
+% and \lstinline{lookup}, shown in Figure \ref{lst:basic_ops}. The definition of \lstinline{bound} and \lstinline{lookup} are similar, with bound not serving much reason except for
+% using it in later proofs to show that node keys are preserved after other operations.  
 
-\begin{figure}[!ht]
-  \centering
-  \lstinputlisting[language=lean, firstline=12, lastline=31, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
-  \caption{}
-  \label{lst:basic_ops}
-\end{figure}
+% \begin{figure}[!ht]
+%   \centering
+%   \lstinputlisting[language=lean, firstline=12, lastline=31, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+%   \caption{}
+%   \label{lst:basic_ops}
+% \end{figure}
 
-I also define the binary search property, as shown in Definition \ref{def:bst_property}. For this I created a helper definition, \lstinline{forall_keys}, which 
-defines what exactly it means for all keys in a left or right subtree to be smaller or larger than the root key. This definition is made as abstract as possible, with the 
-greater-than or less-than relation defined as just the \notes{parameter? variable? } \lstinline{p}, which is given a type of \lstinline{nat → nat → Prop}, which is the type definition of the 
-$>$ and $<$ relations in Lean. If the predicate is satisfied in the current node, as well as the left and right subtrees, then the predicate is satisfied in the whole tree. With this definition,
-the formalization of the binary search property is halfway done.
+% I also define the binary search property, as shown in Definition \ref{def:bst_property}. For this I created a helper definition, \lstinline{forall_keys}, which 
+% defines what exactly it means for all keys in a left or right subtree to be smaller or larger than the root key. This definition is made as abstract as possible, with the 
+% greater-than or less-than relation defined as just the \notes{parameter? variable? } \lstinline{p}, which is given a type of \lstinline{nat → nat → Prop}, which is the type definition of the 
+% $>$ and $<$ relations in Lean. If the predicate is satisfied in the current node, as well as the left and right subtrees, then the predicate is satisfied in the whole tree. With this definition,
+% the formalization of the binary search property is halfway done.
 
-We call the definition for the binary search property \lstinline{ordered}, as
-it is another name for trees where the property holds. It is also made recursive, as in our inductive \lstinline{btree} definition, we only have direct definition of the left child and the right child, 
-and not the children of those children. There is no guarantee that the grandchildren are ordered, so the definition takes this into account with the recursion: a binary tree can only be ordered if every single subtree 
-is ordered. The complete definition can be seen in Figure \ref{lst:ordered}. 
+% We call the definition for the binary search property \lstinline{ordered}, as
+% it is another name for trees where the property holds. It is also made recursive, as in our inductive \lstinline{btree} definition, we only have direct definition of the left child and the right child, 
+% and not the children of those children. There is no guarantee that the grandchildren are ordered, so the definition takes this into account with the recursion: a binary tree can only be ordered if every single subtree 
+% is ordered. The complete definition can be seen in Figure \ref{lst:ordered}. 
 
-\begin{figure}[!ht]
-  \centering
-  \lstinputlisting[language=lean, firstline=35, lastline=38, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
-  \caption{}
-  \label{lst:forall_keys}
-\end{figure}
+% \begin{figure}[!ht]
+%   \centering
+%   \lstinputlisting[language=lean, firstline=35, lastline=38, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+%   \caption{}
+%   \label{lst:forall_keys}
+% \end{figure}
 
-\begin{figure}[!ht]
-  \centering
-  \lstinputlisting[language=lean, firstline=40, lastline=43, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
-  \caption{}
-  \label{lst:ordered}
-\end{figure}
+% \begin{figure}[!ht]
+%   \centering
+%   \lstinputlisting[language=lean, firstline=40, lastline=43, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+%   \caption{}
+%   \label{lst:ordered}
+% \end{figure}
 
-\subsection*{Balancing}
-I define the height of a tree as per Definition \ref{def:height} in Figure \ref{lst:height}. \notes{Why is there a +1 in the definition?}
+% \subsection*{Balancing}
+% I define the height of a tree as per Definition \ref{def:height} in Figure \ref{lst:height}. \notes{Why is there a +1 in the definition?}
 
-\begin{figure}[!ht]
-  \centering
-  \lstinputlisting[language=lean, firstline=49, lastline=52, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
-  \caption{}
-  \label{lst:height}
-\end{figure}
+% \begin{figure}[!ht]
+%   \centering
+%   \lstinputlisting[language=lean, firstline=49, lastline=52, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+%   \caption{}
+%   \label{lst:height}
+% \end{figure}
