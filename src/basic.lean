@@ -51,6 +51,11 @@ def height : btree α → nat
 | (btree.node l k a r) :=
   1 + (max (height l) (height r))
 
+def bf : btree α → nat
+| btree.empty := 0
+| (btree.node l k a r) :=
+  height l - height r
+
 def outLeft : btree α → bool
 | btree.empty := ff
 | (btree.node l k a r) :=
@@ -73,39 +78,22 @@ def outRight : btree α → bool
 
 def easyR : btree α → btree α
 | btree.empty := btree.empty
-| (btree.node l k a r) :=
-  match l with
-    | btree.empty := (btree.node l k a r)
-    | (btree.node ll lk la lr) := (btree.node ll lk la (btree.node lr k a r))
-  end
+| (btree.node (btree.node xL x a xR) z d zR) := 
+  (btree.node xL x a (btree.node xR z d zR))
+| (btree.node l k a r) := btree.node l k a r
 
 def easyL : btree α → btree α
 | btree.empty := btree.empty
-| (btree.node l k a r) :=
-  match r with
-  | btree.empty := (btree.node l k a r)
-  | (btree.node rl rk ra rr) := (btree.node (btree.node l k a rl) rk ra rr)
-  end
+| (btree.node zL z d (btree.node yL y b yR)) :=
+  (btree.node (btree.node zL z d yL) y b yR)
+| (btree.node l k a r) := btree.node l k a r
 
 def rotR : btree α → btree α
 | btree.empty := btree.empty
-| (btree.node l k a r) :=
-  match l with
-  | btree.empty := (btree.node l k a r)
-  | (btree.node ll _ _ lr) :=
-    if (height ll < height lr) then easyR (btree.node (easyL l) k a r)
-    else easyR (btree.node l k a r)
-  end
-
-def rotL : btree α → btree α
-| btree.empty := btree.empty
-| (btree.node l k a r) :=
-  match r with 
-  | btree.empty := btree.empty
-  | (btree.node rl _ _ rr) :=
-    if (height rr < height rl) then easyL (btree.node l k a (easyR r))
-    else easyL (btree.node l k a r)
-  end
+| (btree.node (btree.node xL x a xR) z d zR) :=
+  if height xL < height xR then easyR (btree.node (easyL (btree.node xL x a xR)) z d zR)
+  else easyR (btree.node (btree.node xL x a xR) z d zR)
+| (btree.node l k a r) := easyR (btree.node l k a r)
 
 end balancing
 
