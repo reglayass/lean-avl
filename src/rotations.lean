@@ -129,12 +129,7 @@ end
 lemma easyR_balanced (ll lr r : btree α) (lk k : nat) (la a : α) :
   outLeft (btree.node (btree.node ll lk la lr) k a r) → balanced (easyR (btree.node (btree.node ll lk la lr) k a r)) :=
 begin
-  intro h,
-  simp [easyR, balanced, abs],
-  simp [outLeft] at h,
-  split,
-  { sorry },
-  { sorry },
+  sorry,
 end
 
 lemma easyL_keys (l rl rr : btree α) (k rk : nat) (a ra : α) :
