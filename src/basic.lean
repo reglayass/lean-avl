@@ -4,6 +4,10 @@ inductive btree (α : Type u)
 | empty {} : btree
 | node (l : btree) (k : nat) (a : α) (r : btree) : btree
 
+def tostring : btree string → string
+| btree.empty := "_"
+| (btree.node l k a r) := "[" ++ " " ++ to_string k ++ " " ++ tostring l ++ " " ++ tostring r ++ " " ++ "]"
+
 namespace btree
 variables {α : Type u}
 
@@ -78,29 +82,39 @@ def outRight : btree α → bool
 
 def easyR : btree α → btree α
 | btree.empty := btree.empty
-| (btree.node (btree.node xL x a xR) z d zR) := 
-  (btree.node xL x a (btree.node xR z d zR))
-| (btree.node l k a r) := btree.node l k a r
+| (btree.node l k a r) :=
+  match l with
+    | btree.empty := (btree.node l k a r)
+    | (btree.node ll lk la lr) := (btree.node ll lk la (btree.node lr k a r))
+  end
 
 def easyL : btree α → btree α
 | btree.empty := btree.empty
-| (btree.node zL z d (btree.node yL y b yR)) :=
-  (btree.node (btree.node zL z d yL) y b yR)
-| (btree.node l k a r) := btree.node l k a r
+| (btree.node l k a r) :=
+  match r with
+  | btree.empty := (btree.node l k a r)
+  | (btree.node rl rk ra rr) := (btree.node (btree.node l k a rl) rk ra rr)
+  end
 
 def rotR : btree α → btree α
 | btree.empty := btree.empty
-| (btree.node (btree.node xL x a xR) z d zR) :=
-  if height xL < height xR then easyR (btree.node (easyL (btree.node xL x a xR)) z d zR)
-  else easyR (btree.node (btree.node xL x a xR) z d zR)
-| (btree.node l k a r) := easyR (btree.node l k a r)
+| (btree.node l k a r) :=
+  match l with
+  | btree.empty := (btree.node l k a r)
+  | (btree.node ll lk la lr) :=
+    if (height ll < height lr) then easyR (btree.node (easyL l) k a r)
+    else easyR (btree.node l k a r)
+  end 
 
 def rotL : btree α → btree α
 | btree.empty := btree.empty
-| (btree.node zL z d (btree.node yL y b yR)) :=
-  if height yR < height yL then easyL (btree.node zL z d (easyR (btree.node yL y b yR))) 
-  else easyL (btree.node zL z d (btree.node yL y b yR))
-| (btree.node l k a r) := easyL (btree.node l k a r)
+| (btree.node l k a r) :=
+  match r with
+  | btree.empty := btree.node l k a r
+  | (btree.node rl rk ra rr) :=
+    if height rr < height rl then easyL (btree.node l k a (easyR r))
+    else easyL (btree.node l k a r)
+  end
 
 end balancing
 
