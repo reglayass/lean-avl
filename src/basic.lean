@@ -23,12 +23,17 @@ def lookup (x : nat) : btree α → option α
   else if x > k then lookup r 
   else a
 
+-- def bound (x : nat) : btree α → bool
+-- | btree.empty := ff
+-- | (btree.node l k a r) :=
+--   if x < k then bound l
+--   else if x > k then bound r
+--   else tt
+
 def bound (x : nat) : btree α → bool
 | btree.empty := ff
 | (btree.node l k a r) :=
-  if x < k then bound l
-  else if x > k then bound r
-  else tt
+  x = k ∨ bound l ∨ bound r
 
 def insert (x : nat) (a : α) : btree α → btree α
 | btree.empty := btree.node btree.empty x a btree.empty
