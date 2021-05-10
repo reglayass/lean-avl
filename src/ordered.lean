@@ -10,7 +10,7 @@ open btree
 variables {α : Type u}
 
 lemma forall_insert (k k' : nat) (t : btree α) (a : α) (p : nat → nat → Prop) (h₀ : p k' k) :
-  forall_keys p k' t → forall_keys p k' (insert k a t) :=
+  forall_keys p t k' → forall_keys p (insert k a t) k' :=
 begin
   intro h₁,
   induction t,
