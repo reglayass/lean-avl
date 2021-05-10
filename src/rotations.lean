@@ -101,28 +101,122 @@ begin
   },
 end
 
-lemma easyR_balanced (ll lr r : btree α) (lk k : nat) (la a : α) :
-  outLeft (btree.node (btree.node ll lk la lr) k a r) → balanced (easyR (btree.node (btree.node ll lk la lr) k a r)) :=
+lemma easyL_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = x → bound k (easyL t) = x :=
 begin
-  sorry,
+  cases t,
+  case empty {
+    simp [easyL],
+  },
+  case node : tl tk ta tr {
+    intro h₁,
+    cases tr,
+    case empty {
+      simp [easyL],
+      assumption,
+    },
+    case node : trl trk tra trr {
+      simp [easyL, bound],
+      simp [bound] at h₁,
+      finish,
+    },
+  },
 end
 
-lemma easyL_keys (l rl rr : btree α) (k rk : nat) (a ra : α) :
-  bound k (btree.node l k a (btree.node rl rk ra rr)) → bound k (easyL (btree.node l k a (btree.node rl rk ra rr))) :=
+lemma easyR_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = x → bound k (easyR t) = x :=
 begin
-  intro h,
-  simp only [easyL, bound],
-  simp only [bound] at h,
-  by_cases c₁ :(k < k),
-  { exfalso, linarith, },
-  { simp only [if_neg c₁], 
-    simp only [if_neg c₁] at h,
-    by_cases c₂ : (k < rk),
-    { simp [if_pos c₂], 
+  cases t,
+  case empty {
+    simp [easyR],
+  },
+  case node : tl tk ta tr {
+    intros h₁,
+    cases tl,
+    case empty {
+      simp [easyR],
+      assumption,
     },
-    { by_cases c₃ : (k > rk),
-      { sorry },
-      { simp [if_neg c₂, if_neg c₃], },
+    case node : tll tlk tla tlr {
+      simp [easyR, bound],
+      simp [bound] at h₁,
+      finish,
+    },
+  },
+end
+
+lemma rotR_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = x → bound k (rotR t) = x :=
+begin
+  cases t,
+  case empty {
+    simp [rotR],
+  },
+  case node : tl tk ta tr {
+    intro h₁,
+    cases tl,
+    case empty {
+      simp [rotR],
+      assumption,
+    },
+    case node : tll tlk tla tlr {
+      simp [rotR],
+      by_cases c₁ : (height tll < height tlr),
+      { simp only [if_pos c₁],
+        apply easyR_keys,
+        cases tlr,
+        case empty {
+          simp [easyL],
+          assumption,
+        },
+        case node : tlrl tlrk tlra tlrr {
+          simp [easyL, bound],
+          simp [bound] at h₁,
+          finish,
+        } 
+      },
+      { simp only [if_neg c₁], 
+        apply easyR_keys,
+        assumption,
+      },
+    },
+  },
+end
+
+lemma rotL_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = x → bound k (rotL t) = x :=
+begin
+  cases t,
+  case empty {
+    simp [rotL],
+  },
+  case node : tl tk ta tr {
+    intro h₁,
+    cases tr,
+    case empty {
+      simp [rotL],
+      assumption,
+    },
+    case node : trl trk tra trr {
+      simp [rotL],
+      by_cases c₁ : (height trr < height trl),
+      { simp only [if_pos c₁], 
+        apply easyL_keys,
+        cases trl,
+        case empty {
+          simp [easyR],
+          assumption,
+        },
+        case node : trll trlk trla trlr {
+          simp [easyR, bound],
+          simp [bound] at h₁,
+          finish,
+        }
+      },
+      { simp only [if_neg c₁],
+        apply easyL_keys,
+        assumption, 
+      },
     },
   },
 end
