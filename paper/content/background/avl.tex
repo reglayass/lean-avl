@@ -1,6 +1,3 @@
-\notes{insert small description of the chapter}
-
-\section{Binary Search Trees} 
 I begin by defining a binary search tree. A binary tree is a tree data structure where each node can have no more than two children. These two children are 
 called the \textit{left child} and the \textit{right child} subtrees. In a \textit{binary search tree} (BST), nodes are placed according to their key. 
 
@@ -17,7 +14,7 @@ This allows for lookup and insertion to be done in $O \log n$ time in the worst 
 Search, insertion and retrieval can be done recursively. Starting at the root node, the input key and the node key are compared: if the input key is smaller,
 the operation is done recursively on the left subtree; if the input key is larger, then the operation is done recursively on the right subtree.
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
   \centering
   \begin{tikzpicture}
     \node[circle,draw,fill=gray!30](z){5}
@@ -68,7 +65,6 @@ the operation is done recursively on the left subtree; if the input key is large
     \label{fig:insert}
 \end{figure}
 
-\section{Balance and rotation}
 An AVL tree is based on a binary search tree, with one very important distinction - it is \textit{balanced}. To define what it means for a tree to be balanced, I will first
 define what the \textit{height} of a tree is.
 
@@ -84,13 +80,14 @@ balancing factor can help define whether a tree is balanced or not.
 
 \begin{definition}[Balancing factor]
   \label{def:bf}
-  \notes{finish definition}
+  The balancing factor $BF(n)$ of a tree is the difference in height between the left child tree and the right child tree. A tree is defined to be an AVL tree (and therefore balanced) is the
+  invariant $BF(n) \in \{-1,0,1\}$ holds for every node $n$ in the tree.
 \end{definition}
 
-During the insertion operation, the tree can become imbalanced, which can be mitigated
+During node insertion, the tree can become imbalanced, which can be mitigated
 with either a right rotation or a left rotation. 
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
   \centering
   \begin{tikzpicture}
     \node[circle,draw](z){3}

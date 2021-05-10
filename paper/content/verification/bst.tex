@@ -1,0 +1,34 @@
+\subsection*{Definition}
+
+I begin by defining the core of an AVL tree: a binary search tree. Even though Lean has a definition of a binary tree, \lstinline{bin_tree}, the constructor does not include a left and right tree for a leaf node.
+In my implementation, shown in Figure \ref{lst:btree}, there is no constructor a leaf node, but there is no need since the left and right child trees of a node may be empty.
+
+\begin{figure}[!ht]
+  \centering
+  \lstinputlisting[firstline=5, lastline=7, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+  \caption{}
+  \label{lst:btree}
+\end{figure}
+
+I also create a definition for the binary search property as laid out in Definition \ref{def:bst_property}. First a helper is defined, 
+in order to express keys being smaller or larger than the root. This is shown in \ref{lst:forall_keys}.
+
+\begin{figure}[!ht]
+  \centering
+  \lstinputlisting[firstline=47, lastline=50, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+  \caption{}
+  \label{lst:forall_keys}
+\end{figure}
+
+The binary search property can be laid out. An empty tree is a binary search tree \notes{why?} and a non-empty tree is only a binary search tree if all the keys
+in the left child are smaller than the root and all keys in the right child are larger than the root, and if the left and right children satisfy the binary search property themselves.
+This is formalized in \ref{lst:ordered}.
+
+\begin{figure}[!ht]
+  \centering
+  \lstinputlisting[firstline=52, lastline=55, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+  \caption{}
+  \label{lst:ordered}
+\end{figure}
+
+\subsection*{Operations}

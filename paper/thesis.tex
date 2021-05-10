@@ -31,7 +31,7 @@
 \newcommand\notes[1]{\textcolor{red}{#1}}
 
 \theoremstyle{definition}
-\newtheorem{definition}{Definition}[section]
+\newtheorem{definition}{Definition}[chapter]
 
 \makeatletter
 \renewcommand{\Function}[2]{%
@@ -90,10 +90,20 @@ Vrije Universiteit Amsterdam
 
 \tableofcontents
 
-\chapter{AVL Trees}
-\input{content/avl.tex}
+\chapter{Introduction}
 
-\bibliographystyle{acm}
+\chapter{Background}
+\input{content/background/main.tex}
+
+\chapter{Verification}
+\input{content/verification/main.tex}
+
+\chapter{Discussion}
+\input{content/discussion/main.tex}
+
+\chapter{Conclusion}
+
+\bibliographystyle{ieeetran}
 \bibliography{content/references.bib}
 
 % \appendix
