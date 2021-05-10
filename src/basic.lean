@@ -103,30 +103,26 @@ def rotR : btree α → btree α
     else easyR (btree.node l k a r)
   end
 
--- def rotR: btree α → btree α
--- | btree.empty := btree.empty
--- | (btree.node (btree.node ll lk la lr) k a r) :=
---   if (height ll < height lr) then easyR (btree.node (easyL (btree.node ll lk la lr)) k a r)
---   else easyR (btree.node ll k a r)
--- | (btree.node l k a r) := (btree.node l k a r)
+def rotL : btree α → btree α
+| btree.empty := btree.empty
+| (btree.node l k a r) :=
+  match r with 
+  | btree.empty := (btree.node l k a r)
+  | (btree.node rl rk ra rr) :=
+    if height rr < height rl then easyL (btree.node l k a (easyR r))
+    else easyL (btree.node l k a r)
+  end
 
--- def rotL : btree α → btree α
--- | btree.empty := btree.empty
--- | (btree.node l k a (btree.node rl rk ra rr)) :=
---   if (height rr < height rl) then easyL (btree.node l k a (easyR (btree.node rl rk ra rr)))
---   else easyL (btree.node l k a (btree.node rl rk ra rr))
--- | (btree.node l k a r) := btree.node l k a r
-
--- def insert_bal (x : nat) (a : α) : btree α → btree α
--- | btree.empty := btree.node btree.empty x a btree.empty
--- | (btree.node l k a' r) :=
---   if x < k then 
---     if (height (insert_bal l) > (height r + 1)) then rotR (btree.node (insert_bal l) k a' r) 
---     else btree.node (insert_bal l) k a' r
---   else if x > k then
---     if (height (insert_bal r) > (height l + 1)) then rotL (btree.node l k a' (insert_bal r))
---     else btree.node l k a' (insert_bal r)
---   else btree.node l x a r
+def insert_bal (x : nat) (a : α) : btree α → btree α
+| btree.empty := btree.node btree.empty x a btree.empty
+| (btree.node l k a' r) :=
+  if x < k then 
+    if (height (insert_bal l) > (height r + 1)) then rotR (btree.node (insert_bal l) k a' r) 
+    else btree.node (insert_bal l) k a' r
+  else if x > k then
+    if (height (insert_bal r) > (height l + 1)) then rotL (btree.node l k a' (insert_bal r))
+    else btree.node l k a' (insert_bal r)
+  else btree.node l x a r
 
 end balancing
 
