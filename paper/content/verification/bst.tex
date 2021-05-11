@@ -24,6 +24,8 @@ The binary search property can be laid out. An empty tree is a binary search tre
 in the left child are smaller than the root and all keys in the right child are larger than the root, and if the left and right children satisfy the binary search property themselves.
 This is formalized in \ref{lst:ordered}.
 
+\notes{maybe explain why ordered is a definition and not inductive?}
+
 \begin{figure}[!ht]
   \centering
   \lstinputlisting[firstline=52, lastline=55, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
@@ -32,3 +34,16 @@ This is formalized in \ref{lst:ordered}.
 \end{figure}
 
 \subsection*{Operations}
+
+There are three \notes{might add delete later} basic operations on a binary search tree: insert, bound and lookup. Insert is straightforward; bound is checking if a key exists in the tree; and lookup
+is looking up a key in a binary search tree and returning the node value. The insert and lookup operations are similar; both compare the input key to the node key, and recursively perform the operation on the left 
+or right subtree. The insert operation is shown in Figure \ref{lst:insert}.
+
+\begin{figure}[!ht]
+  \centering 
+  \lstinputlisting[firstline=38, lastline=43, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+  \caption{}
+  \label{lst:insert}
+\end{figure}
+
+\notes{explain the problem between the old bound and new bound}

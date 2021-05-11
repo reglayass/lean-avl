@@ -1,4 +1,23 @@
 \subsection*{Height and Balancing factor}
+I defined the height as per Definition \ref{def:height}. \notes{add more?}
+
+\begin{figure}[!ht]
+  \centering
+  \lstinputlisting[firstline=61, lastline=64, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+  \caption{}
+  \label{lst:height}
+\end{figure}
+
+Instead of defining a balancing factor as a number, I defined balancing factor as a function that returns a boolean. 
+If a node is not empty, to fit within Definition \ref{def:bf} then the difference in heights should not be less than 1 or greater than 1.
+This can be expressed with a simple absolute value of the difference in heights. This definition is shown in Figure \ref{lst:balanced}.
+
+\begin{figure}[!ht]
+  \centering
+  \lstinputlisting[firstline=66, lastline=69, frame=single]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+  \caption{}
+  \label{lst:balanced}
+\end{figure}
 
 \subsection*{Rotations}
 
