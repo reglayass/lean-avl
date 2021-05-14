@@ -42,8 +42,6 @@ def insert (x : nat) (a : α) : btree α → btree α
   else if x > k then btree.node l k a' (insert r)
   else btree.node l x a r
 
-section ordering
-
 def forall_keys (p : nat → nat → Prop) : btree α → nat → Prop
 | btree.empty x := tt
 | (btree.node l k a r) x := 
@@ -54,11 +52,7 @@ def ordered : btree α → Prop
 | (btree.node l k a r) := 
   ordered l ∧ ordered r ∧ (forall_keys (>) l k) ∧ (forall_keys (<) r k)
 
-end ordering
-
-section balancing
-
-def height : btree α → int
+def height : btree α → nat
 | btree.empty := 0
 | (btree.node l k a r) :=
   1 + (max (height l) (height r))
@@ -66,7 +60,8 @@ def height : btree α → int
 def balanced : btree α → bool
 | btree.empty := tt
 | (btree.node l k a r) :=
-  abs (height l - height r) ≤ 1
+  if height l ≥ height r then height l ≤ height r + 1
+  else height r ≤ height l + 1
 
 def outLeft : btree α → bool
 | btree.empty := ff
@@ -129,6 +124,11 @@ def insert_bal (x : nat) (a : α) : btree α → btree α
     else btree.node l k a' (insert_bal r)
   else btree.node l x a r
 
-end balancing
+def balance : btree α → btree α
+| btree.empty := btree.empty
+| (btree.node l k a r) :=
+  if outLeft (btree.node l k a r) then rotR (btree.node (balance l) k a r)
+  else if outRight (btree.node l k a r) then rotL (btree.node l k a (balance r))
+  else btree.node l k a r
 
 end btree
