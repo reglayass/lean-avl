@@ -23,13 +23,6 @@ def lookup (x : nat) : btree α → option α
   else if x > k then lookup r 
   else a
 
--- def bound (x : nat) : btree α → bool
--- | btree.empty := ff
--- | (btree.node l k a r) :=
---   if x < k then bound l
---   else if x > k then bound r
---   else tt
-
 def bound (x : nat) : btree α → bool
 | btree.empty := ff
 | (btree.node l k a r) :=
@@ -119,31 +112,5 @@ def balance : btree α → btree α
   if outLeft (btree.node l k a r) then rotR (btree.node (balance l) k a r)
   else if outRight (btree.node l k a r) then rotL (btree.node l k a (balance r))
   else btree.node l k a r
-
-def inorder_succ : btree α → btree α × nat
-| btree.empty := (btree.empty, nat.zero)
-| (btree.node l k a r) :=
-  match l with 
-  | btree.empty := (r, k)
-  | (btree.node ll lk la lr) :=
-    have tl : btree α := btree.node ll lk la lr,
-    let (l', m) := inorder_succ l in (balance (btree.node l' k a r), m)
-  end
-
-def merge : btree α → btree α → btree α
-| btree.empty btree.empty := btree.empty
-| (btree.node l k a r) btree.empty := btree.node l k a r
-| btree.empty (btree.node l k a r) := btree.node l k a r
-| (btree.node ll lk la lr) (btree.node rl rk ra rr) :=
-  have r : btree α := (btree.node rl rk ra rr),
-  have l : btree α := (btree.node ll lk la lr),
-  let (r', m) := inorder_succ r in balance (btree.node l m la r')
-
-def delete (x : nat) : btree α → btree α
-| btree.empty := btree.empty
-| (btree.node l k a r) :=
-  if x < k then btree.node (delete l) k a r
-  else if x > k then btree.node l k a (delete r)
-  else merge l r
 
 end btree
