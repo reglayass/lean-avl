@@ -1,5 +1,6 @@
 import basic
 import tactic.linarith
+import tactic.omega
 set_option pp.generalized_field_notation false
 
 universe u
@@ -60,6 +61,81 @@ begin
       { apply and.right (and.right (and.right h₄)), },
     } 
   },
+end
+
+lemma easyL_balanced (t : btree α) :
+  outRight t → 
+    balanced (easyL t) :=
+begin
+  intro h₁,
+  cases t,
+  case empty {
+    simp [easyL, balanced],
+  },
+  case node : tl tk ta tr {
+    cases tr,
+    case empty { 
+      simp [easyL, balanced], 
+      simp [outRight] at h₁,
+      contradiction,
+    },
+    case node : trl trk tra trr {
+      simp [easyL, balanced, height],
+      simp [outRight] at h₁,
+      by_cases c₁ : (height trr ≤ 1 + max (height tl) (height trl)),
+      { simp [if_pos c₁], 
+        cases_matching* (_ ∧ _),
+        rw ← h₁_right_right_right at *,
+        suffices h : 1 + max (height tl) (height trl) ≤ 1 + (height tl + 1),
+        { omega, },
+        apply (add_le_add_iff_left 1).mpr,
+        apply max_le; assumption,
+      },
+      { simp [if_neg c₁],
+        cases_matching* (_ ∧ _),
+        rw ← h₁_right_right_right at *,
+        suffices h : 1 + height tl ≤ 1 + (max (height tl) (height trl) + 1),
+        { omega, },
+        apply (add_le_add_iff_left 1).mpr,
+        -- height tl ≤ height tl + 1
+        -- height tl ≤ max (height tl) (height trl) + 1
+      },
+    }
+  },
+end
+
+example (x y : nat) : x ≤ y → 1 + x ≤ 1 + y := by library_search
+example (x y z : nat) : x ≤ z → y ≤ z → max x y ≤ z := by library_search
+
+lemma easyR_balanced (t : btree α) :
+  outLeft t → 
+    balanced (easyR t) :=
+begin
+  intro h₁,
+  cases t,
+  case empty {
+    simp [easyR, balanced],
+  },
+  case node : tl tk ta tr {
+    cases tl,
+    case empty {
+      simp [easyR, balanced],
+      simp [outLeft] at h₁,
+      contradiction,
+    },
+    case node : tll tlk tla tlr {
+      simp [easyR, balanced, height],
+      simp [outLeft] at h₁,
+      by_cases c₁ : (1 + max (height tlr) (height tr) ≤ height tll),
+      { simp [if_pos c₁], 
+        cases_matching* (_ ∧ _),
+        sorry,
+      },
+      { simp [if_neg c₁], 
+        sorry,
+      },
+    }
+  }
 end
 
 lemma easyR_ordered (ll lr r : btree α) (k lk : nat) (a la : α) : 
