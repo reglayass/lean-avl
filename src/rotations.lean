@@ -64,8 +64,7 @@ begin
 end
 
 lemma easyL_balanced (t : btree α) :
-  outRight t → 
-    balanced (easyL t) :=
+  outRight t → balanced (easyL t) :=
 begin
   intro h₁,
   cases t,
@@ -74,34 +73,31 @@ begin
   },
   case node : tl tk ta tr {
     cases tr,
-    case empty { 
-      simp [easyL, balanced], 
+    case empty {
+      simp [easyL, balanced],
       simp [outRight] at h₁,
       contradiction,
     },
     case node : trl trk tra trr {
       simp [easyL, balanced, height],
       simp [outRight] at h₁,
+      cases_matching* (_ ∧ _),
       by_cases c₁ : (height trr ≤ 1 + max (height tl) (height trl)),
       { simp [if_pos c₁], 
-        cases_matching* (_ ∧ _),
         rw ← h₁_right_right_right at *,
         suffices h : 1 + max (height tl) (height trl) ≤ 1 + (height tl + 1),
         { omega, },
         apply (add_le_add_iff_left 1).mpr,
-        apply max_le; assumption,
+        apply max_le, 
+        { simp, },
+        { assumption, },
       },
-      { simp [if_neg c₁],
-        cases_matching* (_ ∧ _),
+      { simp [if_neg c₁], 
         rw ← h₁_right_right_right at *,
-        suffices h : 1 + height tl ≤ 1 + (max (height tl) (height trl) + 1),
-        { omega, },
-        apply (add_le_add_iff_left 1).mpr,
-        -- height tl ≤ height tl + 1
-        -- height tl ≤ max (height tl) (height trl) + 1
+        sorry,
       },
     }
-  },
+  }
 end
 
 example (x y : nat) : x ≤ y → 1 + x ≤ 1 + y := by library_search
@@ -126,13 +122,19 @@ begin
     case node : tll tlk tla tlr {
       simp [easyR, balanced, height],
       simp [outLeft] at h₁,
+      cases_matching* (_ ∧ _), 
       by_cases c₁ : (1 + max (height tlr) (height tr) ≤ height tll),
       { simp [if_pos c₁], 
-        cases_matching* (_ ∧ _),
         sorry,
       },
-      { simp [if_neg c₁], 
-        sorry,
+      { simp [if_neg c₁],
+        rw ← h₁_right_right_right at *,
+        suffices h : 1 + max (height tlr) (height tr) ≤ 1 + (height tr + 1),
+        { omega, },
+        apply (add_le_add_iff_left 1).mpr,
+        apply max_le,
+        { assumption, },
+        { simp, },
       },
     }
   }
