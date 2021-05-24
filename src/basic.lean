@@ -1,21 +1,11 @@
-import algebra
-
 universe u
 
 inductive btree (α : Type u)
 | empty {} : btree
 | node (l : btree) (k : nat) (a : α) (r : btree) : btree
 
--- TODO: remove once done
-def tostring : btree string → string
-| btree.empty := "_"
-| (btree.node l k a r) := "[" ++ " " ++ to_string k ++ " " ++ tostring l ++ " " ++ tostring r ++ " " ++ "]"
-
 namespace btree
 variables {α : Type u}
-
-inductive nonempty : btree α → Type u 
-| node : ∀ l k a r, nonempty (node l k a r)
 
 def empty_tree : btree α := btree.empty
 
@@ -66,14 +56,14 @@ def outLeft : btree α → bool
   | btree.empty := ff
   | (btree.node ll lk la lr) := 
     (height ll ≥ height lr) ∧ (height ll ≤ height lr + 1) ∧ 
-    (height lr ≥ height r) ∧ (height ll = height r + 1)
+    (height lr ≥ height r) ∧ (height r + 1 = height ll)
   end
 
 def outRight : btree α → bool
 | btree.empty := ff
 | (btree.node l k a r) :=
   match r with
-  | btree.empty := outRight r
+  | btree.empty := ff
   | (btree.node rl rk ra rr) :=
     (height rr ≥ height rl) ∧ (height rr ≤ height rl + 1) ∧ 
     (height rl ≤ height l) ∧ (height l + 1 = height rr)
@@ -128,20 +118,6 @@ def insert_balanced (x : nat) (v : α) : btree α → btree α
     if height nr > height l + 1 then rotL (btree.node l k a nr)
     else btree.node l k a nr
   else btree.node l x v r
-
--- def insert_balanced (x : nat) (v : α) : btree α → btree α
--- | btree.empty := btree.node btree.empty x v btree.empty
--- | (btree.node l k a r) :=
---   if x < k then balance (btree.node (insert_balanced l) k a r)
---   else if x > k then balance (btree.node l k a (insert_balanced r))
---   else btree.node l x v r
-
--- def shrink : ∀ (t : btree α), nonempty t → (nat × α × btree α)
--- | _ (nonempty.node l k a btree.empty) := (k, a, l)
--- | _ (nonempty.node l k a (btree.node rl rk ra rr)) := 
---   let s := shrink (btree.node rl rk ra rr) (nonempty.node _ _ _ _) in 
---   if height l > height s.2.2 + 1 then (s.1, s.2.1, rotR (btree.node l k a s.2.2))
---   else (s.1, s.2.1, (btree.node l k a s.2.2))
 
 def shrink : btree α → option (nat × α × btree α)
 | btree.empty := none
