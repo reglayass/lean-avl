@@ -299,6 +299,8 @@ begin
   },
 end
 
+-- ordered t → ordered (rotL t)
+
 lemma rotL_ordered (rl rr l : btree α) (k rk : nat) (a ra : α) :
   ordered (btree.node l k a (btree.node rl rk ra rr)) → 
     ordered (rotL (btree.node l k a (btree.node rl rk ra rr))) :=
