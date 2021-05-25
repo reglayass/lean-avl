@@ -119,25 +119,25 @@ def insert_balanced (x : nat) (v : α) : btree α → btree α
     else btree.node l k a nr
   else btree.node l x v r
 
+def shrink_core : option (nat × α × btree α) → btree α → nat → α → btree α → (nat × α × btree α)
+| none l k v r := (k, v, l)
+| (some (x, a, sh)) l k v r := 
+  if height l > height sh + 1 then (x, a, rotR (btree.node sh k v l))
+  else (x, a, (btree.node sh k v l))
+
 def shrink : btree α → option (nat × α × btree α)
 | btree.empty := none
-| (btree.node l k v r) :=
-  match shrink r with
-  | none := (k, v, l)
-  | some (x, a, sh) := 
-    if height l > height sh + 1 then (x, a, rotR (btree.node sh k v l))
-    else (x, a, (btree.node sh k v l))
-  end
+| (btree.node l k v r) := some (shrink_core (shrink r) l k v r)
+
+def delRoot_core : option (nat × α × btree α) → btree α → nat → α → btree α → btree α
+| none l k v r := r
+| (some (x, a, sh)) l k v r :=
+  if height r > height sh + 1 then rotL (btree.node sh x a r)
+  else btree.node sh x a r
 
 def delRoot : btree α → btree α
 | btree.empty := btree.empty
-| (btree.node l k v r) :=
-  match shrink l with
-  | none := r
-  | some (x, a, sh) :=
-    if height r > height sh + 1 then rotL (btree.node sh x a r)
-    else btree.node sh x a r
-  end
+| (btree.node l k v r) := delRoot_core (shrink l) l k v r
 
 def delete (x : nat) : btree α → btree α
 | btree.empty := btree.empty
