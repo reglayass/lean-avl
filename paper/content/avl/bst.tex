@@ -1,0 +1,67 @@
+\subsection*{Basics}
+I begin by defining a binary stree. A binary tree is a tree data structure where each node can have no more than two children. These two children are 
+called the \textit{left child} and the \textit{right child} subtrees. Each node in a binary tree has a key, and if needed a node value. 
+Figure \ref{lst:btree} shows the inductive type defined. The core Lean code already has a definition for a binary tree, \lstinline{bin_tree}, but it does not 
+have a definition for a tree being empty, and node values and keys are only accessible in the leaf nodes. \notes{say why this is inconvenient}.
+
+\begin{figure}[!ht]
+  \centering
+  \lstinputlisting[firstline=5, lastline=7, frame=single, language=lean]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+  \caption{}
+  \label{lst:btree}
+\end{figure}
+
+\subsection*{Ordering}
+In a BST, nodes are placed according to their key. Where nodes are placed in a binary search tree is determined by what is often called the \textit{binary search property}.
+
+\begin{definition}[Binary Search Property]
+  \label{def:bst_property}
+  Given any node N in a binary search tree, all the keys in the left child subtree are smaller than that of N, and all keys in the right child subtree are greater than the 
+  key of N.
+\end{definition}
+
+In order to formalize this definition, there first needs to be a definition of what it means for a key to be smaller than or larger than the rest of the keys in a child subtree. This is done with a definition \lstinline{forall_keys}, shown in Figure \ref{lst:forall_keys}.
+This function takes a numerical relation \lstinline{p} which is either $>$ or $<$, a binary tree \lstinline{btree} and a key, and returns a proposition. In order for this proposition to be true, the relation has to hold in the left child subtree and the right child subtree, and between the two
+keys. \notes{This is not very good explanation, change it}.
+
+\begin{figure}[!ht]
+  \centering
+  \lstinputlisting[firstline=41, lastline=44, frame=single, language=lean]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+  \caption{}
+  \label{lst:forall_keys}
+\end{figure}
+
+The definition \lstinline{ordered} uses \lstinline{forall_keys} to finish the definition of a BST as per Definiton \ref{def:bst_property}. A BST is only "ordered" - in other words, the binary search property holds for that tree - 
+if all the keys in the left child subtree are smaller than the root, and all keys in the right child subtree are smaller than the root, and both of the child subtrees are ordered themselves. This definition can be seen in Figure \ref{lst:ordered}.
+
+\begin{figure}[!ht]
+  \centering
+  \lstinputlisting[firstline=46, lastline=49, frame=single, language=lean]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+  \caption{}
+  \label{lst:ordered}
+\end{figure}
+
+\subsection*{Basic Operations}
+The binary search property (and consequently, and ordered binary tree) allows for for lookup and insertion to be done in $O \log n$ time in the worst case, as at any given node half of the tree is skipped due to the relation between the root key and the input key.
+
+Insertion and retrieval can be done recursively. Starting at the root node, the input key and the node key are compared: if the input key is smaller,
+the operation is done recursively on the left subtree; if the input key is larger, then the operation is done recursively on the right subtree, where the root key becomes the right child node.
+The function definition of the insertion operation in Lean can be seen on Figure \ref{lst:insert}. The retrieval operation, \lstinline{lookup}, is very similar, except the return value of the definition is the value of the node that is found.
+
+\begin{figure}[!ht]
+  \centering
+  \lstinputlisting[firstline=34, lastline=39, frame=single, language=lean]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+  \caption{}
+  \label{lst:insert}
+\end{figure}
+
+Tree search is a bit different. On the one hand, it could be defined the same as \lstinline{lookup} and \lstinline{insert}, but this could present a problem during re-balancing. When a tree is re-balanced after an insert operation, the position of a particular node can change 
+with respect to its immediate parent (and its parent could change as well). This could mean that the node, for example, wouldn't be in some right subtree but would now be in some left subtree. This would make proofs about key preservation after re-balance difficult. Therefore, I defined whether a key is 
+\lstinline{bound} in a tree in the simplest of terms: if it exists in the right or in the left subtree. In this particular definition, I am not focused on whether the tree is ordered, or if the key is in the right place - I am focused on if they key exists at all. The definition can be seen in Figure \ref{lst:bound}.
+
+\begin{figure}[!ht]
+  \centering
+  \lstinputlisting[firstline=29, lastline=32, frame=single, language=lean]{/Users/sofiakonovalova/Desktop/Thesis/lean-thesis/src/basic.lean}
+  \caption{}
+  \label{lst:bound}
+\end{figure}
