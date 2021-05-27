@@ -32,7 +32,6 @@ begin
       sorry
     },
     case nonempty_nonempty₁ {
-      rw h_2; clear h_2,
       sorry,
     },
     case nonempty_nonempty₂ {
