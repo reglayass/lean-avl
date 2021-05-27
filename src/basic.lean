@@ -114,12 +114,12 @@ def balance : btree α → btree α
 def insert_balanced (x : nat) (v : α) : btree α → btree α
 | btree.empty := btree.node btree.empty x v btree.empty
 | (btree.node l k a r) :=
-  let nl := insert_balanced l in
-  let nr := insert_balanced r in
   if x < k then
+    let nl := insert_balanced l in
     if height nl > height r + 1 then rotR (btree.node nl k a r)
     else btree.node nl k a r
   else if x > k then
+    let nr := insert_balanced r in
     if height nr > height l + 1 then rotL (btree.node l k a nr)
     else btree.node l k a nr
   else btree.node l x v r
