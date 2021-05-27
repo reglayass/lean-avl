@@ -373,4 +373,85 @@ begin
   }
 end
 
+lemma rotR_balance (t : btree α) :
+  outLeft t → balanced (rotR t) :=
+begin
+  intro h₁,
+  cases t,
+  case empty {
+    simp [rotR, balanced],
+  },
+  case node : l k a r {
+    cases l,
+    case empty {
+      simp [rotR, balanced],
+      simp [outLeft] at h₁,
+      contradiction,
+    },
+    case node : tl tk ta tr {
+      simp [rotR],
+      by_cases c₁ : (height tl < height tr),
+      { simp [if_pos c₁], 
+        cases tr,
+        case empty {
+          simp [easyL],
+          apply easyR_balanced,
+          exact h₁,
+        },
+        case node : trl trk tra trr {
+          simp [easyL, easyR, balanced, height],
+          simp [outLeft, height] at h₁,
+          cases_matching* (_ ∧ _),
+          by_cases c₂ : (height trr ≤ height tl ∧ height r ≤ height tl ∨ height trr ≤ height trl ∧ height r ≤ height trl),
+          { sorry },
+          { sorry },
+        },
+      },
+      { simp [if_neg c₁],
+        apply easyR_balanced,
+        exact h₁,
+      }
+    }
+  }
+end
+
+lemma rotL_balance (t : btree α) :
+  outRight t → balanced (rotL t) :=
+begin
+  intro h₁,
+  cases t,
+  case empty {
+    simp [rotL, balanced],
+  },
+  case node : l k a r {
+    cases r,
+    case empty {
+      simp [rotL, balanced],
+      simp [outRight] at h₁,
+      contradiction,
+    },
+    case node : tl tk ta tr {
+      simp [rotL],
+      by_cases c₁ : (height tr < height tl),
+      { simp [if_pos c₁],
+        cases tl,
+        case empty {
+          simp [easyR],
+          apply easyL_balanced,
+          exact h₁,
+        },
+        case node : tll tlk tla tlr {
+          simp [easyR, easyL, balanced, height],
+          simp [outRight, height] at h₁,
+          sorry,
+        }
+      },
+      { simp [if_neg c₁],
+        apply easyL_balanced,
+        exact h₁,
+      },
+    }
+  }
+end
+
 end rotation_lemmas
