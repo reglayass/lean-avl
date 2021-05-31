@@ -12,36 +12,86 @@ open rotation_lemmas
 
 variables {α : Type u}
 
--- lemma delRoot_empty_l (r : btree α) (k : nat) (a : α) :
---   delRoot (btree.node btree.empty k a r) = r :=
--- begin
---   simp [delRoot, shrink, delRoot_core],
--- end
+lemma delRoot_delRoot_view (t : btree α) :
+  delRoot_view t (delRoot t) :=
+begin
+  cases t,
+  case empty {
+    exact delRoot_view.empty,
+  },
+  case node : l k a r {
+    dsimp [delRoot],
+    cases h : shrink l,
+    case none {
+      dsimp [delRoot._match_1],
+      apply delRoot_view.nonempty_empty; assumption,
+    },
+    case some {
+      rcases val with ⟨x, a', sh⟩,
+      dsimp only [delRoot._match_1],
+      by_cases h' : height r > height sh + 1,
+      { simp only [if_pos h'],
+        apply delRoot_view.nonempty_nonempty₁; assumption,
+      },
+      { simp only [if_neg h'],
+        apply delRoot_view.nonempty_nonempty₂; try { assumption, },
+        linarith,
+      },
+    },
+  },
+end
+
+lemma shrink_shrink_view (t : btree α) : 
+  shrink_view t (shrink t) :=
+begin
+ cases t,
+ case empty {
+  exact shrink_view.empty,
+ },
+ case node : l k a r {
+  dsimp [shrink],
+  cases h : shrink r,
+  case none {
+    dsimp only [shrink._match_1],
+    apply shrink_view.nonempty_empty; assumption,
+  },
+  case some {
+    rcases val with ⟨x, a', sh⟩,
+    dsimp only [shrink._match_1],
+    by_cases h' : (height l > height sh + 1),
+    { simp only [if_pos h'], 
+      apply shrink_view.nonempty_nonempty₁, try { assumption },
+      assumption, simp,
+    },
+    { simp only [if_neg h'],
+      apply shrink_view.nonempty_nonempty₂, try { assumption },
+      linarith,
+    },
+  },
+ },
+end
 
 lemma delRoot_ordered (t : btree α) :
   ordered t → ordered (delRoot t) :=
 begin
   intro h₁,
-  induction t,
+  cases t,
   case empty {
     simp [delRoot, ordered],
   },
-  case node: tl tk ta tr ihl ihr {
+  case node : tl tk ta tr {
     cases' delRoot_delRoot_view (node tl tk ta tr),
-    case nonempty_empty {
-      sorry
+    { simp only [ordered] at h₁, 
+      apply and.left (and.right h₁),
     },
-    case nonempty_nonempty₁ {
+    { apply rotL_ordered, 
       sorry,
     },
-    case nonempty_nonempty₂ {
-      sorry
-    }
+    { sorry },
   }
 end
 
-/- deletion preserves order -/
-lemma delete_ordered (t : btree α) (k : nat) :
+lemma delete_ordered (t : btree α) (k : nat) : 
   ordered t → ordered (delete k t) :=
 begin
   intro h₁,
@@ -50,56 +100,32 @@ begin
     simp [delete, ordered],
   },
   case node : tl tk ta tr ihl ihr {
-    simp [delete],
-    simp [ordered] at h₁,
+    simp only [delete],
     by_cases c₁ : (k = tk),
-    { simp [if_pos c₁],
+    { simp only [if_pos c₁], 
       apply delRoot_ordered,
-      rw ordered,
-      assumption,
+      exact h₁,
     },
-    { simp [if_neg c₁],
+    { simp only [if_neg c₁],
       by_cases c₂ : (k < tk),
-      { simp [if_pos c₂],
+      { simp only [if_pos c₂], 
         by_cases c₃ : (height (delete k tl) + 1 < height tr),
-        { simp only [if_pos c₃],
+        { simp only [if_pos c₃],  
           sorry,
         },
-        { simp only [if_neg c₃, ordered],
-          split,
-          { apply ihl,
-            apply and.left h₁,
-          },
-          { split,
-            { apply and.left (and.right h₁), },
-            { split,
-              { sorry },
-              { apply and.right (and.right (and.right h₁)), },
-            },
-          },
+        { simp only [if_neg c₃],
+          sorry,
         },
       },
-      { simp [if_neg c₂],
-        by_cases c₃ : (height (delete k tr) + 1 < height tl),
-        { simp [if_pos c₃],
+      { simp only [if_neg c₂], 
+        by_cases c₃ : (height tl > height (delete k tr) + 1),
+        { sorry, },
+        { simp only [if_neg c₃],
           sorry,
-        },
-        { simp [if_neg c₃, ordered],
-          split,
-          { apply and.left h₁, },
-          { split,
-            { apply ihr,
-              apply and.left (and.right h₁),
-            },
-            { split,
-              { apply and.left (and.right (and.right h₁)), },
-              { sorry, },
-            },
-          },
         },
       },
     },
-  },
+  }
 end
 
 end deletion_lemmas
