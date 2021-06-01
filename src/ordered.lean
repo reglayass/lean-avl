@@ -1,4 +1,4 @@
-import basic
+import definitions
 import tactic.linarith
 set_option pp.generalized_field_notation false
 
@@ -9,44 +9,52 @@ open btree
 
 variables {α : Type u}
 
-lemma forall_insert (k k' : nat) (t : btree α) (a : α) (p : nat → nat → Prop) (h₀ : p k' k) :
-  forall_keys p t k' → forall_keys p (insert k a t) k' :=
+lemma forall_keys_trans (r : btree α) (p : nat → nat → Prop) (z x : nat) (h₁ : p x z) (h₂ : ∀ a b c, p a b → p b c → p a c) :
+  forall_keys p z r → forall_keys p x r :=
+begin
+  induction r,
+  case empty { simp [forall_keys], },
+  case node : rl rk ra rr ihl ihr { 
+    simp [forall_keys],
+    intros h₃ h₄ h₅,
+    split,
+    { finish, },
+    { split, 
+      { apply h₂, apply h₁, finish, },
+      { finish, },
+    },
+  },
+end
+
+lemma forall_insert (k k' : nat) (t : btree α) (a : α) (p : nat → nat → Prop) (h : p k' k) :
+  forall_keys p k' t → forall_keys p k' (insert k a t) :=
 begin
   intro h₁,
   induction t,
   case empty {
-    simp only [btree.insert, forall_keys],
-    simp only [forall_keys] at h₁,
-    apply and.intro h₁ (and.intro h₀ h₁),
+    simp [btree.insert, forall_keys] at *,
+    assumption,
   },
   case node : tl tk ta tr ihl ihr {
-    simp only [btree.insert],
-    simp only [forall_keys] at h₁,
+    simp only [btree.insert, forall_keys] at *,
+    cases_matching* (_ ∧ _),
     by_cases c₁ : (k < tk),
-    { simp only [if_pos c₁, forall_keys], 
-      apply and.intro,
-      { apply ihl; finish, },
-      { finish, },
+    { simp only [if_pos c₁, forall_keys],
+      repeat { split }; try { assumption },
+      { apply ihl, assumption },
     },
-    { simp only [if_neg c₁],
+    { simp only [if_neg c₁], 
       by_cases c₂ : (k > tk),
-      { simp only [if_pos c₂], 
-        simp only [forall_keys],
-        apply and.intro,
-        { finish, },
-        { apply and.intro, 
-          { finish, },
-          { apply ihr; finish, },
-        },
+      { simp only [if_pos c₂, forall_keys], 
+        repeat { split }; try { assumption },
+        { apply ihr, assumption, },
       },
-      { simp only [if_neg c₂, forall_keys],
-        apply and.intro,
-        { finish, },
-        { finish, },
-      }, 
+      { simp only [if_neg c₂, forall_keys], 
+        repeat { split }; try { assumption },
+      },
     },
-  },
-end
+  }
+end 
 
 lemma ordered_insert (t : btree α) (k : nat) (a : α) :
   ordered t → ordered (insert k a t) :=
@@ -58,53 +66,29 @@ begin
     finish,
   },
   case node : tl tk ta tr ihl ihr {
-    simp only [btree.insert],
-    simp only [ordered] at h₁,
+    simp only [btree.insert, ordered] at *,
+    cases_matching* (_ ∧ _),
     by_cases c₁ : (k < tk),
     { simp only [if_pos c₁, ordered], 
-      apply and.intro,
-      { apply ihl; finish, },
-      { apply and.intro, 
-        { finish, },
-        { apply and.intro,
-          { apply forall_insert, 
-            { exact c₁, },
-            { finish, },
-          },
-          { finish, },
-        },
-      },
+      repeat { split }; try { assumption },
+      { apply ihl, assumption, },
+      { apply forall_insert; assumption, },
     },
     { simp only [if_neg c₁], 
       by_cases c₂ : (k > tk),
       { simp only [if_pos c₂, ordered], 
-        apply and.intro,
-        { finish, },
-        { apply and.intro,
-          { apply ihr; finish, },
-          { apply and.intro, 
-            { finish, },
-            { apply forall_insert,
-              { exact c₂, },
-              { finish, },
-            },
-          }, 
-        },
+        repeat { split }; try { assumption },
+        { apply ihr, assumption, },
+        { apply forall_insert; assumption, },
       },
-      { simp only [if_neg c₂, ordered],
-        apply and.intro,
-        { finish, },
-        { apply and.intro, 
-          { finish, },
-          { have h : k = tk := by linarith,
-            apply and.intro, 
-            { subst h, finish, },
-            { subst h, finish, },
-          },
-        },
+      { simp only [if_neg c₂, ordered], 
+        have h : k = tk := by linarith,
+        repeat { split }; try { assumption },
+        { subst h, assumption, },
+        { subst h, assumption, },
       },
     },
-  },
+  }
 end
 
 end ordered

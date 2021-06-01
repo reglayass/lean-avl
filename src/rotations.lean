@@ -1,4 +1,5 @@
-import basic
+import definitions
+import ordered
 import tactic.linarith
 import tactic.omega
 set_option pp.generalized_field_notation false
@@ -7,40 +8,24 @@ universe u
 
 namespace rotation_lemmas
 open btree
+open ordered
 
 variables {α : Type u}
 
-lemma forall_keys_trans (r : btree α) (p : nat → nat → Prop) (z x : nat) (h₁ : p x z) (h₂ : ∀ a b c, p a b → p b c → p a c) :
-  forall_keys p z r → forall_keys p x r :=
-begin
-  induction r,
-  case empty { simp [forall_keys], },
-  case node : rl rk ra rr ihl ihr { 
-    simp [forall_keys],
-    intros h₃ h₄ h₅,
-    split,
-    { finish, },
-    { split, 
-      { apply h₂, apply h₁, finish, },
-      { finish, },
-    },
-  },
-end
-
-lemma easyL_ord (t : btree α) :
-  ordered t → ordered (easyL t) :=
+lemma simple_left_ord (t : btree α) :
+  ordered t → ordered (simple_left t) :=
 begin
   intro h₁,
   cases t,
-  case empty { simp [easyL, ordered], },
+  case empty { simp [simple_left, ordered], },
   case node : tl tk ta tr {
     cases tr,
     case empty {
-      simp [easyL],
+      simp [simple_left],
       exact h₁,
     },
     case node : trl trk tra trr {
-      simp [easyL, ordered, forall_keys] at *,
+      simp [simple_left, ordered, forall_keys] at *,
       cases_matching* (_ ∧ _),
       repeat { split }; try { assumption },
       apply forall_keys_trans _ (>) tk,
@@ -51,22 +36,22 @@ begin
   },
 end
 
-lemma easyR_ord (t : btree α) :
-  ordered t → ordered (easyR t) :=
+lemma simple_right_ord (t : btree α) :
+  ordered t → ordered (simple_right t) :=
 begin
   intro h₁,
   cases t,
   case empty {
-    simp [easyR, ordered],
+    simp [simple_right, ordered],
   },
   case node : tl tk ta tr {
     cases tl,
     case empty {
-      simp [easyR],
+      simp [simple_right],
       exact h₁,
     },
     case node: tll tlk tla tlr {
-      simp [easyR, ordered, forall_keys] at *,
+      simp [simple_right, ordered, forall_keys] at *,
       cases_matching* (_ ∧ _),
       repeat { split }; try { assumption },
       apply forall_keys_trans _ (<) tk _,
@@ -77,32 +62,32 @@ begin
   }
 end
 
-lemma rotL_ordered (t : btree α) :
-  ordered t → ordered (rotL t) :=
+lemma rotate_left_ordered (t : btree α) :
+  ordered t → ordered (rotate_left t) :=
 begin
   intro h₁,
   cases t,
   case empty {
-    simp [rotL, ordered],
+    simp [rotate_left, ordered],
   },
   case node : l k a r {
     cases r,
     case empty {
-      simp [rotL],
+      simp [rotate_left],
       exact h₁,
     },
     case node: rl rk ra rr {
-      simp [rotL],
+      simp [rotate_left],
       by_cases c₁ : (height rr < height rl),
       { simp only [if_pos c₁],
         cases rl,
         case empty {
-          simp [easyR],
-          apply easyL_ord,
+          simp [simple_right],
+          apply simple_left_ord,
           exact h₁,
         },
         case node : rll rlk rla rlr {
-          simp only [easyR, easyL, ordered, forall_keys] at *,
+          simp only [simple_right, simple_left, ordered, forall_keys] at *,
           cases_matching* (_ ∧ _),
           repeat {split} ; try { assumption },
           { apply forall_keys_trans l (>) k, 
@@ -118,39 +103,39 @@ begin
         },
       },
       { simp [if_neg c₁], 
-        apply easyL_ord,
+        apply simple_left_ord,
         exact h₁,
       },
     },
-  }
+  },
 end
 
-lemma rotR_ordered (t : btree α) :
-  ordered t → ordered (rotR t) :=
+lemma rotate_right_ordered (t : btree α) :
+  ordered t → ordered (rotate_right t) :=
 begin
   intro h₁,
   cases t,
   case empty {
-    simp [rotR, ordered],
+    simp [rotate_right, ordered],
   },
   case node : l k a r {
     cases l,
     case empty {
-      simp [rotR],
+      simp [rotate_right],
       exact h₁,
     },
     case node : ll lk la lr {
-      simp [rotR],
+      simp [rotate_right],
       by_cases c₁ : (height ll < height lr),
       { simp [if_pos c₁], 
         cases lr,
         case empty {
-          simp [easyL],
-          apply easyR_ord,
+          simp [simple_left],
+          apply simple_right_ord,
           exact h₁,
         },
         case node: lrl lrk lra lrr {
-          simp only [easyL, easyR, ordered, forall_keys] at *,
+          simp only [simple_left, simple_right, ordered, forall_keys] at *,
           cases_matching* (_ ∧ _),
           repeat { split };  try { assumption },
           { apply forall_keys_trans ll (>) lk _,
@@ -166,151 +151,151 @@ begin
         },
       },
       { simp [if_neg c₁], 
-        apply easyR_ord,
+        apply simple_right_ord,
         exact h₁,
       },
     },
   },
 end
 
-lemma easyL_keys (t : btree α) (k : nat) (x : bool) :
-  bound k t = x → bound k (easyL t) = x :=
+lemma simple_left_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = x → bound k (simple_left t) = x :=
 begin
   cases t,
   case empty {
-    simp [easyL],
+    simp [simple_left],
   },
   case node : tl tk ta tr {
     intro h₁,
     cases tr,
     case empty {
-      simp [easyL],
+      simp [simple_left],
       assumption,
     },
     case node : trl trk tra trr {
-      simp [easyL, bound],
+      simp [simple_left, bound],
       simp [bound] at h₁,
       finish,
     },
   },
 end
 
-lemma easyR_keys (t : btree α) (k : nat) (x : bool) :
-  bound k t = x → bound k (easyR t) = x :=
+lemma simple_right_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = x → bound k (simple_right t) = x :=
 begin
   cases t,
   case empty {
-    simp [easyR],
+    simp [simple_right],
   },
   case node : tl tk ta tr {
     intros h₁,
     cases tl,
     case empty {
-      simp [easyR],
+      simp [simple_right],
       assumption,
     },
     case node : tll tlk tla tlr {
-      simp [easyR, bound],
+      simp [simple_right, bound],
       simp [bound] at h₁,
       finish,
     },
   },
 end
 
-lemma rotR_keys (t : btree α) (k : nat) (x : bool) :
-  bound k t = x → bound k (rotR t) = x :=
+lemma rotate_right_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = x → bound k (rotate_right t) = x :=
 begin
   cases t,
   case empty {
-    simp [rotR],
+    simp [rotate_right],
   },
   case node : tl tk ta tr {
     intro h₁,
     cases tl,
     case empty {
-      simp [rotR],
+      simp [rotate_right],
       assumption,
     },
     case node : tll tlk tla tlr {
-      simp [rotR],
+      simp [rotate_right],
       by_cases c₁ : (height tll < height tlr),
       { simp only [if_pos c₁],
-        apply easyR_keys,
+        apply simple_right_keys,
         cases tlr,
         case empty {
-          simp [easyL],
+          simp [simple_left],
           assumption,
         },
         case node : tlrl tlrk tlra tlrr {
-          simp [easyL, bound],
+          simp [simple_left, bound],
           simp [bound] at h₁,
           finish,
         } 
       },
       { simp only [if_neg c₁], 
-        apply easyR_keys,
+        apply simple_right_keys,
         assumption,
       },
     },
   },
 end
 
-lemma rotL_keys (t : btree α) (k : nat) (x : bool) :
-  bound k t = x → bound k (rotL t) = x :=
+lemma rotate_left_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = x → bound k (rotate_left t) = x :=
 begin
   cases t,
   case empty {
-    simp [rotL],
+    simp [rotate_left],
   },
   case node : tl tk ta tr {
     intro h₁,
     cases tr,
     case empty {
-      simp [rotL],
+      simp [rotate_left],
       assumption,
     },
     case node : trl trk tra trr {
-      simp [rotL],
+      simp [rotate_left],
       by_cases c₁ : (height trr < height trl),
       { simp only [if_pos c₁], 
-        apply easyL_keys,
+        apply simple_left_keys,
         cases trl,
         case empty {
-          simp [easyR],
+          simp [simple_right],
           assumption,
         },
         case node : trll trlk trla trlr {
-          simp [easyR, bound],
+          simp [simple_right, bound],
           simp [bound] at h₁,
           finish,
         }
       },
       { simp only [if_neg c₁],
-        apply easyL_keys,
+        apply simple_left_keys,
         assumption, 
       },
     },
   },
 end
 
-lemma easyL_balanced (t : btree α) :
-  outRight t → balanced (easyL t) :=
+lemma simple_left_balanced (t : btree α) :
+  right_heavy t → balanced (simple_left t) :=
 begin
   intro h₁,
   cases t,
   case empty {
-    simp [easyL, balanced],
+    simp [simple_left, balanced],
   },
   case node : tl tk ta tr {
     cases tr,
     case empty {
-      simp [easyL, balanced],
-      simp [outRight] at h₁,
+      simp [simple_left, balanced],
+      simp [right_heavy] at h₁,
       contradiction,
     },
     case node : trl trk tra trr {
-      simp [easyL, balanced, height],
-      simp [outRight] at h₁,
+      simp [simple_left, balanced, height],
+      simp [right_heavy] at h₁,
       cases_matching* (_ ∧ _),
       by_cases c₁ : (height trr ≤ 1 + max (height tl) (height trl)),
       { simp [if_pos c₁], 
@@ -327,33 +312,33 @@ begin
         rw max_eq_left h₁_right_right_left,
         linarith,
       },
-    }
-  }
+    },
+  },
 end
 
--- example (x y : nat) : x ≤ y → 1 + x ≤ 1 + y := by library_search
--- example (x y z : nat) : x ≤ z → y ≤ z → max x y ≤ z := by library_search
--- example (x y : nat) : x ≤ y → max y x = y := by library_search
+-- -- example (x y : nat) : x ≤ y → 1 + x ≤ 1 + y := by library_search
+-- -- example (x y z : nat) : x ≤ z → y ≤ z → max x y ≤ z := by library_search
+-- -- example (x y : nat) : x ≤ y → max y x = y := by library_search
 
-lemma easyR_balanced (t : btree α) :
-  outLeft t → 
-    balanced (easyR t) :=
+lemma simple_right_balanced (t : btree α) :
+  left_heavy t → 
+    balanced (simple_right t) :=
 begin
   intro h₁,
   cases t,
   case empty {
-    simp [easyR, balanced],
+    simp [simple_right, balanced],
   },
   case node : tl tk ta tr {
     cases tl,
     case empty {
-      simp [easyR, balanced],
-      simp [outLeft] at h₁,
+      simp [simple_right, balanced],
+      simp [left_heavy] at h₁,
       contradiction,
     },
     case node : tll tlk tla tlr {
-      simp [easyR, balanced, height],
-      simp [outLeft] at h₁,
+      simp [simple_right, balanced, height],
+      simp [left_heavy] at h₁,
       cases_matching* (_ ∧ _), 
       by_cases c₁ : (1 + max (height tlr) (height tr) ≤ height tll),
       { simp [if_pos c₁], 
@@ -369,38 +354,38 @@ begin
         { assumption, },
         { simp, },
       },
-    }
-  }
+    },
+  },
 end
 
-lemma rotR_balance (t : btree α) :
-  outLeft t → balanced (rotR t) :=
+lemma rotate_right_balance (t : btree α) :
+  left_heavy t → balanced (rotate_right t) :=
 begin
   intro h₁,
   cases t,
   case empty {
-    simp [rotR, balanced],
+    simp [rotate_right, balanced],
   },
   case node : l k a r {
     cases l,
     case empty {
-      simp [rotR, balanced],
-      simp [outLeft] at h₁,
+      simp [rotate_right, balanced],
+      simp [left_heavy] at h₁,
       contradiction,
     },
     case node : tl tk ta tr {
-      simp [rotR],
+      simp [rotate_right],
       by_cases c₁ : (height tl < height tr),
       { simp [if_pos c₁], 
         cases tr,
         case empty {
-          simp [easyL],
-          apply easyR_balanced,
+          simp [simple_left],
+          apply simple_right_balanced,
           exact h₁,
         },
         case node : trl trk tra trr {
-          simp [easyL, easyR, balanced, height],
-          simp [outLeft, height] at h₁,
+          simp [simple_left, simple_right, balanced, height],
+          simp [left_heavy, height] at h₁,
           cases_matching* (_ ∧ _),
           by_cases c₂ : (height trr ≤ height tl ∧ height r ≤ height tl ∨ height trr ≤ height trl ∧ height r ≤ height trl),
           { sorry },
@@ -408,46 +393,46 @@ begin
         },
       },
       { simp [if_neg c₁],
-        apply easyR_balanced,
+        apply simple_right_balanced,
         exact h₁,
       }
     }
   }
 end
 
-lemma rotL_balance (t : btree α) :
-  outRight t → balanced (rotL t) :=
+lemma rotate_left_balance (t : btree α) :
+  right_heavy t → balanced (rotate_left t) :=
 begin
   intro h₁,
   cases t,
   case empty {
-    simp [rotL, balanced],
+    simp [rotate_left, balanced],
   },
   case node : l k a r {
     cases r,
     case empty {
-      simp [rotL, balanced],
-      simp [outRight] at h₁,
+      simp [rotate_left, balanced],
+      simp [right_heavy] at h₁,
       contradiction,
     },
     case node : tl tk ta tr {
-      simp [rotL],
+      simp [rotate_left],
       by_cases c₁ : (height tr < height tl),
       { simp [if_pos c₁],
         cases tl,
         case empty {
-          simp [easyR],
-          apply easyL_balanced,
+          simp [simple_right],
+          apply simple_left_balanced,
           exact h₁,
         },
         case node : tll tlk tla tlr {
-          simp [easyR, easyL, balanced, height],
-          simp [outRight, height] at h₁,
+          simp [simple_right, simple_left, balanced, height],
+          simp [right_heavy, height] at h₁,
           sorry,
         }
       },
       { simp [if_neg c₁],
-        apply easyL_balanced,
+        apply simple_left_balanced,
         exact h₁,
       },
     }

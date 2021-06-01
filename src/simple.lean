@@ -1,4 +1,4 @@
-import basic
+import definitions
 import tactic.linarith
 set_option pp.generalized_field_notation false
 
