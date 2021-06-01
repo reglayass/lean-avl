@@ -39,7 +39,7 @@ begin
       { simp [if_pos c₂],
         apply ihr; apply and.right (and.right h₁),
       },
-      { simp [if_neg c₂], 
+      { simp [if_neg c₂],
         sorry,
       },
     },

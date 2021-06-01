@@ -11,7 +11,7 @@ open btree
 variables {α : Type u}
 
 lemma forall_keys_trans (r : btree α) (p : nat → nat → Prop) (z x : nat) (h₁ : p x z) (h₂ : ∀ a b c, p a b → p b c → p a c) :
-  forall_keys p r z → forall_keys p r x :=
+  forall_keys p z r → forall_keys p x r :=
 begin
   induction r,
   case empty { simp [forall_keys], },

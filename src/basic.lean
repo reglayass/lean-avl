@@ -30,15 +30,16 @@ def bound (x : nat) : btree α → bool
 | (btree.node l k a r) :=
   x = k ∨ bound l ∨ bound r
 
-def forall_keys (p : nat → nat → Prop) : btree α → nat → Prop
-| btree.empty x := tt
-| (btree.node l k a r) x :=
-  forall_keys l x ∧ (p x k) ∧ forall_keys r x
+-- swap nat / tree
+def forall_keys (p : nat → nat → Prop) : nat → btree α → Prop
+| x btree.empty := tt
+| x (btree.node l k a r) :=
+  forall_keys x l ∧ (p x k) ∧ forall_keys x r
 
 def ordered : btree α → Prop
 | btree.empty := tt
 | (btree.node l k a r) :=
-  ordered l ∧ ordered r ∧ (forall_keys (>) l k) ∧ (forall_keys (<) r k)
+  ordered l ∧ ordered r ∧ (forall_keys (>) k l) ∧ (forall_keys (<) k r)
 
 def height : btree α → nat
 | btree.empty := 0
@@ -128,8 +129,8 @@ def shrink : btree α → option (nat × α × btree α)
   | none := (k, v, l)
   | some (x, a, sh) :=
     if height l > height sh + 1
-      then (x, a, rotR (btree.node sh k v l))
-      else (x, a, btree.node sh k v l)
+      then (x, a, rotR (btree.node l k v sh))
+      else (x, a, btree.node l k v sh)
   end
 
 inductive shrink_view {α} : btree α → option (nat × α × btree α) → Sort*
@@ -140,12 +141,12 @@ inductive shrink_view {α} : btree α → option (nat × α × btree α) → Sor
 | nonempty_nonempty₁ : ∀ {l k v r x a sh out},
   shrink r = some (x, a, sh) →
   height l > height sh + 1 →
-  out = some (x, a, rotR (btree.node sh k v l)) →
+  out = some (x, a, rotR (btree.node l k v sh)) →
   shrink_view (node l k v r) out
 | nonempty_nonempty₂ : ∀ {l k v r x a sh},
   shrink r = some (x, a, sh) →
   height l ≤ height sh + 1 →
-  shrink_view (node l k v r) (some (x, a, node sh k v l))
+  shrink_view (node l k v r) (some (x, a, node l k v sh))
 
 def delRoot : btree α → btree α
 | btree.empty := btree.empty
