@@ -46,6 +46,7 @@ begin
   },
 end
 
+/- If a key is bound to a tree, then lookup will in result in some result -/
 lemma bound_lookup (t : btree α) (k : nat) :
   bound k t → ∃ (v : α), lookup k t = some v :=
 begin
@@ -78,6 +79,7 @@ begin
   },
 end
 
+/- If you lookup a key just inserted, the same value you just inserted will be returned -/
 lemma lookup_insert_eq (k : nat) (t : btree α) (v : α) :
   lookup k (insert k v t) = v :=
 begin
@@ -100,6 +102,7 @@ begin
   },
 end
 
+/- Inserting twice doesn't make a difference if the keys and values are the same -/
 lemma lookup_insert_shadow (t : btree α) (v v' d : α) (k k' : nat) :
   lookup k' (insert k v (insert k v t)) = lookup k' (insert k v t) :=
 begin
@@ -136,7 +139,7 @@ end
 
 /- If you check the bound on a key just inserted into the tree, it will return true -/
 lemma bound_insert_eq (k : nat) (t : btree α) (v : α) :
-  bound k (insert k v t) = tt :=
+  bound k (insert k v t) :=
 begin
   induction t,
   case empty {
