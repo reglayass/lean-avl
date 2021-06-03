@@ -179,4 +179,56 @@ begin
   }
 end
 
+lemma insert_balanced_diff_bound (t : btree α) (k x : nat) (v : α) :
+  bound x t → bound x (insert_balanced k v t) :=
+begin
+  intro h₁,
+  induction t,
+  case empty {
+    simp [insert_balanced, bound],
+    simp [bound] at h₁,
+    contradiction,
+  },
+  case node : tl tk ta tr ihl ihr {
+    simp only [insert_balanced],
+    by_cases c₁ : (k < tk),
+    { simp only [if_pos c₁], 
+      by_cases c₂ : (height (insert_balanced k v tl) > height tr + 1),
+      { simp only [if_pos c₂], 
+        apply rotate_right_keys,
+        simp [bound],
+        simp [bound] at h₁,
+        finish,
+      },
+      { simp only [if_neg c₂], 
+        simp [bound],
+        simp [bound] at h₁,
+        finish,
+      },
+    },
+    { simp only [if_neg c₁], 
+      by_cases c₂ : (k > tk),
+      { simp only [if_pos c₂], 
+        by_cases c₃ : (height (insert_balanced k v tr) > height tl + 1),
+        { simp only [if_pos c₃], 
+          apply rotate_left_keys,
+          simp [bound],
+          simp [bound] at h₁,
+          finish,
+        },
+        { simp only [if_neg c₃],
+          simp [bound],
+          simp [bound] at h₁,
+          finish,
+        },
+      },
+      { simp only [if_neg c₂], 
+        simp [bound],
+        simp [bound] at h₁,
+        finish,
+      },
+    },
+  }
+end
+
 end insertion_balanced_lemmas
