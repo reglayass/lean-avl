@@ -87,24 +87,18 @@ def balanced : btree α → bool
 /- Definition of a tree being left-heavy -/
 def left_heavy : btree α → bool
 | btree.empty := ff
-| (btree.node l k a r) :=
-  match l with
-  | btree.empty := ff
-  | (btree.node ll lk la lr) :=
-    (height ll ≥ height lr) ∧ (height ll ≤ height lr + 1) ∧
-    (height lr ≥ height r) ∧ (height r + 1 = height ll)
-  end
+| (btree.node btree.empty k a r) := ff
+| (btree.node (btree.node ll lk la lr) k a r) :=
+  (height ll ≥ height lr) ∧ (height ll ≤ height lr + 1) ∧
+  (height lr ≥ height r) ∧ (height r + 1 = height ll)
 
 /- Definition of a tree being right-heavy -/
 def right_heavy : btree α → bool
 | btree.empty := ff
-| (btree.node l k a r) :=
-  match r with
-  | btree.empty := ff
-  | (btree.node rl rk ra rr) :=
-    (height rr ≥ height rl) ∧ (height rr ≤ height rl + 1) ∧
-    (height rl ≤ height l) ∧ (height l + 1 = height rr)
-  end
+| (btree.node l k a btree.empty) := ff
+| (btree.node l k a (btree.node rl rk ra rr)) :=
+  (height rr ≥ height rl) ∧ (height rr ≤ height rl + 1) ∧
+  (height rl ≤ height l) ∧ (height l + 1 = height rr)
 
 /- Simple right rotation -/
 def simple_right : btree α → btree α
