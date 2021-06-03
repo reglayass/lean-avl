@@ -166,10 +166,10 @@ def insert_balanced (x : nat) (v : α) : btree α → btree α
     else btree.node l k a nr
   else btree.node l x v r
 
-def inorder_pred : btree α → option (nat × α × btree α)
+def shrink : btree α → option (nat × α × btree α)
 | btree.empty := none
 | (btree.node l k v r) := some $
-  match inorder_pred r with
+  match shrink r with
   | none := (k, v, l)
   | some (x, a, sh) :=
     if height l > height sh + 1
@@ -180,40 +180,40 @@ def inorder_pred : btree α → option (nat × α × btree α)
 def del_node : btree α → btree α
 | btree.empty := btree.empty
 | (btree.node l k v r) :=
-  match inorder_pred l with 
+  match shrink l with 
   | none := r
   | some (x, a, sh) :=
     if height r > height sh + 1 then rotate_left (node sh x a r)
     else node sh x a r
   end
 
-inductive inorder_pred_view {α} : btree α → option (nat × α × btree α) → Sort*
-| empty : inorder_pred_view empty none
+inductive shrink_view {α} : btree α → option (nat × α × btree α) → Sort*
+| empty : shrink_view empty none
 | nonempty_empty : ∀ {l k v r},
-  inorder_pred r = none →
-  inorder_pred_view (node l k v r) (some (k, v, l))
+  shrink r = none →
+  shrink_view (node l k v r) (some (k, v, l))
 | nonempty_nonempty₁ : ∀ {l k v r x a sh out},
-  inorder_pred r = some (x, a, sh) →
+  shrink r = some (x, a, sh) →
   height l > height sh + 1 →
   out = some (x, a, rotate_right (btree.node l k v sh)) →
-  inorder_pred_view (node l k v r) out
+  shrink_view (node l k v r) out
 | nonempty_nonempty₂ : ∀ {l k v r x a sh},
-  inorder_pred r = some (x, a, sh) →
+  shrink r = some (x, a, sh) →
   height l ≤ height sh + 1 →
-  inorder_pred_view (node l k v r) (some (x, a, node l k v sh))
+  shrink_view (node l k v r) (some (x, a, node l k v sh))
 
 /- delRoot_view t dt ↔ delRoot t = dt -/
 inductive del_node_view {α} : btree α → btree α → Sort*
 | empty : del_node_view empty empty
 | nonempty_empty : ∀ {l k v r},
-  inorder_pred l = none →
+  shrink l = none →
   del_node_view (node l k v r) r
 | nonempty_nonempty₁ : ∀ {l k v r x a sh},
-  inorder_pred l = some (x, a, sh) →
+  shrink l = some (x, a, sh) →
   height r > height sh + 1 →
   del_node_view (node l k v r) (rotate_left (node sh x a r))
 | nonempty_nonempty₂ : ∀ {l k v r x a sh},
-  inorder_pred l = some (x, a, sh) →
+  shrink l = some (x, a, sh) →
   height r ≤ height sh + 1 →
   del_node_view (node l k v r) (node sh x a r)
 
