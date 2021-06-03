@@ -138,4 +138,45 @@ begin
   },
 end
 
+lemma insert_balanced_bound (t : btree α) (k : nat) (v : α) :
+  bound k (insert_balanced k v t) :=
+begin
+  induction t,
+  case empty {
+    simp [insert_balanced, bound],
+  },
+  case node : tl tk ta tr ihl ihr {
+    simp [insert_balanced],
+    by_cases c₁ : (k < tk),
+    { simp only [if_pos c₁], 
+      by_cases c₂ : (height tr + 1 < height (insert_balanced k v tl)),
+      { simp only [if_pos c₂], 
+        apply rotate_right_keys,
+        simp [bound],
+        finish,
+      },
+      { simp only [if_neg c₂], 
+        simp [bound],
+        finish,
+      },
+    },
+    { simp only [if_neg c₁], 
+      by_cases c₂ : (tk < k),
+      { simp only [if_pos c₂], 
+        by_cases c₃ : (height tl + 1 < height (insert_balanced k v tr)),
+        { simp only [if_pos c₃], 
+          apply rotate_left_keys,
+          simp [bound],
+          finish,
+        },
+        { simp only [if_neg c₃], 
+          simp [bound],
+          finish,
+        },
+      },
+      { simp [if_neg c₂, bound], },
+    },
+  }
+end
+
 end insertion_balanced_lemmas
