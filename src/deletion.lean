@@ -21,7 +21,7 @@ begin
   },
   case node : l k a r {
     dsimp [del_node],
-    cases h : inorder_pred l,
+    cases h : shrink l,
     case none {
       dsimp [del_node._match_1],
       apply del_node_view.nonempty_empty; assumption,
@@ -41,43 +41,44 @@ begin
   },
 end
 
-lemma inorder_pred_inorder_pred_view (t : btree α) : 
-  inorder_pred_view t (inorder_pred t) :=
+lemma shrink_shrink_view (t : btree α) : 
+  shrink_view t (shrink t) :=
 begin
  cases t,
  case empty {
-  exact inorder_pred_view.empty,
+  exact shrink_view.empty,
  },
  case node : l k a r {
-  dsimp [inorder_pred],
-  cases h : inorder_pred r,
+  dsimp [shrink],
+  cases h : shrink r,
   case none {
-    dsimp only [inorder_pred._match_1],
-    apply inorder_pred_view.nonempty_empty; assumption,
+    dsimp only [shrink._match_1],
+    apply shrink_view.nonempty_empty; assumption,
   },
   case some {
     rcases val with ⟨x, a', sh⟩,
-    dsimp only [inorder_pred._match_1],
+    dsimp only [shrink._match_1],
     by_cases h' : (height l > height sh + 1),
     { simp only [if_pos h'], 
-      apply inorder_pred_view.nonempty_nonempty₁, try { assumption },
+      apply shrink_view.nonempty_nonempty₁, try { assumption },
       assumption, simp,
     },
     { simp only [if_neg h'],
-      apply inorder_pred_view.nonempty_nonempty₂, try { assumption },
+      apply shrink_view.nonempty_nonempty₂, try { assumption },
       linarith,
     },
   },
  },
 end
 
-lemma inorder_pred_ordered (l r sh : btree α) (k x : nat) (v a : α) :
-  ordered (btree.node l k v r) ∧ inorder_pred (btree.node l k v r) = some (x, a, sh) → (ordered sh ∧ forall_keys (>) x sh) :=
+/- If a tree is ordered, the shrunken tree is also ordered and the inorder predecessor is larger than all the keys in the shrunken tree-/
+lemma shrink_ordered (l r sh : btree α) (k x : nat) (v a : α) :
+  ordered (btree.node l k v r) ∧ shrink (btree.node l k v r) = some (x, a, sh) → (ordered sh ∧ forall_keys (>) x sh) :=
 begin
   intro h₁,
   induction r generalizing x a sh l k v,
   case empty {
-    simp [ordered, inorder_pred] at h₁,
+    simp [ordered, shrink] at h₁,
     cases_matching* (_ ∧ _),
     rw ← h₁_right_right_right,
     split,
@@ -86,7 +87,7 @@ begin
   },
   case node : rl rk ra rr ihl ihr {
     cases_matching* (_ ∧ _),
-    cases' inorder_pred_inorder_pred_view (node l k v (node rl rk ra rr)),
+    cases' shrink_shrink_view (node l k v (node rl rk ra rr)),
     case nonempty_empty { cases' h₁_right, 
       simp [ordered] at h₁_left,
       finish,
@@ -116,6 +117,7 @@ begin
   },
 end
 
+/- Deleting a node preserves order -/
 lemma del_node_ordered (t : btree α) :
   ordered t → ordered (del_node t) :=
 begin
@@ -137,6 +139,7 @@ begin
   }
 end
 
+/- Deleting keys preserves order -/
 lemma delete_ordered (t : btree α) (k : nat) : 
   ordered t → ordered (delete k t) :=
 begin
@@ -194,6 +197,7 @@ begin
   }
 end
 
+/- Deletion does not add new keys -/
 lemma delete_nbound_key (t : btree α) (k x : nat) :
   bound x t = ff → bound x (delete k t) = ff :=
 begin

@@ -125,6 +125,7 @@ begin
   }
 end
 
+/- Simple left rotations preserve order -/
 lemma simple_left_ord (t : btree α) :
   ordered t → ordered (simple_left t) :=
 begin
@@ -149,6 +150,7 @@ begin
   },
 end
 
+/- Simple right rotations preserve order -/
 lemma simple_right_ord (t : btree α) :
   ordered t → ordered (simple_right t) :=
 begin
@@ -175,6 +177,7 @@ begin
   }
 end
 
+/- Left rotations preserve order -/
 lemma rotate_left_ordered (t : btree α) :
   ordered t → ordered (rotate_left t) :=
 begin
@@ -223,6 +226,7 @@ begin
   },
 end
 
+/- Right rotations preserve order -/
 lemma rotate_right_ordered (t : btree α) :
   ordered t → ordered (rotate_right t) :=
 begin
@@ -271,6 +275,7 @@ begin
   },
 end
 
+/- Simple left rotations preserve pre-existing keys -/
 lemma simple_left_keys (t : btree α) (k : nat) (x : bool) :
   bound k t = x → bound k (simple_left t) = x :=
 begin
@@ -293,6 +298,7 @@ begin
   },
 end
 
+/- Simple right rotations preserve pre-existing keys -/
 lemma simple_right_keys (t : btree α) (k : nat) (x : bool) :
   bound k t = x → bound k (simple_right t) = x :=
 begin
@@ -315,6 +321,7 @@ begin
   },
 end
 
+/- Right rotations preserve pre-existing keys -/
 lemma rotate_right_keys (t : btree α) (k : nat) (x : bool) :
   bound k t = x → bound k (rotate_right t) = x :=
 begin
@@ -353,6 +360,7 @@ begin
   },
 end
 
+/- Left rotations preserve pre-existing keys -/
 lemma rotate_left_keys (t : btree α) (k : nat) (x : bool) :
   bound k t = x → bound k (rotate_left t) = x :=
 begin
@@ -391,6 +399,7 @@ begin
   },
 end
 
+/- If a tree is right-heavy, a simple left rotations restores balance -/
 lemma simple_left_balanced (t : btree α) :
   right_heavy t → balanced (simple_left t) :=
 begin
@@ -429,10 +438,7 @@ begin
   },
 end
 
--- -- example (x y : nat) : x ≤ y → 1 + x ≤ 1 + y := by library_search
--- -- example (x y z : nat) : x ≤ z → y ≤ z → max x y ≤ z := by library_search
--- -- example (x y : nat) : x ≤ y → max y x = y := by library_search
-
+/-  If a tree is left-heavy, a simple right rotation preserves balance -/
 lemma simple_right_balanced (t : btree α) :
   left_heavy t → 
     balanced (simple_right t) :=
@@ -471,7 +477,8 @@ begin
   },
 end
 
-lemma rotate_right_balance (t : btree α) :
+/- If a tree is left-heavy, a right rotation restores balance -/
+lemma rotate_right_balanced (t : btree α) :
   left_heavy t → balanced (rotate_right t) :=
 begin
   intro h₁,
@@ -513,7 +520,8 @@ begin
   }
 end
 
-lemma rotate_left_balance (t : btree α) :
+/- If a tree is right-heavy, a left rotation restores balance -/
+lemma rotate_left_balanced (t : btree α) :
   right_heavy t → balanced (rotate_left t) :=
 begin
   intro h₁,

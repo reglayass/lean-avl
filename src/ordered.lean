@@ -9,6 +9,7 @@ open btree
 
 variables {α : Type u}
 
+/- Transivitity property for keys in a binary search tree -/
 lemma forall_keys_trans (r : btree α) (p : nat → nat → Prop) (z x : nat) (h₁ : p x z) (h₂ : ∀ a b c, p a b → p b c → p a c) :
   forall_keys p z r → forall_keys p x r :=
 begin
@@ -26,6 +27,7 @@ begin
   },
 end
 
+/- Order of keys previously existing does not change on new key insertion -/
 lemma forall_insert (k k' : nat) (t : btree α) (a : α) (p : nat → nat → Prop) (h : p k' k) :
   forall_keys p k' t → forall_keys p k' (insert k a t) :=
 begin
@@ -56,6 +58,7 @@ begin
   }
 end 
 
+/- Insertion into an ordered tree preserves order -/
 lemma ordered_insert (t : btree α) (k : nat) (a : α) :
   ordered t → ordered (insert k a t) :=
 begin
