@@ -497,25 +497,23 @@ begin
       simp [rotate_right],
       by_cases c₁ : (height tl < height tr),
       { simp [if_pos c₁], 
+        apply simple_right_balanced,
+        simp [left_heavy] at h₁,
         cases tr,
         case empty {
-          simp [simple_left],
-          apply simple_right_balanced,
-          exact h₁,
+          simp [simple_left, left_heavy],
+          assumption,
         },
         case node : trl trk tra trr {
-          simp [simple_left, simple_right, balanced, height],
-          simp [left_heavy, height] at h₁,
+          simp [simple_left, left_heavy],
           cases_matching* (_ ∧ _),
-          by_cases c₂ : (height trr ≤ height tl ∧ height r ≤ height tl ∨ height trr ≤ height trl ∧ height r ≤ height trl),
-          { sorry },
-          { sorry },
-        },
+          linarith,
+        }
       },
-      { simp [if_neg c₁],
+      { simp [if_neg c₁],   
         apply simple_right_balanced,
-        exact h₁,
-      }
+        assumption,
+      },
     }
   }
 end
@@ -540,16 +538,17 @@ begin
       simp [rotate_left],
       by_cases c₁ : (height tr < height tl),
       { simp [if_pos c₁],
+        apply simple_left_balanced,
+        simp [right_heavy] at h₁,
         cases tl,
         case empty {
-          simp [simple_right],
-          apply simple_left_balanced,
-          exact h₁,
+          simp [simple_right, right_heavy],
+          assumption,
         },
         case node : tll tlk tla tlr {
-          simp [simple_right, simple_left, balanced, height],
-          simp [right_heavy, height] at h₁,
-          sorry,
+          simp [simple_right, right_heavy],
+          cases_matching* (_ ∧ _),
+          linarith,
         }
       },
       { simp [if_neg c₁],
