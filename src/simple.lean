@@ -17,6 +17,10 @@ lemma lookup_empty (k : nat) :
 lemma bound_empty (k : nat) :
   bound k (@empty_tree α) = ff := by refl
 
+/- If you insert into an empty tree, then you just have one node -/
+lemma insert_empty (k : nat) (v : α) :
+  insert k v (@empty_tree α) = btree.node btree.empty k v btree.empty := by refl
+
 /- If bound returns false, then the key is not in the tree therefore
   The lookup will return none -/
 lemma bound_false (k : nat) (t : btree α) :

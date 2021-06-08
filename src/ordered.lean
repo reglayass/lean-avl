@@ -10,20 +10,18 @@ open btree
 variables {α : Type u}
 
 /- Transivitity property for keys in a binary search tree -/
-lemma forall_keys_trans (r : btree α) (p : nat → nat → Prop) (z x : nat) (h₁ : p x z) (h₂ : ∀ a b c, p a b → p b c → p a c) :
-  forall_keys p z r → forall_keys p x r :=
+lemma forall_keys_trans (t : btree α) (p : nat → nat → Prop) (z x : nat) (h₁ : p x z) (h₂ : ∀ a b c, p a b → p b c → p a c) :
+  forall_keys p z t → forall_keys p x t :=
 begin
-  induction r,
+  induction t,
   case empty { simp [forall_keys], },
-  case node : rl rk ra rr ihl ihr { 
+  case node : tl tk ta tr ihl ihr { 
     simp [forall_keys],
     intros h₃ h₄ h₅,
-    split,
-    { finish, },
-    { split, 
-      { apply h₂, apply h₁, finish, },
-      { finish, },
-    },
+    repeat { split },
+    { apply ihl, assumption },
+    { apply h₂, apply h₁, assumption },
+    { apply ihr, assumption },
   },
 end
 
