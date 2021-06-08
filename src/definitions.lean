@@ -123,7 +123,8 @@ def rotate_right : btree α → btree α
   match l with
   | btree.empty := (btree.node l k a r)
   | (btree.node ll lk la lr) :=
-    if height ll < height lr then simple_right (btree.node (simple_left l) k a r)
+    if height ll < height lr 
+    then simple_right (btree.node (simple_left l) k a r)
     else simple_right (btree.node l k a r)
   end 
 
@@ -134,7 +135,8 @@ def rotate_left : btree α → btree α
   match r with
   | btree.empty := (btree.node l k a r)
   | (btree.node rl rk ra rr) :=
-    if height rr < height rl then simple_left (btree.node l k a (simple_right r))
+    if height rr < height rl 
+    then simple_left (btree.node l k a (simple_right r))
     else simple_left (btree.node l k a r)
   end
 
