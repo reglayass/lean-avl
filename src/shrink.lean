@@ -42,49 +42,97 @@ begin
  },
 end
 
-/- If a tree is ordered, the shrunken tree is also ordered and the inorder predecessor is larger than all the keys in the shrunken tree-/
-lemma shrink_ordered (l r sh : btree α) (k x : nat) (v a : α) :
-  ordered (btree.node l k v r) ∧ shrink (btree.node l k v r) = some (x, a, sh) → (ordered sh ∧ forall_keys (>) x sh) :=
+lemma forall_keys_shrink {t sh : btree α} {k x : nat} {a : α} {p : nat → nat → Prop} :
+  forall_keys p k t → shrink t = some (x, a, sh) → forall_keys p k sh ∧ p k x :=
+begin
+  intros h₁ h₂,
+  induction t generalizing x a sh,
+  case empty {
+    contradiction,
+  },
+  case node : l k v r ihl ihr {
+    cases' shrink_shrink_view (node l k v r),
+    { cases' h₂, 
+      rw forall_keys at h₁,
+      split, 
+      { apply and.left h₁, },
+      { apply and.left (and.right h₁), },
+    },
+    { rw h_2 at h₂, 
+      rw forall_keys at h₁,
+      sorry,
+    },
+    { sorry },
+  },
+end
+
+lemma forall_keys_shrink_aux_1 {t sh : btree α} {k x : nat} {a : α} {p : nat → nat → Prop} :
+  forall_keys p k t → shrink t = some (x, a, sh) → forall_keys p k sh :=
+begin
+  intros h₁ h₂,
+  have h : forall_keys p k sh ∧ p k x := forall_keys_shrink h₁ h₂,
+  apply and.left h,
+end
+
+lemma forall_keys_shrink_aux_2 {t sh : btree α} {k x : nat} {a : α} {p : nat → nat → Prop} :
+  forall_keys p k t → shrink t = some (x, a, sh) → p k x :=
+begin
+  intros h₁ h₂,
+  have h : forall_keys p k sh ∧ p k x := forall_keys_shrink h₁ h₂,
+  apply and.right h,
+end
+
+lemma shrink_ordered (t sh : btree α) (k x : nat) (a : α) :
+  ordered t ∧ shrink t = some (x, a, sh) → (ordered sh ∧ forall_keys (>) x sh) :=
 begin
   intro h₁,
-  induction r generalizing x a sh l k v,
+  induction t generalizing x a sh,
   case empty {
-    simp [ordered, shrink] at h₁,
     cases_matching* (_ ∧ _),
-    rw ← h₁_right_right_right,
-    split,
-    { assumption, },
-    { subst h₁_right_left, assumption, },
+    contradiction,
   },
-  case node : rl rk ra rr ihl ihr {
+  case node : l k v r ihl ihr {
     cases_matching* (_ ∧ _),
-    cases' shrink_shrink_view (node l k v (node rl rk ra rr)),
-    case nonempty_empty { cases' h₁_right, 
-      simp [ordered] at h₁_left,
-      finish,
-    },
-    case nonempty_nonempty₁ { rw h_2 at h₁_right, 
-      cases' h₁_right,
-      clear h_2,
+    cases' shrink_shrink_view (node l k v r),
+    case nonempty_empty { cases' h₁_right,
+      rw ordered at h₁_left,
       split,
-      { apply rotate_right_ordered, 
-        rw ordered at *,
-        { specialize ihr x_1 a_1 sh_1 rl rk ra, 
-          have h : ordered (node rl rk ra rr),
-          { rw ordered at *,
-            rw forall_keys at *, 
-            cases_matching* (_ ∧ _),
-            repeat { split }; try { assumption },
-          },
-          specialize ihr ⟨h, h_1⟩,
-          cases_matching* (_ ∧ _),
-          repeat { split }; try { assumption },
-          { sorry, }
-        }
-      },
-      { sorry },
+      { apply and.left h₁_left, },
+      { apply and.left (and.right (and.right h₁_left)), },
     },
-    case nonempty_nonempty₂ { sorry },
+    case nonempty_nonempty₁ {
+      rw h_2 at h₁_right,
+      clear h_2,
+      cases' h₁_right,
+      split,
+      { apply rotate_right_ordered,
+        rw ordered at *,
+        specialize ihr x_1 a_1 sh_1,
+        have h₂ : ordered r := and.left (and.right h₁_left),
+        specialize ihr ⟨h₂, h⟩,
+        cases_matching* (_ ∧ _),
+        repeat { split }; try { assumption },
+        { apply forall_keys_shrink_aux_1 h₁_left_right_right_right h, }
+      },
+      { apply forall_rotate_right, sorry, sorry, },
+    },
+    case nonempty_nonempty₂ { cases' h₁_right, 
+      split,
+      { rw ordered at *, 
+        specialize ihr x_1 a_2 sh_1,
+        have h₂ : ordered r := and.left (and.right h₁_left),
+        specialize ihr ⟨h₂, h⟩,
+        cases_matching* (_ ∧ _),
+        repeat { split }; try { assumption },
+        { apply forall_keys_shrink_aux_1 h₁_left_right_right_right h, }
+      },
+      { rw forall_keys,
+        repeat { split },
+        { sorry },
+        { sorry },
+        { sorry },
+      },
+    },
   },
 end
 

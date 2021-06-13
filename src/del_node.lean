@@ -43,7 +43,34 @@ begin
   },
 end
 
-/- Deleting a node preserves order -/
+lemma forall_del_node (t : btree α) (k : nat) (p : nat → nat → Prop) :
+  forall_keys p k t →  forall_keys p k (del_node t) :=
+begin
+  intro h₁,
+  induction t,
+  case empty {
+    simp [del_node, forall_keys],
+  },
+  case node : tl tk ta tr ihl ihr {
+    rw forall_keys at *,
+    cases_matching* (_ ∧ _),
+    cases' del_node_del_node_view (node tl tk ta tr),
+    case nonempty_empty { assumption, },
+    case nonempty_nonempty₁ {
+      apply forall_rotate_left,
+      sorry,
+      sorry,
+    },
+    case nonempty_nonempty₂ {
+      rw forall_keys,
+      repeat { split },
+      { sorry },
+      { sorry },
+      { assumption, },
+    },
+  },
+end
+
 lemma del_node_ordered (t : btree α) :
   ordered t → ordered (del_node t) :=
 begin
@@ -53,16 +80,28 @@ begin
     simp [del_node, ordered],
   },
   case node : tl tk ta tr {
+    simp [ordered] at h₁,
+    cases_matching* (_ ∧ _),
     cases' del_node_del_node_view (node tl tk ta tr),
-    { simp only [ordered] at h₁, 
-      apply and.left (and.right h₁),
-    },
-    { apply rotate_left_ordered,
+    case nonempty_empty { assumption, },
+    case nonempty_nonempty₁ { 
+      apply rotate_left_ordered, 
       rw ordered,
-      sorry,
+      repeat { split },
+      { sorry },
+      { assumption, },
+      { sorry },
+      { sorry },
     },
-    { sorry, },
-  }
+    case nonempty_nonempty₂ { 
+      rw ordered, 
+      repeat { split },
+      { sorry },
+      { assumption, },
+      { sorry },
+      { sorry },
+    },
+  },
 end
 
 end del_node_lemmas
