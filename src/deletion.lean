@@ -54,11 +54,10 @@ begin
         by_cases c₃ : (height (delete x tr) + 1 < height tl),
         { simp only [if_pos c₃], 
           apply forall_rotate_right,
-          { assumption, },
           { rw forall_keys, 
             repeat { split }; try { assumption },
             { apply ihr, assumption, },
-          }
+          },
         },
         { simp only [if_neg c₃], 
           rw forall_keys,
