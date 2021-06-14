@@ -44,28 +44,33 @@ begin
 end
 
 lemma forall_del_node (t : btree α) (k : nat) (p : nat → nat → Prop) :
-  forall_keys p k t →  forall_keys p k (del_node t) :=
+  forall_keys p k t → forall_keys p k (del_node t) :=
 begin
   intro h₁,
-  induction t,
+  cases t,
   case empty {
     simp [del_node, forall_keys],
   },
-  case node : tl tk ta tr ihl ihr {
+  case node : tl tk ta tr {
     rw forall_keys at *,
     cases_matching* (_ ∧ _),
     cases' del_node_del_node_view (node tl tk ta tr),
     case nonempty_empty { assumption, },
     case nonempty_nonempty₁ {
       apply forall_rotate_left,
-      sorry,
-      sorry,
+      { apply forall_keys_shrink_aux_2 h₁_left h, },
+      { rw forall_keys, 
+        repeat { split },
+        { apply forall_keys_shrink_aux_1 h₁_left h, },
+        { apply forall_keys_shrink_aux_2 h₁_left h, },
+        { assumption, },
+      },
     },
     case nonempty_nonempty₂ {
       rw forall_keys,
       repeat { split },
-      { sorry },
-      { sorry },
+      { apply forall_keys_shrink_aux_1 h₁_left h, },
+      { apply forall_keys_shrink_aux_2 h₁_left h, },
       { assumption, },
     },
   },
