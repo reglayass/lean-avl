@@ -91,7 +91,7 @@ begin
   },
 end
 
-lemma forall_rotate_right (k' k : nat) (l r : btree α) (a : α) (p : nat → nat → Prop) (h : p k' k) :
+lemma forall_rotate_right (k' k : nat) (l r : btree α) (a : α) (p : nat → nat → Prop) :
   forall_keys p k' (btree.node l k a r) → forall_keys p k' (rotate_right (btree.node l k a r)) :=
 begin
   intro h₁,
@@ -105,7 +105,9 @@ begin
     by_cases c₁ : (height ll < height lr),
     { simp only [if_pos c₁],
       apply forall_simple_right, 
-      { assumption, },
+      { rw forall_keys at h₁, 
+        apply and.left (and.right h₁),
+      },
       { rw forall_keys at *, 
         cases_matching* (_ ∧ _),
         rw forall_keys at h₁_left,
@@ -120,7 +122,11 @@ begin
       },
     },
     { simp only [if_neg c₁], 
-      apply forall_simple_right; assumption,
+      apply forall_simple_right,
+      { rw forall_keys at h₁, 
+        apply and.left (and.right h₁),
+      },
+      { assumption },
     }
   }
 end
