@@ -82,7 +82,7 @@ begin
   apply and.right h,
 end
 
-lemma shrink_ordered (t sh : btree α) (k x : nat) (a : α) :
+lemma shrink_ordered {t sh : btree α} {k x : nat} {a : α} :
   ordered t ∧ shrink t = some (x, a, sh) → (ordered sh ∧ forall_keys (>) x sh) :=
 begin
   intro h₁,
@@ -134,6 +134,24 @@ begin
       },
     },
   },
+end
+
+lemma shrink_ordered_aux_1 {t sh : btree α} {k x : nat} {a : α} :
+  ordered t ∧ shrink t = some (x, a, sh) → ordered sh :=
+begin
+  intro h₁,
+  have h : ordered sh ∧ forall_keys (>) x sh := shrink_ordered h₁,
+  { apply and.left h, },
+  { exact x, },
+end
+
+lemma shrink_ordered_aux_2 {t sh : btree α} {k x : nat} {a : α} :
+  ordered t ∧ shrink t = some (x, a, sh) → forall_keys (>) x sh :=
+begin
+  intro h₁,
+  have h : ordered sh ∧ forall_keys (>) x sh := shrink_ordered h₁,
+  { apply and.right h, },
+  { exact x, },
 end
 
 end shrink_lemmas
