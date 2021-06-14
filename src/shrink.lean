@@ -83,7 +83,7 @@ begin
 end
 
 lemma shrink_ordered {t sh : btree α} {k x : nat} {a : α} :
-  ordered t ∧ shrink t = some (x, a, sh) → (ordered sh ∧ forall_keys (>) x sh) :=
+  ordered t ∧ shrink t = some (x, a, sh) → ordered sh ∧ forall_keys (>) x sh :=
 begin
   intro h₁,
   induction t generalizing x a sh,
@@ -94,45 +94,35 @@ begin
   case node : l k v r ihl ihr {
     cases_matching* (_ ∧ _),
     cases' shrink_shrink_view (node l k v r),
-    case nonempty_empty { cases' h₁_right,
+    case nonempty_empty {
+      cases' h₁_right,
       rw ordered at h₁_left,
-      split,
-      { apply and.left h₁_left, },
-      { apply and.left (and.right (and.right h₁_left)), },
+      cases_matching* (_ ∧ _),
+      repeat { split }; assumption,
     },
     case nonempty_nonempty₁ {
       rw h_2 at h₁_right,
       clear h_2,
       cases' h₁_right,
+      rw ordered at h₁_left,
+      cases_matching* (_ ∧ _),
+      specialize ihr ⟨h₁_left_right_left, h⟩,
       split,
-      { apply rotate_right_ordered,
-        rw ordered at *,
-        specialize ihr x_1 a_1 sh_1,
-        have h₂ : ordered r := and.left (and.right h₁_left),
-        specialize ihr ⟨h₂, h⟩,
+      { apply rotate_right_ordered, 
+        rw ordered,
         cases_matching* (_ ∧ _),
         repeat { split }; try { assumption },
-        { apply forall_keys_shrink_aux_1 h₁_left_right_right_right h, }
+        apply forall_keys_shrink_aux_1 h₁_left_right_right_right h,
       },
-      { apply forall_rotate_right, sorry, sorry, },
-    },
-    case nonempty_nonempty₂ { cases' h₁_right, 
-      split,
-      { rw ordered at *, 
-        specialize ihr x_1 a_2 sh_1,
-        have h₂ : ordered r := and.left (and.right h₁_left),
-        specialize ihr ⟨h₂, h⟩,
-        cases_matching* (_ ∧ _),
-        repeat { split }; try { assumption },
-        { apply forall_keys_shrink_aux_1 h₁_left_right_right_right h, }
-      },
-      { rw forall_keys,
+      { apply forall_rotate_right, 
+        rw forall_keys,
         repeat { split },
         { sorry },
         { sorry },
-        { sorry },
-      },
+        { apply and.right ihr, },
+      }, 
     },
+    case nonempty_nonempty₂ { sorry },
   },
 end
 
