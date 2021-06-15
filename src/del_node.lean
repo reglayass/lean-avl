@@ -58,7 +58,6 @@ begin
     case nonempty_empty { assumption, },
     case nonempty_nonempty₁ {
       apply forall_rotate_left,
-      { apply forall_keys_shrink_aux_2 h₁_left h, },
       { rw forall_keys, 
         repeat { split },
         { apply forall_keys_shrink_aux_1 h₁_left h, },
