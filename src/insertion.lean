@@ -12,8 +12,8 @@ open rotation_lemmas
 
 variables {α : Type u}
 
-lemma forall_insert_balanced (k k' : nat) (t : btree α) (a : α) (p : nat → nat → Prop) (h : p k' k) :
-  forall_keys p k' t → forall_keys p k' (insert_balanced k a t) :=
+lemma forall_insert_balanced (k x : nat) (t : btree α) (a : α) (p : nat → nat → Prop) (h : p x k) :
+  forall_keys p x t → forall_keys p x (insert_balanced k a t) :=
 begin
   intro h₁,
   induction t,
@@ -22,20 +22,16 @@ begin
     assumption,
   },
   case node : tl tk ta tr ihl ihr {
-    simp only [insert_balanced],
+    simp [insert_balanced],
     by_cases c₁ : (k < tk),
     { simp only [if_pos c₁], 
-      by_cases c₂ : (height (insert_balanced k a tl) > height tr + 1),
+      by_cases c₂ : (height tr + 1 < height (insert_balanced k a tl)),
       { simp only [if_pos c₂], 
         apply forall_rotate_right,
-        { rw forall_keys at *,
-          apply and.left (and.right h₁),
-        },
-        { rw forall_keys at *,
-          cases_matching* (_ ∧ _),
-          repeat { split }; try { assumption },
-          apply ihl, assumption, 
-        }
+        rw forall_keys at *,
+        cases_matching* (_ ∧ _),
+        repeat { split }; try { assumption },
+        { apply ihl, assumption, },
       },
       { simp only [if_neg c₂], 
         rw forall_keys at *,
@@ -45,19 +41,15 @@ begin
       },
     },
     { simp only [if_neg c₁], 
-      by_cases c₂ : (k > tk),
+      by_cases c₂ : (tk < k),
       { simp only [if_pos c₂], 
-        by_cases c₃ : (height (insert_balanced k a tr) > height tl + 1),
+        by_cases c₃ : (height tl + 1 < height (insert_balanced k a tr)),
         { simp only [if_pos c₃], 
           apply forall_rotate_left,
-          { rw forall_keys at h₁, 
-            apply and.left (and.right h₁),
-          },
-          { rw forall_keys at *,
-            cases_matching* (_ ∧ _),
-            repeat { split }; try { assumption },
-            { apply ihr, assumption, },
-          },
+          rw forall_keys at *,
+          cases_matching* (_ ∧ _),
+          repeat { split }; try { assumption },
+          { apply ihr, assumption, },
         },
         { simp only [if_neg c₃], 
           rw forall_keys at *,
@@ -70,7 +62,7 @@ begin
         have h : tk = k := by linarith,
         subst h,
         rw forall_keys at *,
-        assumption,
+        exact h₁,
       },
     },
   },
