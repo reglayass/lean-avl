@@ -109,7 +109,7 @@ begin
 end
 
 /- Simple left rotations preserve order -/
-lemma simple_left_ord (t : btree α) :
+lemma simple_left_ordered (t : btree α) :
   ordered t → ordered (simple_left t) :=
 begin
   intro h₁,
@@ -134,7 +134,7 @@ begin
 end
 
 /- Simple right rotations preserve order -/
-lemma simple_right_ord (t : btree α) :
+lemma simple_right_ordered (t : btree α) :
   ordered t → ordered (simple_right t) :=
 begin
   intro h₁,
@@ -182,7 +182,7 @@ begin
         cases rl,
         case empty {
           simp [simple_right],
-          apply simple_left_ord,
+          apply simple_left_ordered,
           exact h₁,
         },
         case node : rll rlk rla rlr {
@@ -202,7 +202,7 @@ begin
         },
       },
       { simp [if_neg c₁], 
-        apply simple_left_ord,
+        apply simple_left_ordered,
         exact h₁,
       },
     },
@@ -231,7 +231,7 @@ begin
         cases lr,
         case empty {
           simp [simple_left],
-          apply simple_right_ord,
+          apply simple_right_ordered,
           exact h₁,
         },
         case node: lrl lrk lra lrr {
@@ -251,7 +251,7 @@ begin
         },
       },
       { simp [if_neg c₁], 
-        apply simple_right_ord,
+        apply simple_right_ordered,
         exact h₁,
       },
     },
