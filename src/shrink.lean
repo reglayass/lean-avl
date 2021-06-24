@@ -97,8 +97,11 @@ begin
   apply and.right h,
 end
 
-lemma shrink_ordered {t sh : btree α} {k x : nat} {a : α} :
-  ordered t ∧ shrink t = some (x, a, sh) → ordered sh ∧ forall_keys (>) x sh :=
+lemma shrink_keys (l r sh : btree α) (x k : nat) (v a : α) :
+  some (x, a, sh) = shrink r ∧ forall_keys gt k l → forall_keys gt x l := sorry
+
+lemma shrink_ordered {t sh : btree α} {x : nat} {a : α} :
+  ordered t ∧ shrink t = some (x, a, sh) → ordered sh ∧ forall_keys gt x sh :=
 begin
   intro h₁,
   induction t generalizing x a sh,
@@ -113,7 +116,7 @@ begin
       cases' h₁_right,
       rw ordered at h₁_left,
       cases_matching* (_ ∧ _),
-      repeat { split }; assumption,
+      repeat { split }; assumption, 
     },
     case nonempty_nonempty₁ {
       rw h_2 at h₁_right,
@@ -122,20 +125,19 @@ begin
       rw ordered at h₁_left,
       cases_matching* (_ ∧ _),
       specialize ihr ⟨h₁_left_right_left, h⟩,
+      cases_matching* (_ ∧ _),
       split,
       { apply rotate_right_ordered, 
-        rw ordered,
-        cases_matching* (_ ∧ _),
         repeat { split }; try { assumption },
-        apply forall_keys_shrink_aux_1 h₁_left_right_right_right h,
-      },
+        { apply forall_keys_shrink_aux_1 h₁_left_right_right_right h, },
+      }, 
       { apply forall_rotate_right, 
         rw forall_keys,
         repeat { split },
         { sorry },
         { sorry },
-        { apply and.right ihr, },
-      }, 
+        { exact ihr_right, },
+      },
     },
     case nonempty_nonempty₂ {
       cases' h₁_right,
@@ -148,7 +150,12 @@ begin
         repeat { split }; try { assumption },
         { apply forall_keys_shrink_aux_1 h₁_left_right_right_right h, },
       },
-      { sorry },
+      { rw forall_keys, 
+        repeat { split },
+        { sorry, },
+        { sorry },
+        { exact ihr_right, },
+      },
     },
   },
 end
@@ -159,7 +166,6 @@ begin
   intro h₁,
   have h : ordered sh ∧ forall_keys (>) x sh := shrink_ordered h₁,
   { apply and.left h, },
-  { exact x, },
 end
 
 lemma shrink_ordered_aux_2 {t sh : btree α} {k x : nat} {a : α} :
@@ -168,7 +174,6 @@ begin
   intro h₁,
   have h : ordered sh ∧ forall_keys (>) x sh := shrink_ordered h₁,
   { apply and.right h, },
-  { exact x, },
 end
 
 end shrink_lemmas
