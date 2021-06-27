@@ -49,10 +49,8 @@ def bound (x : nat) : btree α → bool
 | (btree.node l k a r) :=
   x = k ∨ bound l ∨ bound r
 
-def forall_keys (p : nat → nat → Prop) : nat → btree α → Prop
-| x btree.empty := tt
-| x (btree.node l k a r) :=
-  forall_keys x l ∧ (p x k) ∧ forall_keys x r
+def forall_keys (p : nat → nat → Prop) (k : nat) (t : btree α) : Prop :=
+  ∀ k', bound k' t → p k k'
 
 /-- 
   Binary search property
