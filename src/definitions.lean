@@ -49,6 +49,18 @@ def bound (x : nat) : btree α → bool
 | (btree.node l k a r) :=
   x = k ∨ bound l ∨ bound r
 
+
+/-- 
+  Two different implementations for forall_keys
+  One in terms of the relationship between the key and the left 
+  and right child subtree
+  One in terms of the key being bound to a tree with a relationship
+-/
+def forall_keys_unfolded (p : nat → nat → Prop) : nat → btree α → Prop
+| x btree.empty := tt
+| x (btree.node l k a r) :=
+  forall_keys_unfolded x l ∧ (p x k) ∧ forall_keys_unfolded x r
+
 def forall_keys (p : nat → nat → Prop) (k : nat) (t : btree α) : Prop :=
   ∀ k', bound k' t → p k k'
 
