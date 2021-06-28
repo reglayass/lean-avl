@@ -55,28 +55,17 @@ begin
     { cases' h₂, 
       rw forall_keys at h₁,
       split, 
-      { apply and.left h₁, },
-      { apply and.left (and.right h₁), },
+      { sorry, },
+      { sorry, },
     },
     { rw h_2 at h₂, 
       cases' h₂,
       rw forall_keys at h₁,
-      cases_matching* (_ ∧ _),
-      specialize ihr h₁_right_right h,
-      cases_matching* (_ ∧ _),
-      split,
-      { apply forall_rotate_right, 
-        rw forall_keys,
-        repeat { split }; assumption,
-      },
-      { assumption, },
+      sorry,
     },
     { cases' h₂, 
       rw forall_keys at *,
-      cases_matching* (_ ∧ _),
-      specialize ihr h₁_right_right h,
-      cases_matching* (_ ∧ _),
-      repeat { split }; assumption,      
+      sorry,     
     },
   },
 end
@@ -97,8 +86,51 @@ begin
   apply and.right h,
 end
 
-lemma shrink_keys (l r sh : btree α) (x k : nat) (v a : α) :
-  some (x, a, sh) = shrink r ∧ forall_keys gt k l → forall_keys gt x l := sorry
+lemma shrink_keys {t sh : btree α} {k x : nat} {a : α} :
+  ordered t ∧ shrink t = some (x, a, sh) ∧ bound k t → bound k sh :=
+begin
+  intro h₁,
+  induction t generalizing x a sh,
+  case empty {
+    cases_matching* (_ ∧ _),
+    contradiction,
+  },
+  case node : l k v r ihl ihr {
+    cases_matching* (_ ∧ _),
+    cases' shrink_shrink_view (node l k v r),
+    case nonempty_empty {
+      cases' h₁_right_left,
+      sorry,
+    },
+    case nonempty_nonempty₁ {
+      rw h_2 at h₁_right_left,
+      clear h_2,
+      cases' h₁_right_left,
+      apply rotate_right_keys,
+      rw ordered at h₁_left,
+      cases_matching* (_ ∧ _),
+      simp [bound] at h₁_right_right ⊢,
+      cases_matching* (_ ∨ _),
+      { apply or.inl h₁_right_right, },
+      { apply or.inr (or.inl h₁_right_right), },
+      { specialize ihr ⟨h₁_left_right_left, ⟨h, h₁_right_right⟩⟩,
+        apply or.inr (or.inr ihr), 
+      },
+    },
+    case nonempty_nonempty₂ {
+      cases' h₁_right_left,
+      rw ordered at h₁_left,
+      cases_matching* (_ ∧ _),
+      simp [bound] at h₁_right_right ⊢,
+      cases_matching* (_ ∨ _),
+      { apply or.inl h₁_right_right, },
+      { apply or.inr (or.inl h₁_right_right), },
+      { specialize ihr ⟨h₁_left_right_left, ⟨h, h₁_right_right⟩⟩,
+        apply or.inr (or.inr ihr),
+      },
+    },
+  },
+end
 
 lemma shrink_ordered {t sh : btree α} {x : nat} {a : α} :
   ordered t ∧ shrink t = some (x, a, sh) → ordered sh ∧ forall_keys gt x sh :=
@@ -133,10 +165,7 @@ begin
       }, 
       { apply forall_rotate_right, 
         rw forall_keys,
-        repeat { split },
-        { sorry },
-        { sorry },
-        { exact ihr_right, },
+        intros k' h₂,
       },
     },
     case nonempty_nonempty₂ {
@@ -151,10 +180,8 @@ begin
         { apply forall_keys_shrink_aux_1 h₁_left_right_right_right h, },
       },
       { rw forall_keys, 
-        repeat { split },
-        { sorry, },
-        { sorry },
-        { exact ihr_right, },
+        intros k' h₂,
+        sorry,
       },
     },
   },
