@@ -12,8 +12,8 @@ open ordered
 
 variables {α : Type u}
 
-lemma forall_simple_left (k' k : nat) (l r : btree α) (a : α) (p : nat → nat → Prop) :
-  forall_keys p k' (btree.node l k a r) → forall_keys p k' (simple_left (btree.node l k a r)) :=
+lemma forall_simple_left (x k : nat) (l r : btree α) (a : α) (p : nat → nat → Prop) :
+  forall_keys p x (btree.node l k a r) → forall_keys p x (simple_left (btree.node l k a r)) :=
 begin
   intro h₁,
   cases r,
@@ -24,10 +24,14 @@ begin
   case node : rl rk ra rr {
     simp [simple_left],
     rw forall_keys at *,
-    cases_matching* (_ ∧ _),
-    rw forall_keys at h₁_right_right,
-    cases_matching* (_ ∧ _),
-    repeat { split }; assumption,
+    intros k' h₂,
+    simp [bound] at h₂,
+    cases_matching* (_ ∨ _),
+    repeat { 
+      apply h₁, 
+      simp [bound],
+      tauto,
+    },
   },
 end
 
@@ -43,32 +47,40 @@ begin
   case node : ll lk la lr {
     simp [simple_right],
     rw forall_keys at *,
-    cases_matching* (_ ∧ _),
-    rw forall_keys at h₁_left,
-    cases_matching* (_ ∧ _),
-    repeat { split }; assumption,
+    intros k' h₂,
+    simp [bound] at h₂,
+    cases_matching* (_ ∨ _),
+    repeat {
+      apply h₁,
+      simp [bound],
+      tauto,
+    },
   },
 end
 
-lemma forall_rotate_left (k' k : nat) (l r : btree α) (a : α) (p : nat → nat → Prop) :
-  forall_keys p k' (btree.node l k a r) → forall_keys p k' (rotate_left (btree.node l k a r)) :=
+lemma forall_rotate_left (x k : nat) (l r : btree α) (a : α) (p : nat → nat → Prop) :
+  forall_keys p x (btree.node l k a r) → forall_keys p x (rotate_left (btree.node l k a r)) :=
 begin
   intro h₁,
   cases r,
   case empty {
     simp [rotate_left],
-    assumption,
+    exact h₁,
   },
   case node : rl rk ra rr {
     simp [rotate_left],
     by_cases c₁ : (height rr < height rl),
     { simp only [if_pos c₁], 
       apply forall_simple_left,
-      rw forall_keys at *,
-      cases_matching* (_ ∧ _),
-      repeat { split }; try { assumption },
-      apply forall_simple_right,
-      assumption,
+      unfold forall_keys at h₁ ⊢,
+      intros k' h₂,
+      specialize h₁ k',
+      apply h₁,
+      simp [bound] at h₂ ⊢,
+      cases_matching* (_ ∨ _),
+      { apply or.inl h₂, },
+      { apply or.inr (or.inl h₂), },
+      { sorry, },
     },
     { simp only [if_neg c₁], 
       apply forall_simple_left,
@@ -77,29 +89,29 @@ begin
   },
 end
 
-lemma forall_rotate_right (k' k : nat) (l r : btree α) (a : α) (p : nat → nat → Prop) :
-  forall_keys p k' (btree.node l k a r) → forall_keys p k' (rotate_right (btree.node l k a r)) :=
+lemma forall_rotate_right (x k : nat) (l r : btree α) (a : α) (p : nat → nat → Prop) :
+  forall_keys p x (btree.node l k a r) → forall_keys p x (rotate_right (btree.node l k a r)) :=
 begin
   intro h₁,
   cases l,
   case empty {
     simp [rotate_right],
-    assumption,
+    exact h₁,
   },
   case node : ll lk la lr {
     simp [rotate_right],
     by_cases c₁ : (height ll < height lr),
     { simp only [if_pos c₁], 
       apply forall_simple_right,
-      rw forall_keys at *,
-      cases_matching* (_ ∧ _),
-      rw forall_keys at h₁_left,
-      cases_matching* (_ ∧ _),
-      repeat { split }; try { assumption },
-      { apply forall_simple_left, 
-        rw forall_keys,
-        repeat { split }; assumption,
-      }
+      unfold forall_keys at h₁ ⊢,
+      intros k' h₂,
+      specialize h₁ k',
+      apply h₁,
+      simp [bound] at h₂ ⊢,
+      cases_matching* (_ ∨ _),
+      { apply or.inl h₂, },
+      { sorry, },
+      { apply or.inr (or.inr h₂), },
     },
     { simp only [if_neg c₁], 
       apply forall_simple_right,
@@ -122,13 +134,12 @@ begin
       exact h₁,
     },
     case node : trl trk tra trr {
-      simp [simple_left, ordered, forall_keys] at *,
+      simp [simple_left],
+      simp [ordered] at h₁ ⊢,
       cases_matching* (_ ∧ _),
       repeat { split }; try { assumption },
-      apply forall_keys_trans _ (>) tk,
-      { assumption },
-      { apply trans, },
-      { assumption, },
+      { sorry, },
+      { sorry },
     },
   },
 end
@@ -148,16 +159,15 @@ begin
       simp [simple_right],
       exact h₁,
     },
-    case node: tll tlk tla tlr {
-      simp [simple_right, ordered, forall_keys] at *,
+    case node : tll tlk tla tlr {
+      simp [simple_right],
+      simp [ordered] at h₁ ⊢,
       cases_matching* (_ ∧ _),
       repeat { split }; try { assumption },
-      apply forall_keys_trans _ (<) tk _,
-      { assumption, },
-      { apply trans, },
-      { assumption, },
+      { sorry },
+      { sorry },
     },
-  }
+  },
 end
 
 /- Left rotations preserve order -/
@@ -178,32 +188,26 @@ begin
     case node: rl rk ra rr {
       simp [rotate_left],
       by_cases c₁ : (height rr < height rl),
-      { simp only [if_pos c₁],
+      { simp only [if_pos c₁], 
+        apply simple_left_ordered,
         cases rl,
         case empty {
           simp [simple_right],
-          apply simple_left_ordered,
           exact h₁,
         },
         case node : rll rlk rla rlr {
-          simp only [simple_right, simple_left, ordered, forall_keys] at *,
+          simp only [simple_right],
+          simp only [ordered] at h₁ ⊢,
           cases_matching* (_ ∧ _),
-          repeat {split} ; try { assumption },
-          { apply forall_keys_trans l (>) k, 
-            { assumption, },
-            { apply trans, },
-            { assumption, },
-          },
-          { apply forall_keys_trans rr (<) rk _, 
-            { assumption, },
-            { apply trans, },
-            { assumption, },
-          }, 
-        },
+          repeat { split }; try { assumption },
+          { sorry },
+          { sorry },
+          { sorry },
+        }
       },
-      { simp [if_neg c₁], 
+      { simp only [if_neg c₁],
         apply simple_left_ordered,
-        exact h₁,
+        exact h₁, 
       },
     },
   },
@@ -227,30 +231,24 @@ begin
     case node : ll lk la lr {
       simp [rotate_right],
       by_cases c₁ : (height ll < height lr),
-      { simp [if_pos c₁], 
+      { simp only [if_pos c₁], 
+        apply simple_right_ordered,
         cases lr,
         case empty {
-          simp [simple_left],
-          apply simple_right_ordered,
+          simp only [simple_left],
           exact h₁,
         },
-        case node: lrl lrk lra lrr {
-          simp only [simple_left, simple_right, ordered, forall_keys] at *,
+        case node : lrl lrk lra lrr {
+          simp only [simple_left],
+          simp only [ordered] at h₁ ⊢,
           cases_matching* (_ ∧ _),
-          repeat { split };  try { assumption },
-          { apply forall_keys_trans ll (>) lk _,
-            { assumption, },
-            { apply trans, },
-            { assumption, },
-          },
-          { apply forall_keys_trans r (<) k _, 
-            { assumption },
-            { apply trans, },
-            { assumption },
-          },
+          repeat { split }; try { assumption },
+          { sorry },
+          { sorry },
+          { sorry },
         },
       },
-      { simp [if_neg c₁], 
+      { simp only [if_neg c₁], 
         apply simple_right_ordered,
         exact h₁,
       },

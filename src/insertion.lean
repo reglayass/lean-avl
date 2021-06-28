@@ -269,26 +269,4 @@ begin
   },
 end
 
-lemma insert_balanced_balance (t : btree α) (k : nat) (v : α) :
-  balanced t = tt → balanced (insert_balanced k v t) = tt :=
-begin
-  intro h₁,
-  induction t,
-  case empty {
-    simp [insert_balanced, balanced],
-  },
-  case node : tl tk ta tr ihl ihr {
-    simp only [insert_balanced],
-    by_cases c₁ : (k < tk),
-    { simp only [if_pos c₁], 
-      by_cases c₂ : (height (insert_balanced k v tl) > height tr + 1),
-      { simp only [if_pos c₂], 
-        sorry,
-      },
-      { sorry },
-    },
-    { sorry },
-  },
-end
-
 end insertion_balanced_lemmas
