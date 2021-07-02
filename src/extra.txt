@@ -1,9 +1,0 @@
--- def shrink : ∀ (t : btree α), nonempty t → (nat × α × btree α)
--- | _ (nonempty.node l k a btree.empty) := (k, a, l)
--- | _ (nonempty.node l k a (btree.node rl rk ra rr)) := 
---   let s := shrink (btree.node rl rk ra rr) (nonempty.node _ _ _ _) in 
---   if height l > height s.2.2 + 1 then (s.1, s.2.1, rotR (btree.node l k a s.2.2))
---   else (s.1, s.2.1, (btree.node l k a s.2.2))
-
-inductive nonempty : btree α → Type u 
-| node : ∀ l k a r, nonempty (node l k a r)
