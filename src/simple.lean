@@ -1,5 +1,6 @@
 import definitions
 import tactic.linarith
+import tactic.omega
 set_option pp.generalized_field_notation false
 
 universe u
@@ -29,22 +30,27 @@ begin
   intro h₁,
   induction t,
   case empty {
-    refl,
+    apply refl,
   },
   case node : tl tk ta tr ihl ihr {
     simp [lookup],
     simp [bound] at h₁,
     by_cases c₁ : (k < tk),
-    { simp [if_pos c₁], 
-      apply ihl; apply and.left (and.right h₁),
+    { simp only [if_pos c₁], 
+      apply ihl,
+      apply and.left (and.right h₁),
     },
-    { simp [if_neg c₁],
+    { simp only [if_neg c₁], 
       by_cases c₂ : (tk < k),
-      { simp [if_pos c₂],
-        apply ihr; apply and.right (and.right h₁),
+      { simp only [if_pos c₂], 
+        apply ihr,
+        apply and.right (and.right h₁),
       },
-      { simp [if_neg c₂],
-        sorry,
+      { simp only [if_neg c₂],
+        cases_matching* (_ ∧ _),
+        have h : k = tk := by linarith,
+        have h₂ : k ≠ tk := by omega,
+        contradiction,
       },
     },
   },
@@ -52,12 +58,11 @@ end
 
 /- If a key is bound to a tree, then lookup will in result in some result -/
 lemma bound_lookup (t : btree α) (k : nat) :
-  bound k t → ∃ (v : α), lookup k t = some v :=
+  bound k t = tt → ∃ (v : α), lookup k t = some v :=
 begin
   intros h₁,
   induction t,
   case empty {
-    simp only [lookup],
     simp [bound] at h₁,
     contradiction,
   },
