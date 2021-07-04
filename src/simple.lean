@@ -88,27 +88,4 @@ begin
   },
 end
 
-/- If you lookup a key just inserted, the same value you just inserted will be returned -/
-lemma lookup_insert_eq (k : nat) (t : btree α) (v : α) :
-  lookup k (insert k v t) = v :=
-begin
-  induction t,
-  case empty {
-    simp only [btree.insert, lookup],
-    by_cases (k < k), 
-    { exfalso, linarith },
-    { simp [if_neg h] },
-  },
-  case node : l k' a' r ihl ihr {
-    simp only [btree.insert],
-    by_cases (k < k'),
-    { simp only [if_pos h, lookup, ihl] },
-    { simp only [if_neg h], 
-      by_cases h' : (k > k'), 
-      { simp only [if_pos h', lookup, if_neg h, ihr] },
-      { simp only [if_neg h', lookup, if_neg (lt_irrefl k)], }
-    },
-  },
-end
-
 end simple_lemmas
