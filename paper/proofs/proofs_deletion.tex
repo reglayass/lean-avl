@@ -14,9 +14,9 @@ lemma del_node_ordered (t : btree α) (k : nat) :
   ordered t → ordered (del_node t) :=
 \end{lstlisting}
 
-Both of the above proofs were constructed by induction on the \lstinline{btree}.
+Both of the above proofs were constructed by induction on the tree \lstinline{t}.
 
-The proof for \lstinline{shrink} is constructed slightly differently to the previous ones. The statement should include an assumption of the tree to shrink being ordered, and an assumption of some result coming from shrinking the tree. The statement concludes that the shrunken tree is also ordered, and that the resulting key \lstinline{x} from the shruknen tree is greater than all the keys in the shrunken tree \lstinline{sh}. 
+Since \lstinline{del_node} uses \lstinline{shrink}, a proof for \lstinline{shrink} preserving order needs to be constructed as well. The lemma statement needs to have the reuslt of \lstinline{shrink} as one of its hypotheses, and the conclusion is that the result of shrinking a tree is also ordered, and that the resulting key is larger than the keys in the shrunken tree.
 
 \begin{lstlisting}[caption=\empty, label={lst:shrink_ordered}]
 lemma shrink_ordered {t sh : btree α} {x : nat} {a : α} :
@@ -28,7 +28,7 @@ The proof for \lstinline{shrink_ordered} was done by induction on the tree, but 
 During the proof, I came across a sitation where some of the hypotheses were about \lstinline{shrink}, but no information could be derived from them. This led to the creation of a view\footnote{\notes{write how this was done by the supervisor but idk how yet}} for \lstinline{shrink}, to show each possible variation of arguments for \lstinline{shrink} and the result that gives.
 
 \begin{lstlisting}[caption=\empty]
-inductive shrink_view {α]} : btree α → option (nat × α × btree α) → Sort*
+inductive shrink_view {α} : btree α → option (nat × α × btree α) → Sort*
 | empty : shrink_view empty none
 | nonempty_empty : ∀ {l k v r},
   shrink r = none →
@@ -44,7 +44,7 @@ inductive shrink_view {α]} : btree α → option (nat × α × btree α) → So
   shrink_view (node l k v r) (some (x, a, node l k v sh))
 \end{lstlisting}
 
-A lemma was also written for \lstinline{shrink_view}, that would result in four case splits for each case in the view. 
+A lemma was also written for \lstinline{shrink_view}, that would result in case splits for each case in the view. 
 
 \begin{lstlisting}[caption=\empty, label={lst:shrink_view}]
 lemma shrink_shrink_view (t : btree α) : 
