@@ -348,4 +348,44 @@ begin
   },
 end
 
+/- If you check the bound on a key just inserted into the tree, it will return true -/
+lemma bound_insert_eq (k : nat) (t : btree α) (v : α) :
+  bound k (insert_balanced k v t) = tt :=
+begin
+  induction t,
+  case empty {
+    simp [insert_balanced, bound],
+  },
+  case node : tl tk ta tr ihl ihr {
+    simp only [insert_balanced],
+    by_cases c₁ : (k < tk),
+    { simp only [if_pos c₁], 
+      by_cases c₂ : (height (insert_balanced k v tl) > height tr + 1),
+      { simp only [if_pos c₂], 
+        apply rotate_right_keys,
+        simp [bound],
+        apply or.inr (or.inl ihl),
+      },
+      { simp [if_neg c₂, bound],
+        apply or.inr (or.inl ihl),
+      },
+    },
+    { simp only [if_neg c₁], 
+      by_cases c₂ : (k > tk),
+      { simp only [if_pos c₂], 
+        by_cases c₃ : (height (insert_balanced k v tr) > height tl + 1),
+        { simp only [if_pos c₃], 
+          apply rotate_left_keys,
+          simp [bound],
+          apply or.inr (or.inr ihr),
+        },
+        { simp [if_neg c₃, bound],
+          apply or.inr (or.inr ihr), 
+        },
+      },
+      { simp [if_neg c₂, bound], },
+    },
+  },
+end
+
 end insertion_balanced_lemmas
