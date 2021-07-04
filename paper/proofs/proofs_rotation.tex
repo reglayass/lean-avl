@@ -1,12 +1,36 @@
-With rotations we want to prove that an ordered tree preserves order after a rotation, and that if a tree is imbalanced then a rotation restores its balance. This section will present two proofs on right rotations preserving order and balance.
+With rotations, I want to show that a rotation preserves order in a tree, that a rotation does not lose keys, and that rotations preserve balance. This section will informally present some proof constructions based on a right rotation, and any changes that were made to definitions based on the process of constructing these proofs.
+
+\subsection*{Keys}
+The lemma for rotations preserving keys is formalized in Listing \ref{lst:rotate_keys}.
+
+\begin{lstlisting}[caption=\empty, label={lst:rotate_keys}]
+lemma rotate_right_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = → bound k (rotate_right t) := ...
+\end{lstlisting}
+
+The first step with proof statements with rotations is to look at their definitions. The definition for \lstinline{rotate_right} uses the \lstinline{simple_right} and \lstinline{simple_left} definitions, so proofs about them preserving order need to be constructed too.
+
+\begin{lstlisting}[caption=\empty]
+lemma simple_right_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = → bound k (simple_right t) := ...
+  
+lemma simple_left_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = → bound k (simple_left t) := ...
+\end{lstlisting}
+
+It was during the construction of these proofs where the first problem with the definition of \lstinline{bound} was discovered. Previously, the definition for \lstinline{bound} was similar to that of \lstinline{lookup}, recursively searching the tree until the key was found, returning true.
+
+This definition would make it very difficult to write the proofs needed. The hypothesis of the lemmas would assume that the key is bound in the same subtree, yet after a rotation this may not be the case anymore. The definition was then changed to the one present in this paper, which allowed for the proofs to be completed, as with disjunction only one of the variables needs to be true for the whole expression \notes{is this the right word for it?} to be true. This change in the definition resulted in other proofs becoming much easier to complete and much shorter. 
 
 \subsection*{Order}
+Listing \ref{lst:right_ordered} shows a formalized lemma statement for right rotations preserving order.
+
 \begin{lstlisting}[caption=\empty, label={lst:right_ordered}]
 lemma rotate_right_ordered (t : btree α) :
   ordered t → ordered (rotate_right t) := ...
 \end{lstlisting}
 
-Listing \ref{lst:right_ordered} shows a formalized lemma statement for right rotations preserving order. The first step with proof statements with rotations is to look at their definitions. The definition for \lstinline{rotate_right} uses the \lstinline{simple_right} and \lstinline{simple_left} definitions, so proofs about them preserving order need to be constructed too.
+Since it is a compound rotation, similar lemmas need to be constructed for the simple rotations.
 
 \begin{lstlisting}[caption=\empty, label={lst:simple_ordered}]
 lemma simple_right_ordered (t : btree α) :
@@ -39,3 +63,23 @@ lemma forall_keys_intro {l r : btree α} {k x : nat} {v : α}
 When applying the introduction lemma, I was able to get the relation of the key between the left and right subtree, and the relation between the input key and the key of the tree, which made applying the transitivity lemma a lot easier.
 
 \subsection*{Balance}
+The lemmas for balance involved the definitions for \lstinline{right_heavy} and \lstinline{right_heavy}. If a tree is right-heavy, a left rotation restores balance; if a tree is left-heavy a right rotation restores balance.
+
+\begin{lstlisting}[caption=\empty]
+lemma rotate_right_balanced (t : btree α) :
+  left_heavy t → balanced (rotate_right t) := ...
+\end{lstlisting}
+
+Lemmas for simple rotations restoring balance also needed to be written and completed. 
+
+\begin{lstlisting}[caption=\empty]
+lemma simple_right_balanced (t : btree α) :
+  left_heavy t → balanced (simple_right t) := ...
+  
+lemma simple_left_balanced (t : btree α) :
+  right_heavy t → balanced (simple_left t) := ...
+\end{lstlisting}
+
+Similarly to proofs about ordering, the above proofs were completed with case splitting on trees and subtrees. During construction of proofs with compound rotations, the lemmas about simple rotations were applied when needed. 
+
+The proofs about balance were a bit more complicated to solve. With the ordering lemmas, it was a case of finding the goals in the hypotheses, with additionally using transitivity to achieve out goal. Since tree heaviness and the definition of \lstinline{balanced} use tree height, there was more mathematics involved. 
