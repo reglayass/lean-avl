@@ -1,6 +1,6 @@
 import definitions
 import rotations
-import ordered
+import forall_keys
 import tactic.linarith
 import tactic.induction
 set_option pp.generalized_field_notation false
@@ -10,7 +10,7 @@ universe u
 namespace shrink_lemmas 
 open btree
 open rotation_lemmas
-open ordered
+open forall_keys_lemmas
 
 variables {α : Type u}
 
@@ -44,75 +44,6 @@ begin
  },
 end
 
-lemma forall_keys_unfolded_bound (t : btree α) (p : nat → nat → Prop) (k : nat) :
-  forall_keys_unfolded p k t → forall_keys p k t :=
-begin
-  intro h₁,
-  induction t,
-  case empty {
-    simp [forall_keys, bound],
-  },
-  case node : l x v r ihl ihr {
-    unfold forall_keys at *,
-    rw forall_keys_unfolded at h₁,
-    cases_matching* (_ ∧ _),
-    intros k' h₂,
-    simp [bound] at h₂,
-    cases_matching* (_ ∨ _),
-    { subst h₂, assumption, },
-    { apply ihl; assumption, },
-    { apply ihr; assumption, },
-  },
-end
-
-lemma forall_keys_bound_unfolded (t : btree α) (p : nat → nat → Prop) (k : nat) :
-  forall_keys p k t → forall_keys_unfolded p k t :=
-begin
-  intro h₁,
-  induction t,
-  case empty {
-    simp [forall_keys_unfolded],
-  },
-  case node : l x v r ihl ihr {
-    rw forall_keys_unfolded,
-    simp [forall_keys] at ihl ihr h₁,
-    repeat { split },
-    { apply ihl, 
-      intros k' h₂,
-      apply h₁,
-      simp [bound], tauto,
-    },
-    { apply h₁, 
-      simp [bound],
-    },
-    { apply ihr, 
-      intros k' h₂,
-      apply h₁,
-      simp [bound], tauto,
-    },
-  },
-end
-
-lemma forall_keys_intro {l r : btree α} {k x : nat} {v : α} {p : nat → nat → Prop} :
-  (forall_keys p k l ∧ p k x ∧ forall_keys p k r) → forall_keys p k (node l x v r) :=
-begin
-  intro h₁,
-  cases_matching* (_ ∧ _),
-  unfold forall_keys at *,
-  intros k' h₂,
-  simp [bound] at h₂,
-  cases_matching* (_ ∨ _),
-  { subst h₂, 
-    exact h₁_right_left,
-  },
-  { apply h₁_left, 
-    exact h₂,
-  },
-  { apply h₁_right_right, 
-    exact h₂,
-  },
-end
-
 lemma forall_keys_shrink {t sh : btree α} {k x : nat} {a : α} {p : nat → nat → Prop} :
   forall_keys p k t ∧ shrink t = some (x, a, sh) → forall_keys p k sh ∧ p k x :=
 begin
@@ -125,15 +56,21 @@ begin
   case node : l k v r ihl ihr {
     cases_matching* (_ ∧ _),
     cases' shrink_shrink_view (node l k v r),
-    case nonempty_empty { sorry },
+    case nonempty_empty {
+      sorry
+    },
     case nonempty_nonempty₁ {
       rw h_2 at h₁_right,
       clear h_2,
       cases' h₁_right,
-      sorry,
+      repeat { split },
+      { sorry },
+      { sorry },
     },
-    case nonempty_nonempty₂ { sorry },
-  },
+    case nonempty_nonempty₂ {
+      sorry,
+    }
+  }
 end
 
 lemma forall_keys_shrink_aux_1 {t sh : btree α} {k x : nat} {a : α} {p : nat → nat → Prop} :
@@ -164,34 +101,9 @@ begin
   case node : l k v r ihl ihr {
     cases_matching* (_ ∧ _),
     cases' shrink_shrink_view (node l k v r),
-    case nonempty_empty { 
-      sorry,
-    },
-    case nonempty_nonempty₁ {
-      rw ordered at h₁,
-      cases_matching* (_ ∧ _),
-      rw h_2 at h₂,
-      cases h₂,
-      specialize ihr h₁_right_left h,
-      cases_matching* (_ ∧ _),
-      split,
-      { simp [bound],
-        apply or.inr (or.inr ihr_left),
-      },
-      { sorry },
-    },
-    case nonempty_nonempty₂ {
-      rw ordered at h₁,
-      cases_matching* (_ ∧ _),
-      cases' h₂,
-      specialize ihr h₁_right_left h,
-      cases_matching* (_ ∧ _),
-      split,
-      { simp [bound], 
-        apply or.inr (or.inr ihr_left),
-      },
-      { sorry },
-    },
+    case nonempty_empty { sorry },
+    case nonempty_nonempty₁ { sorry },
+    case nonempty_nonempty₂ { sorry },
   },
 end
 
