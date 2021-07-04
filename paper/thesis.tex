@@ -1,0 +1,82 @@
+\documentclass[11pt,oneside, a4paper]{article}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage[nottoc]{tocbibind}
+\usepackage[titletoc]{appendix}
+\usepackage{amsthm}
+\usepackage{titlesec}
+\usepackage{tikz}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[backend=bibtex, style=ieee, bibencoding=utf8]{biblatex}
+\usepackage{amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage[DIV=14,BCOR=2mm,headinclude=true,footinclude=false]{typearea}
+
+\definecolor{keywordcolor}{rgb}{0.7, 0.1, 0.1}   % red
+\definecolor{commentcolor}{rgb}{0.4, 0.4, 0.4}   % grey
+\definecolor{symbolcolor}{rgb}{0.0, 0.1, 0.6}    % blue
+\definecolor{sortcolor}{rgb}{0.1, 0.5, 0.1}      % green
+\definecolor{tacticcolor}{rgb}{0.0, 0.1, 0.6}
+\definecolor{background}{gray}{0.95}
+
+\usepackage{listings}
+\def\lstlanguagefiles{lstlean.tex}
+\lstset{
+  language=lean, 
+  mathescape=true, 
+  breaklines=true,
+}
+\newcommand{\dollar}{\mbox{\textdollar}}
+
+\makeatletter
+\DeclareCaptionFormat{alsoempty}{%
+  #1\if\relax\expandafter\noexpand\lst@caption\else#2#3\fi}
+\makeatother
+\captionsetup[lstlisting]{format=alsoempty}
+
+\newcommand\notes[1]{\textcolor{red}{#1}}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\theoremstyle{definition}
+\newtheorem{lemma}{Lemma}[section]
+
+\addbibresource{refs.bib}
+
+\begin{document}
+
+% Title Page
+% \input{title.tex}
+
+% \tableofcontents
+
+% \newpage 
+
+%\begin{abstract}
+	%lorem ipsum
+%\end{abstract}
+
+% \section{Introduction}
+
+%FIRST DRAFT%
+% \section{Lean Theorem Prover}
+% \input{background/background_lean.tex}
+
+%FIRST DRAFT%
+% \section{AVL Trees and Operations}
+% \input{definitions/definitions.tex}
+
+\section{Proofs}
+\input{proofs/proofs.tex}
+
+% \section{Related Work}
+% \input{related_work/related_work.tex}
+
+% \newpage
+
+% \printbibliography
+
+\end{document}

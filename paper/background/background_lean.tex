@@ -1,0 +1,23 @@
+The Lean Theorem Prover is a proof assistant based on dependent type theory with inductive families and universal polymorphism \cite{inductive_families}. The language contains a hierarchy of universes, dependent function types and inductive types. This section will detail how these are outlined in the language.
+
+In simple type theory, every expression has an associated type. Lean's dependent type theory extends simple type theory by having types themselves by types. Types can also be built from other types \cite{lean:manual}.  
+
+\begin{lstlisting}
+  /- simple types -/
+  constant m : nat
+  constant b : bool
+  /- types built from other types -/
+  constant f : nat → nat
+\end{lstlisting}
+
+With dependent type theory, types can depend on parameters. For example, \lstinline{list α} depends on \lstinline{α}, which helps differentiate between lists of different types. If we want to define a function which adds a new value to the list, the function would be polymorphic as its expected to function the same way with a \lstinline{bool}, \lstinline{nat} or any other \lstinline{α} type list. A function to add a new element to the list would have a type \lstinline{α → list α → list α}, which is an example of a dependent function type, as the outcome of the function is dependent on the type \lstinline{α} of the parameters.
+
+In Lean, every type other than universes and every constructor other than a Pi is an instance of a family of type constructors are called inductive types \cite{lean:manual}. An inductive type is built from muliple constructors, and each constructor specifies a way of building some object. 
+
+\begin{lstlisting}
+inductive foo (a : α) : Sort u
+| constructor₁: Π (b : β₁) → foo
+| constructor₂: Π (b : β₂) → foo
+\end{lstlisting}
+
+An inductive type may be recursive if the arguments within the constructors \lstinline{(b₁ : β₁)} refer to the inductive type itself \cite{lean:reference}.

@@ -1,0 +1,54 @@
+This section will go through the proof construction of deletion preserving order, and the sub-proofs that come along with it as well as major changes that have been done to previous definitions to make the proof constructions easier and readable.
+
+The lemma statement for deletion preserving order is formalized below.
+
+\begin{lstlisting}[caption=\empty]
+lemma delete_ordered (t : btree α) (k : nat) :
+  ordered t → ordered (delete k t) :=
+\end{lstlisting}
+
+Since the function \lstinline{delete} uses \lstinline{del_node}, a similar proof has to be constructed for it as well. The lemma statement does not contain a key, as with \lstinline{del_node}, the tree is assumed to have the root that matches the key in the arguments of \lstinline{delete}.
+
+\begin{lstlisting}[caption=\empty]
+lemma del_node_ordered (t : btree α) (k : nat) :
+  ordered t → ordered (del_node t) :=
+\end{lstlisting}
+
+Both of the above proofs were constructed by induction on the \lstinline{btree}.
+
+The proof for \lstinline{shrink} is constructed slightly differently to the previous ones. The statement should include an assumption of the tree to shrink being ordered, and an assumption of some result coming from shrinking the tree. The statement concludes that the shrunken tree is also ordered, and that the resulting key \lstinline{x} from the shruknen tree is greater than all the keys in the shrunken tree \lstinline{sh}. 
+
+\begin{lstlisting}[caption=\empty, label={lst:shrink_ordered}]
+lemma shrink_ordered {t sh : btree α} {x : nat} {a : α} :
+  ordered t ∧ shrink t = some (x, a, sh) → ordered sh ∧ forall_keys gt x sh :=
+\end{lstlisting}
+
+The proof for \lstinline{shrink_ordered} was done by induction on the tree, but generalizing \lstinline{x}, \lstinline{a} and \lstinline{sh}. This is because without the generalization, the proof would be referring to a specific result of \lstinline{shrink}, which cannot be foreseen, so therefore the proof needs to take into account all the possible values for the three-tuple result of \lstinline{shrink}.
+
+During the proof, I came across a sitation where some of the hypotheses were about \lstinline{shrink}, but no information could be derived from them. This led to the creation of a view\footnote{\notes{write how this was done by the supervisor but idk how yet}} for \lstinline{shrink}, to show each possible variation of arguments for \lstinline{shrink} and the result that gives.
+
+\begin{lstlisting}[caption=\empty]
+inductive shrink_view {α]} : btree α → option (nat × α × btree α) → Sort*
+| empty : shrink_view empty none
+| nonempty_empty : ∀ {l k v r},
+  shrink r = none →
+  shrink_view (node l k v r) (some (k, v, l))
+| nonempty_nonempty₁ : ∀ {l k v r x a sh out},
+  shrink r = some (x, a, sh) →
+  height l > height sh + 1 →
+  out = some (x, a, rotate_right (btree.node l k v sh)) →
+  shrink_view (node l k v r) out
+| nonempty_nonempty₂ : ∀ {l k v r x a sh},
+  shrink r = some (x, a, sh) →
+  height l ≤ height sh + 1 →
+  shrink_view (node l k v r) (some (x, a, node l k v sh))
+\end{lstlisting}
+
+A lemma was also written for \lstinline{shrink_view}, that would result in four case splits for each case in the view. 
+
+\begin{lstlisting}[caption=\empty, label={lst:shrink_view}]
+lemma shrink_shrink_view (t : btree α) : 
+  shrink_view t (shrink t) :=
+\end{lstlisting}
+
+Applying the lemma shown in Listing \ref{lst:shrink_view} would result in three cases in the inductive step of the proof in Listing \ref{lst:shrink_ordered}.
