@@ -1,13 +1,5 @@
-Formalizations of AVL trees are present in both Coq and Isabelle/HOL interactive theorem provers. This section will compare the formalizations present in the these languages and my implementation in Lean.
+Formalizations of AVL trees are present in both Coq\cite{code:coq} and Isabelle/HOL\cite{isabelle} interactive theorem provers. This section will compare the formalizations present in the these languages and my implementation in Lean.
 
-\subsection*{Coq}
-There are several differences between my formalization and the one presented in Coq, some stylistic, and some may affect efficiency and any future proof constructions.
+First, some differences. Both the Isabelle and Coq implementations of balancing a tree are different to the implementation in Lean. In Isabelle, there are two functions \lstinline{balL} that re-balances left subtrees and \lstinline{balR} that re-balances right subtrees. Coq has one single balance function, and no abstraction into separate left/right rotations. The functions in Isabelle functional essentially the same as \lstinline{rotate_right} and \lstinline{rotate_left} but don't abstract the single rotations away. This can be in part just a difference of stylistic choice, but in the case of having one single balance function, it can cause efficiency issues, and create longer proof constructions. Both Coq and Isabelle have the height of a tree starting from a node in the node data, while in Lean the height is calculated when needed using a function. This is purely a stylistic choice. 
 
-In Coq, a separate inductive type is created for AVL trees, with assumptions of height in the constructor. This is more a stylistic choice, and it doesn't make a difference if the assumptions about height are presented in the inductive type or as a separate definitions in proofs like in my formalization. 
-
-With definitions of functions in Coq, there is no separation of right rotations of left rotations unlike in the Lean formalization, and only a singular \lstinline{bal} function, which is in turn used in the \lstinline{insert} function and uses the recursive insert call as the function argument to re-balance a tree after insertion. While this can also be a stylistic choice, since a single \lstinline{bal} function could allow for a simpler \lstinline{insert} function, it may be inefficient as well as the proofs will have to be longer, and applying the function might take a longer time. 
-
-The delete function in Coq follows a standard way of deleting a node from a tree - finding the inorder predecessor of the node to delete (the node with the largest key in the left subtree), replacing the subtree rooted at the inorder predecessor of the node, and re-balancing. 
-
-\subsection*{Isabelle}
-\notes{find the correct Isabelle stuff!}
+Now the similarities. Coq has a function \lstinline{remove_min} and Isabelle \lstinline{split_max} which act in a similar way to \lstinline{shrink} - splitting off a key and a node from a tree, and performing operations on the subtree left. The implementations of the binary search tree base is also the same, for the exception of height being part of the binary tree structure.
