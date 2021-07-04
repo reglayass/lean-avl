@@ -1,5 +1,5 @@
-An AVL tree \cite*{avl:original} is a self-balancing binary search tree, where the height difference between two child subtrees differ by no more than one.
-This may also be described by the \textit{balancing factor} \notes{what is this?}
+An AVL tree \cite{avl:original} is a self-balancing binary search tree, where the absolute value of the height difference between two child subtrees is no more than one.
+This may also be described by the \textit{balancing factor}
 
 \begin{definition}[Tree height]
   \label{def:height}
@@ -8,12 +8,12 @@ This may also be described by the \textit{balancing factor} \notes{what is this?
 
 \begin{definition}[Balancing factor]
   \label{def:balancing_factor}
-  The balance factor of any node \textit{n} is defined to be the height difference of its two child subtrees : $height (right(n)) - height(left(n))$.
+  The balancing factor of any node is defined to be the height difference of its two child subtrees.
 \end{definition}
 
 In Lean, the definitions \lstinline{height} and \lstinline{balanced} are done per Definitions \ref{def:height} and \ref{def:balancing_factor}.
 
-\begin{lstlisting}[caption=\empty]
+\begin{lstlisting}
 def height : btree α → nat
 | btree.empty := 0
 | (btree.node l k a r) :=
@@ -22,11 +22,29 @@ def height : btree α → nat
 def balanced : btree α → bool
 | btree.empty := tt
 | (btree.node l k a r) :=
-  if height l ≥ height r then height l ≤ height r + 1
-  else height r ≤ height l + 1
+  if height l ≥ height r 
+    then height l ≤ height r + 1
+    else height r ≤ height l + 1
 \end{lstlisting}
 
 The process of looking up a node or searching for a key is the same as in BSTs. During insertion and deletion, however, a tree may become unbalanced, after which rotation algorithms are used to re-balance the tree. A tree can either be left-heavy or right-heavy. Left-heaviness can be fixed with a simple right rotation; right heaviness with a simple left rotation. If the subtrees of the children are also unbalanced, compound rotations are used to re-balance, which consist of a right rotation followed by a left rotation or vice versa.
+
+A tree \lstinline{t} being left-heavy means that if the right subtree has a height of $n$, the height of the left subtree is $n+2$; similarly, a right-heavy tree has a left subtree of height $n$ and a right subtree of height $n+2$. The definition for \lstinline{left_heavy} as well as \lstinline{simple_right} closely follow \cite{textbook:discrete_computer}. The definition for \lstinline{right_heavy} is mirrored.
+
+\begin{lstlisting}
+def left_heavy : btree α → bool
+| btree.empty := ff
+| (btree.node btree.empty k a r) := ff
+| (btree.node (btree.node ll lk la lr) k a r) :=
+  (height ll ≥ height lr) ∧ (height ll ≤ height lr + 1) ∧
+  (height lr ≥ height r) ∧ (height r + 1 = height ll)
+
+def simple_right : btree α → btree α
+| btree.empty := btree.empty
+| (btree.node (btree.node ll lk la lr) k a r) := 
+    btree.node ll lk la (btree.node lr k a r)
+| (btree.node l k a r) := btree.node l k a r
+\end{lstlisting}
 
 \begin{figure}[!ht]
   \begin{subfigure}{0.5\textwidth}
@@ -64,30 +82,9 @@ The process of looking up a node or searching for a key is the same as in BSTs. 
   \caption{An example of a simple left rotation on a right-heavy tree.}
 \end{figure}
 
-A tree \lstinline{t} being left-heavy means that if the right subtree has a height of $n$, the height of the left subtree is $n+2$; similarly, a right-heavy tree has a left subtree of height $n$ and a right subtree of height $n+2$. The definition for \lstinline{left_heavy} closely follows the implementation from \cite{textbook:discrete_computer}. The definition for \lstinline{right_heavy} is mirrored.
+In a simple right rotation, the pivot of the rotation is the left subtree, which is rotated. In a simple left rotation, the pivot of the rotation is the right subtree.
 
-\begin{lstlisting}[caption=\empty]
-def left_heavy : btree α → bool
-| btree.empty := ff
-| (btree.node btree.empty k a r) := ff
-| (btree.node (btree.node ll lk la lr) k a r) :=
-  (height ll ≥ height lr) ∧ (height ll ≤ height lr + 1) ∧
-  (height lr ≥ height r) ∧ (height r + 1 = height ll)
-\end{lstlisting}
-
-The definitions for simple and compound rotations also closely follow \cite{textbook:discrete_computer}. 
-
-\begin{lstlisting}[caption=\empty, label={lst:def_simple_right}]
-def simple_right : btree α → btree α
-| btree.empty := btree.empty
-| (btree.node (btree.node ll lk la lr) k a r) := 
-    btree.node ll lk la (btree.node lr k a r)
-| (btree.node l k a r) := btree.node l k a r
-\end{lstlisting}
-
-In Listing \ref{lst:def_simple_right}, the pivot of the rotation is the left subtree, which is rotated. In a simple left rotation, the pivot of the rotation is the right subtree.
-
-\begin{lstlisting}[caption=\empty, label={lst:def_rotate_right}]
+\begin{lstlisting}
 def rotate_right : btree α → btree α
 | btree.empty := btree.empty
 | (btree.node l k a r) :=
@@ -100,11 +97,11 @@ def rotate_right : btree α → btree α
   end 
 \end{lstlisting}
 
-With simple rotations, only the height of the right (or left) child subtree matters. In the situation that the subtrees of the child are also too tall, i.e. too tall on the "inside" a compound rotation needs to be applied. In the definition \lstinline{rotate_right}, the children of the left child are compared. If the left subtree of the child is smaller a compound rotation is done as the tree is too heavy on the "inside". Otherwise, just a simple right rotation is done.
+With simple rotations, only the height of the right (or left) child subtree matters. In the situation that the subtrees of the child are also too tall, i.e. too tall on the \enquote{inside} a compound rotation needs to be applied. In the definition \lstinline{rotate_right}, the children of the left child are compared. If the left subtree of the child is smaller a compound rotation is done as the tree is too heavy on the "inside". Otherwise, just a simple right rotation is done.
 
-Deletion is more complicated, and depends on the placement of the node within the tree. If the left subtree is empty, then the node can be safely replaced by the right subtree.  If the left subtree has children, it can be of any height, so re-balancing has to be taken into account. In this case, the same philosophy can be follows as for deletion when the left subtree is empty, but traveling down the right subtree and looking for an empty right child. If a node \lstinline{n} is found with an empty right child, the key and data value of \lstinline{n} is returned, and \lstinline{n} is replaced by its left child subtree, with right rotations performed to restore balance. 
+Deletion is more complicated, and depends on the placement of the node within the tree. If the left subtree is empty, then the node can be safely replaced by the right subtree.  If the left subtree has children, it can be of any height, so re-balancing has to be taken into account. In this case, the same philosophy can be followed as for deletion when the left subtree is empty, but traveling down the right subtree and looking for an empty right child. If a node \lstinline{n} is found with an empty right child, the key and data value of \lstinline{n} is returned, and \lstinline{n} is replaced by its left child subtree, with right rotations performed to restore balance. 
 
-\begin{lstlisting}[escapeinside={*}{*}, caption=\empty]
+\begin{lstlisting}[escapeinside={*}{*}]
 def shrink : btree α → option (nat × α × btree α)
 | btree.empty := none
 | (btree.node l k v r) := some *\$*
@@ -117,11 +114,11 @@ def shrink : btree α → option (nat × α × btree α)
   end
 \end{lstlisting}
 
-Since shrinking an empty tree is impossible, \lstinline{shrink} returns an \lstinline{option} so it is able to return an empty value.
+Since shrinking an empty tree is impossible, \lstinline{shrink} returns an \lstinline{option}.
 
-The next step is to define the steps to delete a node. This is done with the function \lstinline{del_node}. If the left subtree of the node to be deleted is not empty, then the tree (meaning, the tree that is formed from the node to delete) is shrunken, and a new tree is formed with the resulting key from the shrink operation as the new node, the shrunken tree and the original right subtree. A rotation is done if the result is unbalanced. 
+The next step is to define the steps to delete a node. This is done with the function \lstinline{del_node}. If the left subtree of the node to be deleted is not empty, then the left subtree is shrunken, and a new tree is formed with the resulting key from the shrink operation as the new node, the shrunken tree and the original right subtree. A rotation is done if the result is unbalanced. 
 
-\begin{lstlisting}[caption=\empty]
+\begin{lstlisting}
 def del_node : btree α → btree α
 | btree.empty := btree.empty
 | (btree.node l k v r) :=
@@ -135,7 +132,7 @@ def del_node : btree α → btree α
 
 Finally, the full \lstinline{delete} function is complete. 
 
-\begin{lstlisting}[caption=\empty]
+\begin{lstlisting}
 def delete (x : nat) : btree α → btree α
 | btree.empty := btree.empty
 | (btree.node l k a r) :=

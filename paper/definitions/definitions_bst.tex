@@ -1,53 +1,51 @@
 A binary search tree (BST) (also called an ordered tree) is a tree data structure where each node has at most two children, referred to as the \textit{left child} and \textit{right child}. A node also has a key and a value for storing information.
 
-To formalize binary trees, I defined an inductive type \lstinline{btree}.
+Binary trees are defined as the following inductive type.
 
-\begin{lstlisting}[caption=\empty]
+\begin{lstlisting}
 inductive btree (α : Type u)
 | empty {} : btree
 | node (l : btree) (k : nat) (a : α) (r : btree) : btree
 \end{lstlisting}
 
-In this definition, there are two constructors: one for an empty tree, and one for a node, with two children, a key and a node value. There is no leaf constructor, as a leaf is a node with no children, which can be easily defined with the \lstinline{node} constructor.
+In this definition, there are two constructors: one for an empty tree and one for a node, with two children, a key (as a natural number) and a node value. There is no leaf constructor, as a leaf is a node with no children, which can be defined with the \lstinline{node} constructor.
 
 From there, I defined a function to search for a key in a tree. The purpose of the function is to verify that a key exists in a tree; therefore, it doesn't matter in which subtree it is located in, as long as it is in one of them.
 
-\begin{lstlisting}[caption=\empty]
+\begin{lstlisting}
 def bound (x : nat) : btree α → bool
 | btree.empty := ff
 | (btree.node l k a r) :=
   x = k ∨ bound l ∨ bound r
 \end{lstlisting}
 
-All nodes in a binary search tree must have the \textit{binary search property}.
+A binary search tree must hold to the \textit{binary search property}.
 
 \begin{definition}[Binary Search Property]
   \label{def:bst_property}
-  Given any node N in a binary search tree, all the keys in the left subtree of N are smaller than the key of N, and all keys in the right child subtree are greater than the 
+  Given any node N in a binary search tree, all the keys in the left subtree of N are smaller than the key of N, and all keys in the right subtree are greater than the 
   key of N.
 \end{definition}
 
-The binary search property is formalized with two definitions. \lstinline{forall_keys} describes the relationship between a key and a tree - for all the keys that exist in a tree, there is some relationship between the input key and the tree keys. 
+In Lean we define the binary search property with two separate definitions. The first one, \lstinline{forall_keys}, describes the relationship between a key and a tree -- for all the keys that exist in the tree, the relation \lstinline{nat → nat → Prop} holds for the input key and the keys in the tree.
 
-\begin{lstlisting}[caption=\empty]
+\begin{lstlisting}
 def forall_keys (p : nat → nat → Prop) (k : nat) (t : btree α) : Prop :=
   ∀ k', bound k' t → p k k'
 \end{lstlisting}
 
-The definition for \lstinline{ordered} uses the \lstinline{forall_keys} definition to formalize the binary search property. A tree is ordered only if the children are ordered and the \lstinline{forall_keys} relationship holds.
+The definition for \lstinline{ordered} formalizes the binary search property. A tree is ordered if the children are ordered and the \lstinline{forall_keys} relationship holds.
 
-\begin{lstlisting}[caption=\empty]
+\begin{lstlisting}
 def ordered : btree α → Prop
 | btree.empty := tt
 | (btree.node l k a r) :=
   ordered l ∧ ordered r ∧ (forall_keys (>) k l) ∧ (forall_keys (<) k r)
 \end{lstlisting}
 
-Due to the binary search property, operations such as lookup can be done recursively. For traversal, it is possible to compare every key to another as a total preorder relation is required for binary search trees. When traversing the tree, the input key is compared with the current node, and the left subtree or the right subtree is then recursively traversed depending on if the input key is smaller or larger than its root, respectively.
+Due to the binary search property, lookup can be done recursively. For traversal, it is possible to compare every key to another as a total preorder is required for binary search trees. When traversing the tree, if the input key is smaller than the current node key, we recurse into the left subtree; if the input key is larger, we recurse into the right subtree.  
 
-Listing \ref{lst:def_lookup} shows the \lstinline{lookup} function - a key is searched for in a tree, traversing the tree as stated previously and the node data is returned if a key is located.
-
-\begin{lstlisting}[caption=\empty, label={lst:def_lookup}]
+\begin{lstlisting}
 def lookup (x : nat) : btree α → option α
 | btree.empty := none
 | (btree.node l k a r) :=
