@@ -29,7 +29,7 @@ def balanced : btree α → bool
 
 The process of looking up a node or searching for a key is the same as in BSTs. During insertion and deletion, however, a tree may become unbalanced, after which rotation algorithms are used to re-balance the tree. A tree can either be left-heavy or right-heavy. Left-heaviness can be fixed with a simple right rotation; right-heaviness with a simple left rotation. If the subtrees of the children are also unbalanced, compound rotations are used to re-balance, which consist of a right rotation followed by a left rotation or vice versa.
 
-A tree \lstinline{t} being left-heavy means that if the right subtree has a height of $n$, the height of the left subtree is $n+2$; similarly, a right-heavy tree has a left subtree of height $n$ and a right subtree of height $n+2$. The definition for \lstinline{left_heavy} as well as \lstinline{simple_right} closely follow \cite{textbook:discrete_computer}. The definition for \lstinline{right_heavy} is mirrored.
+A tree \lstinline{t} being left-heavy means that if the right subtree has a height of $n$, the height of the left subtree is $n+2$; similarly, a right-heavy tree has a left subtree of height $n$ and a right subtree of height $n+2$. The definitions presented further closely follow \cite{textbook:discrete_computer}. The definition for \lstinline{right_heavy} is mirrored.
 
 \begin{lstlisting}
 def left_heavy : btree α → bool
