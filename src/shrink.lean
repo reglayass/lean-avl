@@ -44,7 +44,7 @@ begin
  },
 end
 
-lemma forall_keys_shrink {t sh : btree α} {k x : nat} {a : α} {p : nat → nat → Prop} :
+lemma forall_shrink {t sh : btree α} {k x : nat} {a : α} {p : nat → nat → Prop} :
   forall_keys p k t ∧ shrink t = some (x, a, sh) → forall_keys p k sh ∧ p k x :=
 begin
   intro h₁,
@@ -56,23 +56,21 @@ begin
   case node : l k v r ihl ihr {
     cases_matching* (_ ∧ _),
     cases' shrink_shrink_view (node l k v r),
-    case nonempty_empty {
-      sorry
-    },
-    case nonempty_nonempty₁ {
+    case nonempty_empty { sorry },
+    case nonempty_nonempty₁ { 
       rw h_2 at h₁_right,
       clear h_2,
       cases' h₁_right,
       split,
-      { apply forall_rotate_right, 
+      { apply forall_rotate_right,
+        unfold forall_keys at h₁_left, 
         apply forall_keys_intro,
-        unfold forall_keys at h₁_left,
         repeat { split },
-        { unfold forall_keys, 
+        { unfold forall_keys,
           intros k' h₂,
           apply h₁_left,
           simp [bound],
-          apply or.inr (or.inl h₂),
+          tauto, 
         },
         { apply h₁_left, 
           simp [bound],
@@ -81,41 +79,23 @@ begin
       },
       { sorry },
     },
-    case nonempty_nonempty₂ {
-      cases' h₁_right,
-      split,
-      { apply forall_keys_intro, 
-        unfold forall_keys at h₁_left,
-        repeat { split },
-        { unfold forall_keys,
-          intros k' h₂,
-          apply h₁_left,
-          simp [bound],
-          apply or.inr (or.inl h₂),
-        },
-        { apply h₁_left,
-          simp [bound],
-        },
-        { sorry },
-      },
-      { sorry },
-    },
+    case nonempty_nonempty₂ { sorry },
   },
 end
 
-lemma forall_keys_shrink_aux_1 {t sh : btree α} {k x : nat} {a : α} {p : nat → nat → Prop} :
+lemma forall_shrink_aux_1 {t sh : btree α} {k x : nat} {a : α} {p : nat → nat → Prop} :
   forall_keys p k t ∧ shrink t = some (x, a, sh) → forall_keys p k sh :=
 begin
   intro h₁,
-  have h : forall_keys p k sh ∧ p k x := forall_keys_shrink h₁,
+  have h : forall_keys p k sh ∧ p k x := forall_shrink h₁,
   apply and.left h,
 end
 
-lemma forall_keys_shrink_aux_2 {t sh : btree α} {k x : nat} {a : α} {p : nat → nat → Prop} :
+lemma forall_shrink_aux_2 {t sh : btree α} {k x : nat} {a : α} {p : nat → nat → Prop} :
   forall_keys p k t ∧ shrink t = some (x, a, sh) → p k x :=
 begin
   intro h₁,
-  have h : forall_keys p k sh ∧ p k x := forall_keys_shrink h₁,
+  have h : forall_keys p k sh ∧ p k x := forall_shrink h₁,
   apply and.right h,
 end
 
@@ -132,32 +112,20 @@ begin
     rw ordered at h₁,
     cases_matching* (_ ∧ _),
     cases' shrink_shrink_view (node l k v r),
-    case nonempty_empty {
-      sorry,
-    },
-    case nonempty_nonempty₁ {
-      rw h_2 at h₂,
-      clear h_2,
-      cases' h₂,
-      specialize ihr h₁_right_left h,
-      cases_matching* (_ ∧ _),
-      specialize ihr_right x_1,
-      split,
-      { simp [bound], 
-        apply or.inr (or.inr ihr_left),
-      },
-      { sorry, },
-    },
+    case nonempty_empty { sorry },
+    case nonempty_nonempty₁ { sorry },
     case nonempty_nonempty₂ {
       cases' h₂,
       specialize ihr h₁_right_left h,
       cases_matching* (_ ∧ _),
       specialize ihr_right x_1,
       split,
-      { simp [bound],
-        apply or.inr (or.inr ihr_left),
-      },
       { sorry },
+      { intros k' h₃,
+        simp [bound] at h₃ ⊢,
+        cases_matching* (_ ∨ _); try { tauto },
+        { sorry }, 
+      },
     },
   },
 end
@@ -172,41 +140,36 @@ begin
     contradiction,
   },
   case node : l k v r ihl ihr {
+    rw ordered at h₁,
     cases_matching* (_ ∧ _),
     cases' shrink_shrink_view (node l k v r),
-    case nonempty_empty {
+    case nonempty_empty { 
       cases' h₁_right,
-      rw ordered at h₁_left,
-      cases_matching* (_ ∧ _),
-      repeat { split }; assumption, 
+      split; assumption,
     },
     case nonempty_nonempty₁ {
       rw h_2 at h₁_right,
       clear h_2,
       cases' h₁_right,
-      rw ordered at h₁_left,
-      cases_matching* (_ ∧ _),
       specialize ihr ⟨h₁_left_right_left, h⟩,
       cases_matching* (_ ∧ _),
       split,
       { apply rotate_right_ordered, 
         repeat { split }; try { assumption },
-        { apply forall_keys_shrink_aux_1 (and.intro h₁_left_right_right_right h), },
-      }, 
+        { apply forall_shrink_aux_1 (and.intro h₁_left_right_right_right h), }
+      },
       { apply forall_rotate_right, 
-        have g₂ : x_1 > k,
-        { have h₃ : bound x_1 r ∧ (∀ k', bound k' sh_1 → bound k' r), 
+        have h₂ : x_1 > k,
+        { have h₃ : bound x_1 r ∧ (∀ k', bound k' sh_1 → bound k' r),
           { apply shrink_keys h₁_left_right_left h, },
           cases_matching* (_ ∧ _),
           unfold forall_keys at h₁_left_right_right_right,
           apply h₁_left_right_right_right,
-          assumption,
+          assumption, 
         },
-        have g₃ : forall_keys gt x_1 l,
-        { apply forall_keys_trans l (>) k,
-          { assumption, },
-          { apply trans, },
-          { assumption, },
+        have h₃ : forall_keys gt x_1 l,
+        { apply forall_keys_trans l (>) k; try { assumption },
+          { apply trans, }, 
         },
         apply forall_keys_intro,
         repeat { split }; assumption,
@@ -214,28 +177,24 @@ begin
     },
     case nonempty_nonempty₂ {
       cases' h₁_right,
-      rw ordered at h₁_left,
-      cases_matching* (_ ∧ _),
       specialize ihr ⟨h₁_left_right_left, h⟩,
       cases_matching* (_ ∧ _),
       split,
       { rw ordered, 
         repeat { split }; try { assumption },
-        { apply forall_keys_shrink_aux_1 (and.intro h₁_left_right_right_right h), },
+        { apply forall_shrink_aux_1 (and.intro h₁_left_right_right_right h), },
       },
-      { have g₂ : x_1 > k,
-        { have h₃ : bound x_1 r ∧ (∀ k', bound k' sh_1 → bound k' r), 
+      { have h₂ : x_1 > k,
+        { have h₃ : bound x_1 r ∧ (∀ k', bound k' sh_1 → bound k' r),
           { apply shrink_keys h₁_left_right_left h, },
-          cases_matching* (_ ∧ _),
+          cases_matching* (_ ∧ _), 
           unfold forall_keys at h₁_left_right_right_right,
           apply h₁_left_right_right_right,
           assumption,
         },
-        have g₃ : forall_keys gt x_1 l,
-        { apply forall_keys_trans l (>) k, 
-          { assumption, },
+        have h₃ : forall_keys gt x_1 l,
+        { apply forall_keys_trans l (>) k; try { assumption },
           { apply trans, },
-          { assumption, },
         },
         apply forall_keys_intro,
         repeat { split }; assumption,
