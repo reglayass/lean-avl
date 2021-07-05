@@ -1,0 +1,20 @@
+The lemma for rotations preserving keys is written as so.
+
+\begin{lstlisting}
+lemma rotate_right_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = → bound k (rotate_right t) := ...
+\end{lstlisting}
+
+The first step with proof statements with rotations is to look at their definitions. The definition for \lstinline{rotate_right} uses the \lstinline{simple_right} and \lstinline{simple_left} definitions, so proofs about them preserving order need to be constructed too.
+
+\begin{lstlisting}[caption=\empty]
+lemma simple_right_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = → bound k (simple_right t) := ...
+  
+lemma simple_left_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = → bound k (simple_left t) := ...
+\end{lstlisting}
+
+It was during the construction of these proofs where the first problem with the definition of \lstinline{bound} was discovered. Previously, the definition for \lstinline{bound} was similar to that of \lstinline{lookup}, recursively searching the tree until the key was found, returning true.
+
+This definition would make it very difficult to write the proofs needed. The hypothesis of the lemmas would assume that the key is bound in the same subtree, yet after a rotation this may not be the case anymore. The definition was then changed to the one present in this paper, which allowed for the proofs to be completed, as with disjunction only one of the variables needs to be true for the whole expression \notes{is this the right word for it?} to be true. This change in the definition resulted in other proofs becoming much easier to complete and much shorter. 

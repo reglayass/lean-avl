@@ -1,0 +1,20 @@
+The lemmas for balance involved the definitions for \lstinline{right_heavy} and \lstinline{right_heavy}. If a tree is right-heavy, a left rotation restores balance; if a tree is left-heavy a right rotation restores balance.
+
+\begin{lstlisting}
+lemma rotate_right_balanced (t : btree α) :
+  left_heavy t → balanced (rotate_right t) := ...
+\end{lstlisting}
+
+Lemmas for simple rotations restoring balance also needed to be written and completed. 
+
+\begin{lstlisting}
+lemma simple_right_balanced (t : btree α) :
+  left_heavy t → balanced (simple_right t) := ...
+  
+lemma simple_left_balanced (t : btree α) :
+  right_heavy t → balanced (simple_left t) := ...
+\end{lstlisting}
+
+Similarly to proofs about ordering, the above proofs were completed with case splitting on trees and subtrees. During construction of proofs with compound rotations, the lemmas about simple rotations were applied when needed. 
+
+The proofs about balance were a bit more complicated to solve. With the ordering lemmas, it was a case of finding the goals in the hypotheses, with additionally using transitivity to achieve out goal. Since tree heaviness and the definition of \lstinline{balanced} use tree height, there was more mathematics involved. 

@@ -1,0 +1,27 @@
+The following lemma is for right rotations preserving order. Any sub-lemmas that come out of it follows the same structure, as do any other lemma statements that concern order.
+
+\begin{lstlisting}
+lemma rotate_right_ordered (t : btree α) :
+  ordered t → ordered (rotate_right t) := ...
+\end{lstlisting}
+
+Since it is a compound rotation, similar lemmas need to be constructed for the simple rotations.
+
+\begin{lstlisting}
+lemma simple_right_ordered (t : btree α) :
+  ordered t → ordered (simple_right t) := ...
+
+lemma simple_left_ordered (t : btree α) :
+  ordered t → ordered (simple_left t) := ...
+\end{lstlisting}
+
+The proofs \lstinline{rotate_right_ordered} were done by case splitting on the tree \lstinline{t}, its right subtree \lstinline{r} and the next subtree \lstinline{lr}, and the simple rotation lemmas were applied throughout when needed. The simple rotation lemmas were also completed by case splitting on left or right subtree depending on the rotation. The same process was followed for the rest of the proofs.
+
+The proofs above also require a lemma for transitivity of keys in trees. Assume a tree \lstinline{rr} and \lstinline{rl}, with the former having a left and a right child \lstinline{rll} and \lstinline{rlr}. Also assume two keys \lstinline{rk}, which is the parent node key of \lstinline{rr}, and \lstinline{rlk}, which is the key of \lstinline{rl}.
+If \lstinline{rk} is greater than all the keys contained in \lstinline{rll} and \lstinline{rlr}, and \lstinline{rk} is less than the keys in \lstinline{rr}, by transitivity \lstinline{rlk} is less than all the keys in \lstinline{rr}. The lemma for key transitivity is formalized below.
+
+\begin{lstlisting}
+lemma forall_keys_trans (t : btree α) (p : nat → nat → Prop) 
+(z x : nat) (h₁ : p x z) (h₂ : ∀ a b c, p a b → p b c → p a c) :
+  forall_keys p z t → forall_keys p x t := ...
+\end{lstlisting}
