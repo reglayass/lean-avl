@@ -1,5 +1,5 @@
 An AVL tree \cite{avl:original} is a self-balancing binary search tree, where the absolute value of the height difference between two child subtrees is no more than one.
-This may also be described by the \textit{balancing factor}
+This may also be described by the \textit{balancing factor}.
 
 \begin{definition}[Tree height]
   \label{def:height}
@@ -27,7 +27,7 @@ def balanced : btree α → bool
     else height r ≤ height l + 1
 \end{lstlisting}
 
-The process of looking up a node or searching for a key is the same as in BSTs. During insertion and deletion, however, a tree may become unbalanced, after which rotation algorithms are used to re-balance the tree. A tree can either be left-heavy or right-heavy. Left-heaviness can be fixed with a simple right rotation; right heaviness with a simple left rotation. If the subtrees of the children are also unbalanced, compound rotations are used to re-balance, which consist of a right rotation followed by a left rotation or vice versa.
+The process of looking up a node or searching for a key is the same as in BSTs. During insertion and deletion, however, a tree may become unbalanced, after which rotation algorithms are used to re-balance the tree. A tree can either be left-heavy or right-heavy. Left-heaviness can be fixed with a simple right rotation; right-heaviness with a simple left rotation. If the subtrees of the children are also unbalanced, compound rotations are used to re-balance, which consist of a right rotation followed by a left rotation or vice versa.
 
 A tree \lstinline{t} being left-heavy means that if the right subtree has a height of $n$, the height of the left subtree is $n+2$; similarly, a right-heavy tree has a left subtree of height $n$ and a right subtree of height $n+2$. The definition for \lstinline{left_heavy} as well as \lstinline{simple_right} closely follow \cite{textbook:discrete_computer}. The definition for \lstinline{right_heavy} is mirrored.
 
@@ -97,7 +97,7 @@ def rotate_right : btree α → btree α
   end 
 \end{lstlisting}
 
-With simple rotations, only the height of the right (or left) child subtree matters. In the situation that the subtrees of the child are also too tall, i.e. too tall on the \enquote{inside} a compound rotation needs to be applied. In the definition \lstinline{rotate_right}, the children of the left child are compared. If the left subtree of the child is smaller a compound rotation is done as the tree is too heavy on the "inside". Otherwise, just a simple right rotation is done.
+With simple rotations, only the height of the right (or left) child subtree matters. If the subtrees of the child are also too tall, i.e. too tall on the \enquote{inside}, a compound rotation needs to be applied. In the definition \lstinline{rotate_right}, the children of the left child are compared. If the left subtree of the child is smaller, a compound rotation is done as the tree is too heavy on the "inside". Otherwise, just a simple right rotation is done.
 
 Deletion is more complicated, and depends on the placement of the node within the tree. If the left subtree is empty, then the node can be safely replaced by the right subtree.  If the left subtree has children, it can be of any height, so re-balancing has to be taken into account. In this case, the same philosophy can be followed as for deletion when the left subtree is empty, but traveling down the right subtree and looking for an empty right child. If a node \lstinline{n} is found with an empty right child, the key and data value of \lstinline{n} is returned, and \lstinline{n} is replaced by its left child subtree, with right rotations performed to restore balance. 
 

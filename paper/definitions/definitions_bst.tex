@@ -1,4 +1,4 @@
-A binary search tree (BST) (also called an ordered tree) is a tree data structure where each node has at most two children, referred to as the \textit{left child} and \textit{right child}. A node also has a key and a value for storing information.
+A binary search tree (BST) (also called an ordered tree) is a tree data structure where each node has none, one, or two children. The children are referred to as the \textit{left child} and \textit{right child}. A node also has a key and a value for storing information.
 
 Binary trees are defined as the following inductive type.
 
@@ -10,7 +10,7 @@ inductive btree (α : Type u)
 
 In this definition, there are two constructors: one for an empty tree and one for a node, with two children, a key (as a natural number) and a node value. There is no leaf constructor, as a leaf is a node with no children, which can be defined with the \lstinline{node} constructor.
 
-From there, I defined a function to search for a key in a tree. The purpose of the function is to verify that a key exists in a tree; therefore, it doesn't matter in which subtree it is located in, as long as it is in one of them.
+From there, I defined a function to search for a key in a tree. The function verifies that a key exists in a tree; therefore, it doesn't matter in which subtree it is located in, as long as it is in one of them.
 
 \begin{lstlisting}
 def bound (x : nat) : btree α → bool
@@ -32,6 +32,15 @@ In Lean we define the binary search property with two separate definitions. The 
 \begin{lstlisting}
 def forall_keys (p : nat → nat → Prop) (k : nat) (t : btree α) : Prop :=
   ∀ k', bound k' t → p k k'
+\end{lstlisting}
+
+An additional definition \lstinline{forall_keys_unfolded} was also written to be able to use the above definition but separate a tree into its separate children so that the relationship between the key and the two children can be seen as well. 
+
+\begin{lstlisting}
+def forall_keys_unfolded (p : nat → nat → Prop) : nat → btree α → Prop
+| x btree.empty := tt
+| x (btree.node l k a r) :=
+  forall_keys_unfolded x l ∧ (p x k) ∧ forall_keys_unfolded x r
 \end{lstlisting}
 
 The definition for \lstinline{ordered} formalizes the binary search property. A tree is ordered if the children are ordered and the \lstinline{forall_keys} relationship holds.
