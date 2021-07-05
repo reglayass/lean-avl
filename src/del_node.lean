@@ -1,6 +1,7 @@
 import definitions
 import rotations
 import shrink
+import forall_keys
 import tactic.linarith
 import tactic.induction
 set_option pp.generalized_field_notation false
@@ -11,6 +12,7 @@ namespace del_node_lemmas
 open btree
 open rotation_lemmas
 open shrink_lemmas
+open forall_keys_lemmas
 
 variables {α : Type u}
 
@@ -64,19 +66,9 @@ begin
     },
     case nonempty_nonempty₁ {
       apply forall_rotate_left,
-      { rw forall_keys,
-        intros k' h₂,
-        apply h₁,
-        simp [bound] at h₂ ⊢,
-        sorry,
-      },
+      { sorry },
     },
-    case nonempty_nonempty₂ {
-      intros k' h₂,
-      apply h₁,
-      simp [bound] at h₂ ⊢,
-      sorry,
-    },
+    case nonempty_nonempty₂ { sorry },
   },
 end
 
@@ -97,26 +89,26 @@ begin
       apply rotate_left_ordered, 
       rw ordered,
       repeat { split },
-      { have h : ordered l ∧ shrink l = some (x, a, sh) := and.intro h₁_left h,
-        apply shrink_ordered_aux_1 h, 
-      },
+      { apply shrink_ordered_aux_1 (and.intro h₁_left h),  },
       { assumption, },
-      { have h : ordered l ∧ shrink l = some (x, a, sh) := and.intro h₁_left h, 
-        apply shrink_ordered_aux_2 h,
+      { apply shrink_ordered_aux_2 (and.intro h₁_left h), },
+      { apply forall_keys_trans _ (<) k, 
+        { apply forall_shrink_aux_2 (and.intro h₁_right_right_left h), },
+        { apply trans, },
+        { assumption, },
       },
-      { sorry, },
     },
     case nonempty_nonempty₂ { 
       rw ordered, 
       repeat { split },
-      { have h : ordered l ∧ shrink l = some (x, a, sh) := and.intro h₁_left h, 
-        apply shrink_ordered_aux_1 h,
-      },
+      { apply shrink_ordered_aux_1 (and.intro h₁_left h), },
       { assumption, },
-      { have h : ordered l ∧ shrink l = some (x, a, sh) := and.intro h₁_left h, 
-        apply shrink_ordered_aux_2 h,
+      { apply shrink_ordered_aux_2 (and.intro h₁_left h), },
+      { apply forall_keys_trans _ (<) k, 
+        { apply forall_shrink_aux_2 (and.intro h₁_right_right_left h), },
+        { apply trans, },
+        { assumption, },
       },
-      { sorry },
     },
   },
 end
