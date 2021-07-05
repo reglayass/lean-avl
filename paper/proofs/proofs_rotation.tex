@@ -1,85 +1,10 @@
 With rotations, I want to show that a rotation preserves order in a tree, that a rotation does not lose keys, and that rotations preserve balance. This section will informally present some proof constructions based on a right rotation, and any changes that were made to definitions based on the process of constructing these proofs.
 
 \subsection*{Keys}
-The lemma for rotations preserving keys is formalized in Listing \ref{lst:rotate_keys}.
-
-\begin{lstlisting}[caption=\empty, label={lst:rotate_keys}]
-lemma rotate_right_keys (t : btree α) (k : nat) (x : bool) :
-  bound k t = → bound k (rotate_right t) := ...
-\end{lstlisting}
-
-The first step with proof statements with rotations is to look at their definitions. The definition for \lstinline{rotate_right} uses the \lstinline{simple_right} and \lstinline{simple_left} definitions, so proofs about them preserving order need to be constructed too.
-
-\begin{lstlisting}[caption=\empty]
-lemma simple_right_keys (t : btree α) (k : nat) (x : bool) :
-  bound k t = → bound k (simple_right t) := ...
-  
-lemma simple_left_keys (t : btree α) (k : nat) (x : bool) :
-  bound k t = → bound k (simple_left t) := ...
-\end{lstlisting}
-
-It was during the construction of these proofs where the first problem with the definition of \lstinline{bound} was discovered. Previously, the definition for \lstinline{bound} was similar to that of \lstinline{lookup}, recursively searching the tree until the key was found, returning true.
-
-This definition would make it very difficult to write the proofs needed. The hypothesis of the lemmas would assume that the key is bound in the same subtree, yet after a rotation this may not be the case anymore. The definition was then changed to the one present in this paper, which allowed for the proofs to be completed, as with disjunction only one of the variables needs to be true for the whole expression \notes{is this the right word for it?} to be true. This change in the definition resulted in other proofs becoming much easier to complete and much shorter. 
+\input{proofs/rotation/rotation_keys.tex}
 
 \subsection*{Order}
-Listing \ref{lst:right_ordered} shows a formalized lemma statement for right rotations preserving order.
-
-\begin{lstlisting}[caption=\empty, label={lst:right_ordered}]
-lemma rotate_right_ordered (t : btree α) :
-  ordered t → ordered (rotate_right t) := ...
-\end{lstlisting}
-
-Since it is a compound rotation, similar lemmas need to be constructed for the simple rotations.
-
-\begin{lstlisting}[caption=\empty, label={lst:simple_ordered}]
-lemma simple_right_ordered (t : btree α) :
-  ordered t → ordered (simple_right t) := ...
-
-lemma simple_left_ordered (t : btree α) :
-  ordered t → ordered (simple_left t) := ...
-\end{lstlisting}
-
-The proof in Listing \ref{lst:right_ordered} were done by case splitting on the tree \lstinline{t}, its right subtree \lstinline{r} and the next subtree \lstinline{lr}, and the simple rotation lemmas were applied throughout when needed. The simple rotation lemmas were also completed by case splitting on left or right subtree depending on the rotation.
-
-The proofs above also require a lemma for transitivity of keys in trees. Assume a tree \lstinline{rr} and \lstinline{rl}, with the former having a left and a right child \lstinline{rll} and \lstinline{rlr}. Also assume two keys \lstinline{rk}, which is the parent node key of \lstinline{rr}, and \lstinline{rlk}, which is the key of \lstinline{rl}.
-If \lstinline{rk} is greater than all the keys contained in \lstinline{rll} and \lstinline{rlr}, and \lstinline{rk} is less than the keys in \lstinline{rr}, by transitivity \lstinline{rlk} is less than all the keys in \lstinline{rr}. The lemma for key transitivity is formalized below.
-
-\begin{lstlisting}[caption=\empty]
-lemma forall_keys_trans (t : btree α) (p : nat → nat → Prop) 
-(z x : nat) (h₁ : p x z) (h₂ : ∀ a b c, p a b → p b c → p a c) :
-  forall_keys p z t → forall_keys p x t := ...
-\end{lstlisting}
-
-Another lemma had to be made to make constructing proofs with \lstinline{forall_keys} much easier. The current definition for \lstinline{forall_keys} does not take into consideration the relationship of the input key between the left and right children of the tree. The \lstinline{forall_keys_intro} introduction lemma solved this problem.
-
-\begin{lstlisting}[caption=\empty]
-lemma forall_keys_intro {l r : btree α} {k x : nat} {v : α} 
-  {p : nat → nat → Prop} :
-(forall_keys p k l ∧ p k x ∧ forall_keys p k r) 
-  → forall_keys p k (node l x v r) := ...
-\end{lstlisting}
-
-When applying the introduction lemma, I was able to get the relation of the key between the left and right subtree, and the relation between the input key and the key of the tree, which made applying the transitivity lemma a lot easier.
+\input{proofs/rotation/rotation_order.tex}
 
 \subsection*{Balance}
-The lemmas for balance involved the definitions for \lstinline{right_heavy} and \lstinline{right_heavy}. If a tree is right-heavy, a left rotation restores balance; if a tree is left-heavy a right rotation restores balance.
-
-\begin{lstlisting}[caption=\empty]
-lemma rotate_right_balanced (t : btree α) :
-  left_heavy t → balanced (rotate_right t) := ...
-\end{lstlisting}
-
-Lemmas for simple rotations restoring balance also needed to be written and completed. 
-
-\begin{lstlisting}[caption=\empty]
-lemma simple_right_balanced (t : btree α) :
-  left_heavy t → balanced (simple_right t) := ...
-  
-lemma simple_left_balanced (t : btree α) :
-  right_heavy t → balanced (simple_left t) := ...
-\end{lstlisting}
-
-Similarly to proofs about ordering, the above proofs were completed with case splitting on trees and subtrees. During construction of proofs with compound rotations, the lemmas about simple rotations were applied when needed. 
-
-The proofs about balance were a bit more complicated to solve. With the ordering lemmas, it was a case of finding the goals in the hypotheses, with additionally using transitivity to achieve out goal. Since tree heaviness and the definition of \lstinline{balanced} use tree height, there was more mathematics involved. 
+\input{proofs/rotation/rotation_balance.tex}
