@@ -87,16 +87,14 @@ lemma forall_shrink_aux_1 {t sh : btree α} {k x : nat} {a : α} {p : nat → na
   forall_keys p k t ∧ shrink t = some (x, a, sh) → forall_keys p k sh :=
 begin
   intro h₁,
-  have h : forall_keys p k sh ∧ p k x := forall_shrink h₁,
-  apply and.left h,
+  apply and.left (forall_shrink h₁),
 end
 
 lemma forall_shrink_aux_2 {t sh : btree α} {k x : nat} {a : α} {p : nat → nat → Prop} :
   forall_keys p k t ∧ shrink t = some (x, a, sh) → p k x :=
 begin
   intro h₁,
-  have h : forall_keys p k sh ∧ p k x := forall_shrink h₁,
-  apply and.right h,
+  apply and.right (forall_shrink h₁),
 end
 
 lemma shrink_keys {t sh : btree α} {x : nat} {a : α} :
@@ -207,16 +205,14 @@ lemma shrink_ordered_aux_1 {t sh : btree α} {x : nat} {a : α} :
   ordered t ∧ shrink t = some (x, a, sh) → ordered sh :=
 begin
   intro h₁,
-  have h : ordered sh ∧ forall_keys (>) x sh := shrink_ordered h₁,
-  { apply and.left h, },
+  apply and.left (shrink_ordered h₁), 
 end
 
 lemma shrink_ordered_aux_2 {t sh : btree α} {x : nat} {a : α} :
   ordered t ∧ shrink t = some (x, a, sh) → forall_keys (>) x sh :=
 begin
   intro h₁,
-  have h : ordered sh ∧ forall_keys (>) x sh := shrink_ordered h₁,
-  { apply and.right h, },
+  apply and.right (shrink_ordered h₁),
 end
 
 end shrink_lemmas
