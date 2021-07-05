@@ -1,4 +1,4 @@
-This section will go through the proof construction of deletion preserving order, and the sub-proofs that come along with it as well as major changes that have been done to previous definitions to make the proof constructions easier and readable.
+This section will go through the proof construction of deletion preserving order, and the sub-proofs that come along with it as well as major changes that have been done to previous definitions to make the proof constructions easier and readable. The lemma statements closely follow the ones presented in \cite{textbook:discrete_computer}, though in the process some definitions were changed.
 
 The lemma statement for deletion preserving order is formalized below.
 
@@ -55,9 +55,28 @@ A lemma for \lstinline{shrink} retaining keys also needed to be written, as the 
 \begin{lstlisting}
 lemma shrink_keys {t sh : btree α} {x : nat} {a : α} :
   ordered t → shrink t = some (x, a, sh) → 
-    bound x t ∧ (∀ k', bound k' sh → bound k' t)
+    bound x t ∧ (∀ k', bound k' sh → bound k' t) := ...
 \end{lstlisting}
 
-As \lstinline{shrink_keys} would have to be applied to \lstinline{shrink_ordered}, the original \lstinline{forall_keys} definition had to be rewritten. 
+As \lstinline{shrink_keys} would have to be applied to \lstinline{shrink_ordered}, the original \lstinline{forall_keys} definition had to be rewritten. Before beginning the proofs about deletion, the \lstinline{forall_keys} definition was \lstinline{forall_keys_unfolded} as seen in Section \ref{sec:bst}, without the additional definition to take into account the key being bound in the tree. After the new definition was written, an introduction lemma was needed in order to split a goal with \lstinline{forall_keys} intro three goals. 
 
-% As this lemma would have to be applied to \lstinline{shrink_ordered}, the original \lstinline{forall_keys} definition had to be rewritten. In \notes{the previous section}, an introduction lemma for \lstinline{forall_keys} was given. The previous definition was the hypothesis of the lemma, specifically \lstinline{forall_keys p x l ∧ p k k' ∧ forall_keys p x r}. This posed a problem for continuing proofs related to shrink \notes{why?} and therefore the definition of \lstinline{forall_keys} was rewritten.
+First, two lemmas were created in order to verify that the two definitions \lstinline{forall_keys} and \lstinline{forall_keys_unfolded} were the same. 
+
+\begin{lstlisting}
+lemma forall_keys_unfolded_bound (t : btree α) 
+(p : nat → nat → Prop) (k : nat) :
+  forall_keys_unfolded p k t → forall_keys p k t := ...
+
+lemma forall_keys_bound_unfolded (t : btree α) 
+(p : nat → nat → Prop) (k : nat) :
+  forall_keys p k t → forall_keys_unfolded p k t :=
+\end{lstlisting}
+
+Then, the final introduction lemma was written and the proof completed. 
+
+\begin{lstlisting}
+lemma forall_keys_intro {l r : btree α} {k x : nat} {v : α} 
+{p : nat → nat → Prop} :
+  (forall_keys p k l ∧ p k x ∧ forall_keys p k r) → 
+    forall_keys p k (node l x v r) :=
+\end{lstlisting}
