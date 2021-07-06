@@ -24,20 +24,6 @@ def lookup (x : nat) : btree α → option α
   else a
 
 /-
-  Inserting an item into a binary tree
-  If the key to insert is smaller than the current node, 
-  the insertion is done recursively in the left subtree.
-  If the key to insert is larger than the current node, the insertion
-  is done recursively in the left subtree
--/
-def insert (x : nat) (a : α) : btree α → btree α
-| btree.empty := btree.node btree.empty x a btree.empty
-| (btree.node l k a' r) :=
-  if x < k then btree.node (insert l) k a' r
-  else if x > k then btree.node l k a' (insert r)
-  else btree.node l x a r
-
-/-
   Checking if a key exists in a tree.
   For this case, there is no need to know in which subtree it is in,
   it matters that it exists in the first place
@@ -157,17 +143,15 @@ def rotate_left : btree α → btree α
   If insertion is done in the right subtree and this causes a disbalance, then
   a left rotation is done.
 -/
-def insert_balanced (x : nat) (v : α) : btree α → btree α
+def insert (x : nat) (v : α) : btree α → btree α
 | btree.empty := btree.node btree.empty x v btree.empty
 | (btree.node l k a r) :=
-  if x < k then
-    let nl := insert_balanced l in
-    if height nl > height r + 1 then rotate_right (btree.node nl k a r)
-    else btree.node nl k a r
+  if x < k then 
+    if left_heavy (insert l) then rotate_right (btree.node (insert l) k a r)
+    else btree.node (insert l) k a r
   else if x > k then
-    let nr := insert_balanced r in
-    if height nr > height l + 1 then rotate_left (btree.node l k a nr)
-    else btree.node l k a nr
+    if right_heavy (insert r) then rotate_left (btree.node l k a (insert r))
+    else btree.node l k a (insert r)
   else btree.node l x v r
 
 /- 
