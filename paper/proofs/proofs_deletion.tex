@@ -1,26 +1,30 @@
-This section will go through the proof construction of deletion preserving order, and the sub-proofs that come along with it as well as major changes that have been done to previous definitions to make the proof constructions easier and readable. The lemma statements closely follow the ones presented in \cite{textbook:discrete_computer}, though in the process some definitions were changed.
-
-The lemma statement for deletion preserving order is formalized below.
+This section will follow a proof construction of deletion from a tree preserving order. The lemma statements presented in this section closely follow \cite{textbook:discrete_computer}, though in the process some of the statements were made to suit the Lean definitions.
 
 \begin{lstlisting}
 lemma delete_ordered (t : btree α) (k : nat) :
   ordered t → ordered (delete k t) := ...
 \end{lstlisting}
 
+This proof is constructed with a simple proof by induction. 
+
 Since the function \lstinline{delete} uses \lstinline{del_node}, and \lstinline{del_node} uses \lstinline{shrink}, proofs about the two preserving order need to be sontructed as well.
 
 \begin{lstlisting}
 lemma del_node_ordered (t : btree α) (k : nat) :
   ordered t → ordered (del_node t) := ...
+\end{lstlisting}
 
+The proof for \lstinline{del_node} was done with a simple case split on the tree.
+
+The proof for shrink needs to have a bit more information in the hypotheses. It's not enough to say that \lstinline{t} is ordered and \lstinline{sh} is ordered, there needs to be a connection between the tree and the shrunken tree, so \lstinline{shrink t = some (x, a, sh)} is one of the hypotheses of the proof. The proof also shows that \lstinline{x} is larger than all of the keys in a shrunken tree. 
+
+\begin{lstlisting}
 lemma shrink_ordered {t sh : btree α} {x : nat} {a : α} :
   ordered t ∧ shrink t = some (x, a, sh) →
     ordered sh ∧ forall_keys gt x sh := ...
 \end{lstlisting}
 
-The proof statement for \lstinline{shrink_ordered} needs to have the reuslt of \lstinline{shrink} as one of its hypotheses, and the conclusion is that the result of shrinking a tree is also ordered, and that the resulting key is larger than the keys in the shrunken tree.
-
-The proof for \lstinline{shrink_ordered} was done by induction on the tree, but generalizing \lstinline{x}, \lstinline{a} and \lstinline{sh}. This is because without the generalization, the proof would be referring to a specific result of \lstinline{shrink}, which cannot be foreseen, so therefore the proof needs to take into account all the possible values for the three-tuple result of \lstinline{shrink}. The proof for \lstinline{delete} was completed with induction on \lstinline{t} and \lstinline{del_node} was completed with a case split.
+The proof for \lstinline{shrink_ordered} was done by induction on the tree generalizing \lstinline{x}, \lstinline{a} and \lstinline{sh}, as the proof construction this way will take into account all possible values of the three.
 
 To aid with writing the proofs, two view inductive definitions were written for \lstinline{shrink} and \lstinline{delete}\footnote{The idea for this view type was created by the daily supervisor, Jannis Limperg}. The \lstinline{shrink_view} is shown below.
 
@@ -40,6 +44,8 @@ inductive shrink_view {α} : btree α → option (nat × α × btree α) → Sor
   height l ≤ height sh + 1 →
   shrink_view (node l k v r) (some (x, a, node l k v sh))
 \end{lstlisting}
+
+These views allowed for a case split on \lstinline{shrink} or \lstinline{del_node} without additional manual case-splits on subtrees.
 
 A lemma was also written for \lstinline{shrink_view}, that would result in case splits for each case in the view. 
 
