@@ -19,3 +19,5 @@ lemma forall_insert (k x : nat) (t : btree α) (a : α)
 This proof shows that if a key is inserted in some tree, the relationship between the original key and the new input key is the same as the relationship between the original key and tree. For example, if the key \lstinline{x} is larger than all the keys in the tree \lstinline{t}, it will only stay larger after the insertion only if $x > k$. The relationship between \lstinline{x} and \lstinline{k} is provided in the proof after the application of \lstinline{forall_insert}.
 
 The proof \lstinline{insert_diff_bound} was faily simple, with case splits and using the \lstinline{tauto} tactic in order to make the process of writing the proofs faster, as there was no need to write out natural deduction tactics by hand.
+
+\notes{Write why proofs about balance are not included, if refactoring is unsuccessful}
