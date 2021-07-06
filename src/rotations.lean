@@ -607,8 +607,8 @@ begin
         apply simple_right_balanced,
         assumption,
       },
-    }
-  }
+    },
+  },
 end
 
 /- If a tree is right-heavy, a left rotation restores balance -/
@@ -648,8 +648,8 @@ begin
         apply simple_left_balanced,
         exact h₁,
       },
-    }
-  }
+    },
+  },
 end
 
 end rotation_lemmas
