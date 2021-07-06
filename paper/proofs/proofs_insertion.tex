@@ -1,1 +1,21 @@
-Proofs about insertion into AVL trees, like the ones for rotation, need to show a preservation of order, keys, and balance restoration.
+This section will show two lemmas for balanced insertion, one about preserving keys and one about order. The lemmas statements are written similarly to how lemmas about rotation were written.
+
+\begin{lstlisting}
+lemma insert_ordered (t : btree α) (k : nat) (v : α) :
+  ordered t → ordered (insert k v t) := ...
+
+lemma insert_diff_bound (t : btree α) (k x : nat) (v : α) :
+  bound x t → bound x (insert k v t) := ...
+\end{lstlisting}
+
+Both proofs are constructed with induction on the tree \lstinline{t}. Since the definition uses rotations, lemmas for key preservation and ordering of rotations were used within the proof. Since the definition of \lstinline{ordered} uses \lstinline{forall_keys}, lemmas about insertion with \lstinline{forall_keys} were written as well.
+
+\begin{lstlisting}
+lemma forall_insert (k x : nat) (t : btree α) (a : α) 
+(p : nat → nat → Prop) (h : p x k) :
+  forall_keys p x t → forall_keys p x (insert k a t) := ...
+\end{lstlisting}
+
+This proof shows that if a key is inserted in some tree, the relationship between the original key and the new input key is the same as the relationship between the original key and tree. For example, if the key \lstinline{x} is larger than all the keys in the tree \lstinline{t}, it will only stay larger after the insertion only if $x > k$. The relationship between \lstinline{x} and \lstinline{k} is provided in the proof after the application of \lstinline{forall_insert}.
+
+The proof \lstinline{insert_diff_bound} was faily simple, with case splits and using the \lstinline{tauto} tactic in order to make the process of writing the proofs faster, as there was no need to write out natural deduction tactics by hand.
