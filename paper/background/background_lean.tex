@@ -1,20 +1,21 @@
-The Lean Theorem Prover is a proof assistant based on dependent type theory with inductive families and universal polymorphism \cite{inductive_families}. The language contains a hierarchy of universes, dependent function types and inductive types. This section will detail how these are outlined in the language.
+The Lean Theorem Prover is a proof assistant based on dependent type theory with inductive families and universe polymorphism \cite{inductive_families}. The language contains dependent function types and inductive types.
 
-In simple type theory, every expression has an associated type. Lean's dependent type theory extends simple type theory by having types themselves by types. Types can also be built from other types \cite{lean:manual}.  
+In simple type theory, every expression has an associated type. Lean's dependent type theory extends simple type theory by having types themselves be types. Types can also be built from other types \cite{lean:manual}.  
 
 \begin{lstlisting}
-  universe u
   /- simple types -/
   constant m : nat
   constant b : bool
   /- types from other types -/
-  constant g : nat → nat → nat
-  #check g m -- nat → nat
+  constant g : nat → nat
+  #check g m -- nat
 \end{lstlisting}
 
-With dependent type theory, types can depend on parameters. For example, \lstinline{list α} depends on \lstinline{α}, which helps differentiate between lists of different types. If we want to define a function which adds a new value to the list, the function would be polymorphic as its expected to function the same way with a \lstinline{bool}, \lstinline{nat} or any other \lstinline{α} type list. A function to add a new element to the list would have a type \lstinline{α → list α → list α}, which is an example of a dependent function type, as the outcome of the function is dependent on the type \lstinline{α} of the parameters.
+The code above shows some examples of types. The constant \lstinline{m} is a natural number type, and \lstinline{b} is a boolean type. The constant \lstinline{g} is a type of function from a natural number to another natural number. This can be applied to any other type too; if \lstinline{α} and \lstinline{β} are types, then \lstinline{α → β} is the type of functions from \lstinline{α} to \lstinline{β}.
 
-In Lean, every type other than universes and every constructor other than a Pi is an instance of a family of type constructors are called inductive types \cite{lean:manual}. An inductive type is built from muliple constructors, and each constructor specifies a way of building some object. 
+With dependent type theory, types can depend on values. For example, \lstinline{list α} depends on \lstinline{α}, which helps differentiate between lists of different types. If we want to define a function which adds a new value to the list, the function would be polymorphic as its expected to function the same way with a \lstinline{bool}, \lstinline{nat} or any other \lstinline{α} type list. A function to add a new element to the list would have a type \lstinline{∀ α, list α → list α}, which is an example of a dependent function type, as the outcome of the function is dependent on the type \lstinline{α} of the parameters.
+
+In Lean, an inductive type is has zero or more constructors, and each constructor specifies a way of building an inhabitant of the type. 
 
 \begin{lstlisting}
 inductive foo (a : α) : Sort u
