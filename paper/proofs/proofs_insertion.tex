@@ -1,14 +1,36 @@
-This section will show two lemmas for balanced insertion, one about preserving keys and one about order. The lemmas statements are written similarly to how lemmas about rotation were written.
+For insertion, we want to show that keys and order and balance are preserved.
+
+For balance, there was some trouble constructing a proof for \lstinline{insert_balanced}, as the goal of this lemma is that balance is preserved, while the lemmas for rotations are about restoring balance. The two definitions are not very compatible with each other.
+
+\subsection*{Keys}
+There are three different lemmas in relation to key preservation.
+
+\begin{lstlisting}
+lemma insert_bound (t : btree α) (k : nat) (v : α) :
+  bound k (insert k v t) := ...
+
+lemma insert_diff_bound (t : btree α) (k x : nat) (v : α) :
+  bound x t → bound x (insert k v t) := ...
+
+lemma insert_nbound (t : btree α) (k x : nat) (v : α) :
+  (bound x t = ff ∧ x ≠ k) → bound x (insert k v t) = ff := ...
+\end{lstlisting}
+
+For \lstinline{insert_bound}, the goal is to show that a key can be found as soon as it is inserted into a tree. This lemma verifies that \lstinline{insert} does what it is intended to do. For \lstinline{insert_diff_bound} and \lstinline{insert_nbound}, the goal is to show that no keys are lost or no keys that were not previously there do not get added, for the exception of the input key to be added. The proofs are completed by induction on \lstinline{t}. 
+
+Since \lstinline{insert} uses rotations, previously constructed proofs about rotations preserving keys can be applied in this proof. The tactic \lstinline{tauto} was used frequently, as the tactic is able to split goals and assumptions that are disjunctions. Due to the bound definition using disjunction, this tactic does a lot of the heavy work of breaking down these forms, and then completing the separate goals based on reflexivity or elimination.
+
+\subsection*{Order}
+Lemma statements for insertion preserving order have the same structure as lemmas for rotations preserving order.
 
 \begin{lstlisting}
 lemma insert_ordered (t : btree α) (k : nat) (v : α) :
   ordered t → ordered (insert k v t) := ...
-
-lemma insert_diff_bound (t : btree α) (k x : nat) (v : α) :
-  bound x t → bound x (insert k v t) := ...
 \end{lstlisting}
 
-Both proofs are constructed with induction on the tree \lstinline{t}. Since the definition uses rotations, lemmas for key preservation and ordering of rotations were used within the proof. Since the definition of \lstinline{ordered} uses \lstinline{forall_keys}, lemmas about insertion with \lstinline{forall_keys} were written as well.
+This proof was fairly easy to construct, as previous lemmas for rotations preserving order were applied, with the \lstinline{bound} definition simplified and \lstinline{tauto} applied.
+
+A new proof that was constructed was \lstinline{forall_insert}. To bring an example from the proof construction of \lstinline{insert_ordered} -- if a key \lstinline{tk} is greater than all of the keys in the tree \lstinline{tl} even after insertion, then it follows that \lstinline{tk > k} and that \lstinline{tk} is greater than all the keys in \lstinline{tl}. These are also the two sub-goals that come out after applying the lemma.
 
 \begin{lstlisting}
 lemma forall_insert (k x : nat) (t : btree α) (a : α) 
@@ -16,8 +38,16 @@ lemma forall_insert (k x : nat) (t : btree α) (a : α)
   forall_keys p x t → forall_keys p x (insert k a t) := ...
 \end{lstlisting}
 
-This proof shows that if a key is inserted in some tree, the relationship between the original key and the new input key is the same as the relationship between the original key and tree. For example, if the key \lstinline{x} is larger than all the keys in the tree \lstinline{t}, it will only stay larger after the insertion only if $x > k$. The relationship between \lstinline{x} and \lstinline{k} is provided in the proof after the application of \lstinline{forall_insert}.
+As insertion uses rotation, similar lemmas were written for both compound and simple rotations.
 
-The proof \lstinline{insert_diff_bound} was faily simple, with case splits and using the \lstinline{tauto} tactic in order to make the process of writing the proofs faster, as there was no need to write out natural deduction tactics by hand.
+\begin{lstlisting}
+lemma forall_rotate_right (x k : nat) (l r : btree α) (a : α) 
+(p : nat → nat → Prop) :
+  forall_keys p x (btree.node l k a r) → 
+    forall_keys p x (rotate_right (btree.node l k a r)) := ...
 
-\notes{Write why proofs about balance are not included, if refactoring is unsuccessful}
+lemma forall_rotate_right (x k : nat) (l r : btree α) (a : α) 
+(p : nat → nat → Prop) :
+  forall_keys p x (btree.node l k a r) → 
+    forall_keys p x (simple_right (btree.node l k a r)) := ...
+\end{lstlisting}
