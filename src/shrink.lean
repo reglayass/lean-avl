@@ -44,6 +44,60 @@ begin
  },
 end
 
+lemma shrink_keys {t sh : btree α} {x : nat} {a : α} :
+  ordered t ∧ shrink t = some (x, a, sh) → bound x t ∧ (∀ k', bound k' sh → bound k' t) :=
+begin
+  intros h₁,
+  cases_matching* (_ ∧ _),
+  induction t generalizing x a sh,
+  case empty { contradiction, },
+  case node : l k v r ihl ihr {
+    rw ordered at h₁_left,
+    cases_matching* (_ ∧ _),
+    cases' shrink_shrink_view (node l k v r),
+    case nonempty_empty { sorry },
+    case nonempty_nonempty₁ {
+      rw h_2 at h₁_right,
+      clear h_2,
+      cases' h₁_right,
+      split,
+      { specialize ihr h₁_left_right_left h, 
+        cases_matching* (_ ∧ _),
+        simp [bound],
+        tauto,
+      },
+      { intros k' h₂, 
+        sorry, -- rotate_right_keys but other way around
+      },
+    },
+    case nonempty_nonempty₂ {
+      cases' h₁_right,
+      specialize ihr h₁_left_right_left h,
+      cases_matching* (_ ∧ _),
+      split,
+      { simp [bound], tauto, },
+      { intros k' h₂, 
+        simp [bound] at h₂ ⊢,
+        tauto,
+      },
+    },
+  },
+end
+
+lemma shrink_keys_aux_1 {t sh : btree α} {x : nat} {a : α} :
+  ordered t ∧ shrink t = some (x, a, sh) → bound x t :=
+begin
+  intro h₁,
+  apply and.left (shrink_keys h₁),
+end
+
+lemma shrink_keys_aux_2 {t sh : btree α} {x : nat} {a : α} :
+  ordered t ∧ shrink t = some (x, a, sh) → (∀ k', bound k' sh → bound k' t) :=
+begin
+  intro h₁,
+  apply and.right (shrink_keys h₁),
+end
+
 lemma forall_shrink {t sh : btree α} {k x : nat} {a : α} {p : nat → nat → Prop} :
   forall_keys p k t ∧ shrink t = some (x, a, sh) → forall_keys p k sh ∧ p k x :=
 begin
@@ -56,7 +110,7 @@ begin
   case node : l k v r ihl ihr {
     cases_matching* (_ ∧ _),
     cases' shrink_shrink_view (node l k v r),
-    case nonempty_empty { sorry },
+    case nonempty_empty { sorry }, -- have sorries where it makes sense
     case nonempty_nonempty₁ { 
       rw h_2 at h₁_right,
       clear h_2,
@@ -75,7 +129,11 @@ begin
         { apply h₁_left, 
           simp [bound],
         },
-        { sorry },
+        { unfold forall_keys,
+          intros k' h₂,
+          apply h₁_left,
+          sorry, -- shrink_keys lemma
+        },
       },
       { sorry },
     },
@@ -95,37 +153,6 @@ lemma forall_shrink_aux_2 {t sh : btree α} {k x : nat} {a : α} {p : nat → na
 begin
   intro h₁,
   apply and.right (forall_shrink h₁),
-end
-
-lemma shrink_keys {t sh : btree α} {x : nat} {a : α} :
-  ordered t → shrink t = some (x, a, sh) → bound x t ∧ (∀ k', bound k' sh → bound k' t) :=
-begin
-  intros h₁ h₂,
-  induction t generalizing x a sh,
-  case empty {
-    cases_matching* (_ ∧ _),
-    contradiction,
-  },
-  case node : l k v r ihl ihr {
-    rw ordered at h₁,
-    cases_matching* (_ ∧ _),
-    cases' shrink_shrink_view (node l k v r),
-    case nonempty_empty { sorry },
-    case nonempty_nonempty₁ { sorry },
-    case nonempty_nonempty₂ {
-      cases' h₂,
-      specialize ihr h₁_right_left h,
-      cases_matching* (_ ∧ _),
-      specialize ihr_right x_1,
-      split,
-      { sorry },
-      { intros k' h₃,
-        simp [bound] at h₃ ⊢,
-        cases_matching* (_ ∨ _); try { tauto },
-        { sorry }, 
-      },
-    },
-  },
 end
 
 lemma shrink_ordered {t sh : btree α} {x : nat} {a : α} :
@@ -159,7 +186,7 @@ begin
       { apply forall_rotate_right, 
         have h₂ : x_1 > k,
         { have h₃ : bound x_1 r ∧ (∀ k', bound k' sh_1 → bound k' r),
-          { apply shrink_keys h₁_left_right_left h, },
+          { apply shrink_keys (and.intro h₁_left_right_left h), },
           cases_matching* (_ ∧ _),
           unfold forall_keys at h₁_left_right_right_right,
           apply h₁_left_right_right_right,
@@ -184,7 +211,7 @@ begin
       },
       { have h₂ : x_1 > k,
         { have h₃ : bound x_1 r ∧ (∀ k', bound k' sh_1 → bound k' r),
-          { apply shrink_keys h₁_left_right_left h, },
+          { apply shrink_keys (and.intro h₁_left_right_left h), },
           cases_matching* (_ ∧ _), 
           unfold forall_keys at h₁_left_right_right_right,
           apply h₁_left_right_right_right,
