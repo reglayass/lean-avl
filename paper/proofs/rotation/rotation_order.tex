@@ -1,11 +1,11 @@
-The following lemma is for right rotations preserving order. Any sub-lemmas that come out of it follows the same structure, as do any other lemma statements that concern order.
+All lemmas based on rotations preserving order follow the same structure for the statement: assuming that a tree \lstinline{t} is ordered, \lstinline{t} remainds ordered after a rotation. Since AVL trees are based on binary search trees, and binary search trees must be ordered, a rotation cannot violate this. 
 
 \begin{lstlisting}
 lemma rotate_right_ordered (t : btree α) :
   ordered t → ordered (rotate_right t) := ...
 \end{lstlisting}
 
-Since it is a compound rotation, similar lemmas need to be constructed for the simple rotations.
+Since \lstinline{rotate_right} and \lstinline{rotate_left} are compound rotations, lemmas for simple rotations must be constructed too. 
 
 \begin{lstlisting}
 lemma simple_right_ordered (t : btree α) :
@@ -15,13 +15,14 @@ lemma simple_left_ordered (t : btree α) :
   ordered t → ordered (simple_left t) := ...
 \end{lstlisting}
 
-The proofs \lstinline{rotate_right_ordered} were done by case splitting on the tree \lstinline{t}, its right subtree \lstinline{r} and the next subtree \lstinline{lr}, and the simple rotation lemmas were applied throughout when needed. The simple rotation lemmas were also completed by case splitting on left or right subtree depending on the rotation. The same process was followed for the rest of the proofs.
+All of the above proofs were done by case splitting on the tree \lstinline{t}. Induction hypotheses wasn't needed since the definition for \lstinline{ordered} already splits on the left and right subtree, and the goal of the proof is to match the \lstinline{ordered} and \lstinline{forall_keys} subtrees of the hypothesis to the goal. 
 
-The proofs above also require a lemma for transitivity of keys in trees. Assume a tree \lstinline{rr} and \lstinline{rl}, with the former having a left and a right child \lstinline{rll} and \lstinline{rlr}. Also assume two keys \lstinline{rk}, which is the parent node key of \lstinline{rr}, and \lstinline{rlk}, which is the key of \lstinline{rl}.
-If \lstinline{rk} is greater than all the keys contained in \lstinline{rll} and \lstinline{rlr}, and \lstinline{rk} is less than the keys in \lstinline{rr}, by transitivity \lstinline{rlk} is less than all the keys in \lstinline{rr}. The lemma for key transitivity is formalized below.
+To achieve this, a lemma for transitivity of keys is required, and this lemma is applied in both the lemmas for compound rotations and simple rotations.
 
 \begin{lstlisting}
 lemma forall_keys_trans (t : btree α) (p : nat → nat → Prop) 
 (z x : nat) (h₁ : p x z) (h₂ : ∀ a b c, p a b → p b c → p a c) :
   forall_keys p z t → forall_keys p x t := ...
 \end{lstlisting}
+
+For example, if we have a key \lstinline{trk} and \lstinline{tk}, and the goal is to show that \lstinline{trk} is greater than all of the keys in a tree \lstinline{tl}, applying the lemma will yield three goals: one for \lstinline{trk > tk}, transivity (which is completed by a simple tactic \lstinline{apply trans}) and a goal \lstinline{forall_keys tk tl}. The two goals for the exception of transitivity should be available in the proof hypotheses. 
