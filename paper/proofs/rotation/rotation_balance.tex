@@ -1,11 +1,11 @@
-The lemmas for balance involved the definitions for \lstinline{right_heavy} and \lstinline{right_heavy}. If a tree is right-heavy, a left rotation restores balance; if a tree is left-heavy a right rotation restores balance.
+The process for constructing lemmas for balance is slightly different to the ones for ordering. We want show that balance restores rotation, therefore the assumption needs to be that a tree is either left or right imbalanced, and the corresponding rotation will make the tree balanced.
 
 \begin{lstlisting}
 lemma rotate_right_balanced (t : btree α) :
   left_heavy t → balanced (rotate_right t) := ...
 \end{lstlisting}
 
-Lemmas for simple rotations restoring balance also needed to be written and completed. 
+As with ordering, the corresponding lemmas for simple rotations need to be constructed.
 
 \begin{lstlisting}
 lemma simple_right_balanced (t : btree α) :
