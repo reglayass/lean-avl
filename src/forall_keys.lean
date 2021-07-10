@@ -156,4 +156,21 @@ begin
   },
 end
 
+lemma forall_keys_intro_iff {l r : btree α} {k x : nat} {v : α} {p : nat → nat → Prop} :
+  (forall_keys p k l ∧ p k x ∧ forall_keys p k r) ↔ forall_keys p k (node l x v r) :=
+begin
+  split,
+  { intro h₁, 
+    cases_matching* (_ ∧ _),
+    unfold forall_keys at *,
+    intros k' h₂,
+    simp [bound] at h₂,
+    cases_matching* (_ ∨ _),
+    { subst h₂, exact h₁_right_left, },
+    { apply h₁_left, exact h₂, },
+    { apply h₁_right_right, exact h₂, },
+  },
+  { sorry },
+end
+
 end forall_keys_lemmas
