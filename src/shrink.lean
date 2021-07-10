@@ -55,7 +55,15 @@ begin
     rw ordered at h₁_left,
     cases_matching* (_ ∧ _),
     cases' shrink_shrink_view (node l k v r),
-    case nonempty_empty { sorry },
+    case nonempty_empty {
+      cases' h₁_right,
+      split,
+      { sorry, },
+      { intros k' h₂,
+        simp [bound] at h₂ ⊢,
+        tauto,
+      },
+    },
     case nonempty_nonempty₁ {
       rw h_2 at h₁_right,
       clear h_2,
@@ -67,7 +75,11 @@ begin
         tauto,
       },
       { intros k' h₂, 
-        sorry, -- rotate_right_keys but other way around
+        rw ← rotate_right_keys at h₂,
+        simp [bound] at h₂ ⊢,
+        specialize ihr h₁_left_right_left h, 
+        cases_matching* (_ ∧ _),
+        tauto,
       },
     },
     case nonempty_nonempty₂ {
