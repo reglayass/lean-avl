@@ -74,7 +74,7 @@ begin
     by_cases c₁ : (height rr < height rl),
     { simp only [if_pos c₁],
       apply forall_simple_left, 
-      apply forall_keys_intro,
+      rw ← forall_keys_intro,
       repeat { split },
       { unfold forall_keys at h₁ ⊢, 
         intros k' h₂,
@@ -115,7 +115,7 @@ begin
     by_cases c₁ : (height ll < height lr),
     { simp only [if_pos c₁], 
       apply forall_simple_right,
-      apply forall_keys_intro,
+      rw ← forall_keys_intro,
       repeat { split },
       { apply forall_simple_left, 
         unfold forall_keys at h₁ ⊢,
@@ -166,7 +166,7 @@ begin
         simp [bound],
         apply or.inr (or.inl h₂),
       },
-      { apply forall_keys_intro,
+      { rw ← forall_keys_intro,
         repeat { split },
         { apply forall_keys_trans _ (>) tk, 
           { unfold forall_keys at h₁_right_right_right, 
@@ -212,7 +212,7 @@ begin
         simp [bound],
         apply or.inr (or.inr h₂),
       },
-      { apply forall_keys_intro, 
+      { rw ← forall_keys_intro, 
         repeat { split },
         { assumption, },
         { unfold forall_keys at h₁_right_right_left, 
@@ -268,7 +268,7 @@ begin
             simp [bound],
             apply or.inr (or.inr h₂),
           },
-          { apply forall_keys_intro,
+          { rw ← forall_keys_intro,
             repeat { split },
             { assumption, },
             { unfold forall_keys at h₁_right_left_right_right_left, 
@@ -336,7 +336,7 @@ begin
             simp [bound],
             apply or.inr (or.inl h₂),
           },
-          { apply forall_keys_intro, 
+          { rw ← forall_keys_intro, 
             repeat { split },
             { apply forall_keys_trans _ (>) lk,
               { unfold forall_keys at h₁_left_right_right_right, 
@@ -370,7 +370,7 @@ end
 
 /- Simple left rotations preserve pre-existing keys -/
 lemma simple_left_keys (t : btree α) (k : nat) :
-  bound k t = tt ↔ bound k (simple_left t) = tt :=
+  bound k t ↔ bound k (simple_left t) :=
 begin
   cases t,
   case empty {
@@ -390,7 +390,7 @@ end
 
 /- Simple right rotations preserve pre-existing keys -/
 lemma simple_right_keys (t : btree α) (k : nat) :
-  bound k t = tt ↔ bound k (simple_right t) = tt :=
+  bound k t ↔ bound k (simple_right t) :=
 begin
   cases t,
   case empty {
@@ -410,7 +410,7 @@ end
 
 /- Right rotations preserve pre-existing keys -/
 lemma rotate_right_keys (t : btree α) (k : nat) :
-  bound k t = tt ↔ bound k (rotate_right t) = tt :=
+  bound k t ↔ bound k (rotate_right t) :=
 begin
   cases t,
   case empty {
@@ -464,7 +464,7 @@ end
 
 /- Left rotations preserve pre-existing keys -/
 lemma rotate_left_keys (t : btree α) (k : nat):
-  bound k t = tt ↔ bound k (rotate_left t) = tt :=
+  bound k t ↔ bound k (rotate_left t) :=
 begin
   cases t,
   case empty {
