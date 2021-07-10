@@ -369,124 +369,148 @@ begin
 end
 
 /- Simple left rotations preserve pre-existing keys -/
-lemma simple_left_keys (t : btree α) (k : nat) (x : bool) :
-  bound k t = x → bound k (simple_left t) = x :=
+lemma simple_left_keys (t : btree α) (k : nat) :
+  bound k t = tt ↔ bound k (simple_left t) = tt :=
 begin
   cases t,
   case empty {
-    simp [simple_left],
+    split; simp [simple_left],
   },
   case node : tl tk ta tr {
-    intro h₁,
     cases tr,
     case empty {
-      simp [simple_left],
-      assumption,
+      split; simp [simple_left],
     },
     case node : trl trk tra trr {
       simp [simple_left, bound],
-      simp [bound] at h₁,
-      finish,
+      split; { intro h₁, tauto },
     },
   },
 end
 
 /- Simple right rotations preserve pre-existing keys -/
-lemma simple_right_keys (t : btree α) (k : nat) (x : bool) :
-  bound k t = x → bound k (simple_right t) = x :=
+lemma simple_right_keys (t : btree α) (k : nat) :
+  bound k t = tt ↔ bound k (simple_right t) = tt :=
 begin
   cases t,
   case empty {
-    simp [simple_right],
+    split; simp [simple_right],
   },
   case node : tl tk ta tr {
-    intros h₁,
     cases tl,
     case empty {
-      simp [simple_right],
-      assumption,
+      split; simp[simple_right],
     },
     case node : tll tlk tla tlr {
       simp [simple_right, bound],
-      simp [bound] at h₁,
-      finish,
+      split; { intro h₁, tauto, },
     },
   },
 end
 
 /- Right rotations preserve pre-existing keys -/
-lemma rotate_right_keys (t : btree α) (k : nat) (x : bool) :
-  bound k t = x → bound k (rotate_right t) = x :=
+lemma rotate_right_keys (t : btree α) (k : nat) :
+  bound k t = tt ↔ bound k (rotate_right t) = tt :=
 begin
   cases t,
   case empty {
-    simp [rotate_right],
+    split; simp [rotate_right],
   },
   case node : tl tk ta tr {
-    intro h₁,
     cases tl,
     case empty {
-      simp [rotate_right],
-      assumption,
+      split; simp [rotate_right],
     },
     case node : tll tlk tla tlr {
       simp [rotate_right],
       by_cases c₁ : (height tll < height tlr),
-      { simp only [if_pos c₁],
-        apply simple_right_keys,
-        cases tlr,
-        case empty {
-          simp [simple_left],
-          assumption,
+      { simp only [if_pos c₁], 
+        split,
+        { intro h₁,
+          rw ← simple_right_keys,
+          cases tlr,
+          case empty { simp [simple_left], assumption, },
+          case node : tlrl tlrk tlra tlrr {
+            simp [simple_left],
+            simp [bound] at h₁ ⊢,
+            tauto,
+          },
         },
-        case node : tlrl tlrk tlra tlrr {
-          simp [simple_left, bound],
-          simp [bound] at h₁,
-          finish,
-        } 
+        { intro h₁, 
+          rw ← simple_right_keys at h₁,
+          cases tlr,
+          case empty { simp [simple_left] at h₁, assumption, },
+          case node : tlrl tlrk tlra tlrr {
+            simp [simple_left] at h₁,
+            simp [bound] at h₁ ⊢,
+            tauto,
+          },
+        },
       },
-      { simp only [if_neg c₁], 
-        apply simple_right_keys,
-        assumption,
+      { simp only [if_neg c₁],
+        split,
+        { intro h₁,
+          rw ← simple_right_keys, 
+          exact h₁,
+        },
+        { intro h₁, 
+          rw ← simple_right_keys at h₁,
+          exact h₁,
+        },
       },
     },
   },
 end
 
 /- Left rotations preserve pre-existing keys -/
-lemma rotate_left_keys (t : btree α) (k : nat) (x : bool) :
-  bound k t = x → bound k (rotate_left t) = x :=
+lemma rotate_left_keys (t : btree α) (k : nat):
+  bound k t = tt ↔ bound k (rotate_left t) = tt :=
 begin
   cases t,
   case empty {
-    simp [rotate_left],
+    split; simp [rotate_left],
   },
   case node : tl tk ta tr {
-    intro h₁,
     cases tr,
     case empty {
-      simp [rotate_left],
-      assumption,
+      split; simp [rotate_left],
     },
     case node : trl trk tra trr {
       simp [rotate_left],
       by_cases c₁ : (height trr < height trl),
       { simp only [if_pos c₁], 
-        apply simple_left_keys,
-        cases trl,
-        case empty {
-          simp [simple_right],
-          assumption,
+        split,
+        { intro h₁, 
+          rw ← simple_left_keys,
+          cases trl,
+          case empty { simp [simple_right], exact h₁, },
+          case node : trll trlk trla trlr {
+            simp [simple_right],
+            simp [bound] at h₁ ⊢,
+            tauto,
+          },
         },
-        case node : trll trlk trla trlr {
-          simp [simple_right, bound],
-          simp [bound] at h₁,
-          finish,
-        }
+        { intro h₁, 
+          rw ← simple_left_keys at h₁,
+          cases trl,
+          case empty { simp [simple_right] at h₁, exact h₁, },
+          case node : trll trlk trla trlr {
+            simp [simple_right, bound] at h₁,
+            simp [bound],
+            tauto,
+          }
+        },
       },
-      { simp only [if_neg c₁],
-        apply simple_left_keys,
-        assumption, 
+      { simp only [if_neg c₁], 
+        split,
+        { intro h₁, 
+          rw ← simple_left_keys,
+          exact h₁,
+        },
+        { intro h₁, 
+          rw ← simple_left_keys at h₁,
+          exact h₁,
+        },
       },
     },
   },
