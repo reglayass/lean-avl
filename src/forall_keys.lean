@@ -35,41 +35,39 @@ begin
     exact h,
   },
   case node : tl tk ta tr ihl ihr {
-    simp [btree.insert] at h₂,
+    simp only [btree.insert] at h₂,
     by_cases c₁ : (k < tk),
-    { simp only [if_pos c₁] at h₂,
+    { simp only [if_pos c₁] at h₂, 
       by_cases c₂ : ↥(left_heavy (insert k a tl)),
       { simp only [if_pos c₂] at h₂, 
         rw ← rotate_right_keys at h₂,
         simp [bound] at h₂,
-        cases_matching* (_ ∨ _);
-        try { apply h₁, simp [bound], tauto, },
-        { apply ihl, 
-          { intros k' h₃, 
-            apply h₁,
-            simp [bound],
-            tauto,
-          },
-          { exact h₂ },
-        },
-      },
-      { simp [if_neg c₂, bound] at h₂, 
         cases_matching* (_ ∨ _); 
         try { apply h₁, simp [bound], tauto, },
         { apply ihl, 
-      { apply ihl,
-        { apply ihl, 
-          { intros k' h₃, 
+          { intros k' h₂,
+            apply h₁,
+            simp [bound], 
+            tauto,
+          },
+          { exact h₂, },
+        },
+      },
+      { simp [if_neg c₂, bound] at h₂, 
+        cases_matching* (_ ∨ _);
+        try { apply h₁, simp [bound], tauto, },
+        { apply ihl,
+          { intros k' h₂,
             apply h₁,
             simp [bound],
             tauto,
           },
-          { exact h₂ },
+          { exact h₂, },
         },
       },
     },
     { simp only [if_neg c₁] at h₂, 
-      by_cases c₂ : (tk < k),
+      by_cases c₂ : (k > tk),
       { simp only [if_pos c₂] at h₂, 
         by_cases c₃ : ↥(right_heavy (insert k a tr)),
         { simp only [if_pos c₃] at h₂, 
@@ -78,7 +76,7 @@ begin
           cases_matching* (_ ∨ _);
           try { apply h₁, simp [bound], tauto, },
           { apply ihr, 
-            { intros k' h₃,
+            { intros k' h₂, 
               apply h₁,
               simp [bound],
               tauto,
@@ -90,11 +88,7 @@ begin
           cases_matching* (_ ∨ _);
           try { apply h₁, simp [bound], tauto, },
           { apply ihr, 
-        { apply ihr, 
-          { apply ihr, 
-            { intros k' h₃,
-          { intros k' h₃, 
-            { intros k' h₃,
+            { intros k' h₂, 
               apply h₁,
               simp [bound],
               tauto,
@@ -105,11 +99,11 @@ begin
       },
       { simp only [if_neg c₂] at h₂, 
         have h : k = tk := by linarith,
-        subst h,
         apply h₁,
+        subst h,
         exact h₂,
       },
-    },
+    },  
   },
 end
 
@@ -164,28 +158,7 @@ begin
   },
 end
 
-/- Introduction lemma for forall_keys-/
 lemma forall_keys_intro {l r : btree α} {k x : nat} {v : α} {p : nat → nat → Prop} :
-  (forall_keys p k l ∧ p k x ∧ forall_keys p k r) → forall_keys p k (node l x v r) :=
-begin
-  intro h₁,
-  cases_matching* (_ ∧ _),
-  unfold forall_keys at *,
-  intros k' h₂,
-  simp [bound] at h₂,
-  cases_matching* (_ ∨ _),
-  { subst h₂, 
-    exact h₁_right_left,
-  },
-  { apply h₁_left, 
-    exact h₂,
-  },
-  { apply h₁_right_right, 
-    exact h₂,
-  },
-end
-
-lemma forall_keys_intro_iff {l r : btree α} {k x : nat} {v : α} {p : nat → nat → Prop} :
   (forall_keys p k l ∧ p k x ∧ forall_keys p k r) ↔ forall_keys p k (node l x v r) :=
 begin
   split,
