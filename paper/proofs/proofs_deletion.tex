@@ -1,4 +1,4 @@
-This section will follow a proof construction of deletion from a tree preserving order. The lemma statements presented in this section closely follow \cite{textbook:discrete_computer}, though in the process some of the statements were made to suit the Lean definitions.
+This section will follow a proof construction of deletion from a tree preserving order. The lemma statements presented in this section closely follow \cite{textbook:discrete_computer}, though in the process some of the statements were made to suit the Lean definitions. 
 
 \begin{lstlisting}
 lemma delete_ordered (t : btree α) (k : nat) :
@@ -16,7 +16,7 @@ lemma del_node_ordered (t : btree α) (k : nat) :
 
 The proof for \lstinline{del_node} was done with a simple case split on the tree.
 
-The proof for shrink needs to have a bit more information in the hypotheses. It's not enough to say that \lstinline{t} is ordered and \lstinline{sh} is ordered, there needs to be a connection between the tree and the shrunken tree, so \lstinline{shrink t = some (x, a, sh)} is one of the hypotheses of the proof. The proof also shows that \lstinline{x} is larger than all of the keys in a shrunken tree. 
+The proof for shrink needs to contain more information. The hypotheses need to contain the result of shrinking the tree, \lstinline{shrink t = some (x, a, sh)}, and that the entire tree is ordered and therefore so is \lstinline{sh}. The proof also concludes that \lstinline{x} is larger than all of the keys in a shrunken tree.
 
 \begin{lstlisting}
 lemma shrink_ordered {t sh : btree α} {x : nat} {a : α} :
@@ -26,7 +26,24 @@ lemma shrink_ordered {t sh : btree α} {x : nat} {a : α} :
 
 The proof for \lstinline{shrink_ordered} was done by induction on the tree generalizing \lstinline{x}, \lstinline{a} and \lstinline{sh}, as the proof construction this way will take into account all possible values of the three.
 
-To aid with writing the proofs, two view inductive definitions were written for \lstinline{shrink} and \lstinline{delete}\footnote{The idea for this view type was created by the daily supervisor, Jannis Limperg}. The \lstinline{shrink_view} is shown below.
+In the inductive step, if the left subtree is larger than the height of \lstinline{sh + 1}, then \lstinline{sh = rotate_right (node l k v sh_1)}, where \lstinline{sh_1} is from \lstinline{shrink r = (x_1, a_1, sh_1)}. This case can be resolved with the lemma \lstinline{rotate_right_keys} to show that keys are preserved after a rotation. Then we need to show that all the keys in \lstinline{sh} come from the original tree, which is done by applying the lemma \lstinline{shrink_keys}.
+
+\begin{lstlisting}
+lemma shrink_keys {t sh : btree α} {x : nat} {a : α} :
+  ordered t ∧ shrink t = some (x, a, sh) → 
+    bound x t ∧ (∀ k', bound k' sh → bound k' t) := ...
+\end{lstlisting}
+
+We know that \lstinline{x_1} is larger than all the keys in \lstinline{sh_1}. Since \lstinline{(node l k v sh_1)} is ordered, then it must be the case that \lstinline{k} is smaller than all the keys in \lstinline{sh_1}, and therefore \lstinline{x > k} and \lstinline{x} is greater than all the keys in \lstinline{l}. This is formalized using the lemma \lstinline{forall_keys_shrink}.
+
+\begin{lstlisting}
+lemma forall_shrink {t sh : btree α} {k x : nat} {a : α} 
+{p : nat → nat → Prop} :
+  forall_keys p k t ∧ shrink t = some (x, a, sh) → 
+    forall_keys p k sh ∧ p k x :=
+\end{lstlisting}
+
+To aid with writing the proofs, two view inductive definitions were written for \lstinline{shrink} and \lstinline{delete}\footnote{how do i write that it isn't mine??}. The \lstinline{shrink_view} is shown below.
 
 \begin{lstlisting}
 inductive shrink_view {α} : btree α → option (nat × α × btree α) → Sort*
@@ -54,15 +71,11 @@ lemma shrink_shrink_view (t : btree α) :
   shrink_view t (shrink t) := ...
 \end{lstlisting}
 
-Applying the lemma would result in three cases in the inductive step of \lstinline{shrink_ordered}. The same steps were taken for \lstinline{del_node}, writing a view definition and then a lemma that would deconstruct it from a normal \lstinline{del_node} definition.
+Applying the lemma would result in three cases in the inductive step of \lstinline{shrink_ordered}, which matches the three cases from the definition -- one for the right subtree being empty, leading to \lstinline{shrink r = none}, another one where \lstinline{shrink r = some (x, a, rotate_right(l k v sh))}, and another one where \lstinline{shrink r = some (x, a, node l k v sh)}. This allowed to complete the proofs without creating additional case splits, cluttering the proof construction.
+
+The same steps were taken for \lstinline{del_node}, writing a view definition and then a lemma that would deconstruct it from a normal \lstinline{del_node} definition.
 
 A lemma for \lstinline{shrink} retaining keys also needed to be written, as the proof needs to also show that \lstinline{x} is a key from the tree \lstinline{t} and not some random key.
-
-\begin{lstlisting}
-lemma shrink_keys {t sh : btree α} {x : nat} {a : α} :
-  ordered t → shrink t = some (x, a, sh) → 
-    bound x t ∧ (∀ k', bound k' sh → bound k' t) := ...
-\end{lstlisting}
 
 As \lstinline{shrink_keys} would have to be applied to \lstinline{shrink_ordered}, the original \lstinline{forall_keys} definition had to be rewritten. Before beginning the proofs about deletion, the \lstinline{forall_keys} definition was \lstinline{forall_keys_unfolded} as seen in Section \ref{sec:bst}, without the additional definition to take into account the key being bound in the tree. After the new definition was written, an introduction lemma was needed in order to split a goal with \lstinline{forall_keys} intro three goals. 
 
@@ -78,11 +91,11 @@ lemma forall_keys_bound_unfolded (t : btree α)
   forall_keys p k t → forall_keys_unfolded p k t :=
 \end{lstlisting}
 
-Then, the final introduction lemma was written and the proof completed. 
+Then, the final introduction lemma was written and the proof completed. The lemma being a bi-implication allows for the lemma to be applied to any hypothesis containing a \lstinline{forall_keys}, to extract information about the subtrees separately and the relationship between \lstinline{k} and \lstinline{x}. This made proof constructions with \lstinline{forall_keys} significantly easier, as there was an alternative way to unfold \lstinline{forall_keys}, instead of unfolding it in terms of \lstinline{bound} like in the definition. 
 
 \begin{lstlisting}
 lemma forall_keys_intro {l r : btree α} {k x : nat} {v : α} 
 {p : nat → nat → Prop} :
-  (forall_keys p k l ∧ p k x ∧ forall_keys p k r) → 
+  (forall_keys p k l ∧ p k x ∧ forall_keys p k r) ↔ 
     forall_keys p k (node l x v r) :=
 \end{lstlisting}
