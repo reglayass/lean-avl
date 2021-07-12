@@ -57,7 +57,12 @@ begin
     cases' shrink_shrink_view (node l k v r),
     case nonempty_empty {
       cases' h₁_right,
-      sorry,
+      split,
+      { simp [bound], },
+      { intros k' h₂, 
+        simp [bound], 
+        tauto,
+      },
      },
     case nonempty_nonempty₁ {
       rw h_2 at h₁_right,
