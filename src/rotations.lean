@@ -1,16 +1,10 @@
-import definitions
-import ordered
-import forall_keys
-import tactic.linarith
-import tactic.omega
+import definitions forall_keys tactic.linarith tactic.omega
 set_option pp.generalized_field_notation false
 
 universe u
 
 namespace rotation_lemmas
-open btree
-open ordered_lemmas
-open forall_keys_lemmas
+open btree forall_keys_lemmas
 
 variables {α : Type u}
 
@@ -369,8 +363,8 @@ begin
 end
 
 /- Simple left rotations preserve pre-existing keys -/
-lemma simple_left_keys (t : btree α) (k : nat) :
-  bound k t ↔ bound k (simple_left t) :=
+lemma simple_left_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = x ↔ bound k (simple_left t) = x :=
 begin
   cases t,
   case empty {
@@ -383,14 +377,14 @@ begin
     },
     case node : trl trk tra trr {
       simp [simple_left, bound],
-      split; { intro h₁, tauto },
+      split; { intro h₁, finish, },
     },
   },
 end
 
 /- Simple right rotations preserve pre-existing keys -/
-lemma simple_right_keys (t : btree α) (k : nat) :
-  bound k t ↔ bound k (simple_right t) :=
+lemma simple_right_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = x ↔ bound k (simple_right t) = x :=
 begin
   cases t,
   case empty {
@@ -399,18 +393,18 @@ begin
   case node : tl tk ta tr {
     cases tl,
     case empty {
-      split; simp[simple_right],
+      split; simp [simple_right],
     },
     case node : tll tlk tla tlr {
       simp [simple_right, bound],
-      split; { intro h₁, tauto, },
+      split; { intro h₁, finish, },
     },
   },
 end
 
 /- Right rotations preserve pre-existing keys -/
-lemma rotate_right_keys (t : btree α) (k : nat) :
-  bound k t ↔ bound k (rotate_right t) :=
+lemma rotate_right_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = x ↔ bound k (rotate_right t) = x :=
 begin
   cases t,
   case empty {
@@ -433,7 +427,7 @@ begin
           case node : tlrl tlrk tlra tlrr {
             simp [simple_left],
             simp [bound] at h₁ ⊢,
-            tauto,
+            finish,
           },
         },
         { intro h₁, 
@@ -443,7 +437,7 @@ begin
           case node : tlrl tlrk tlra tlrr {
             simp [simple_left] at h₁,
             simp [bound] at h₁ ⊢,
-            tauto,
+            finish,
           },
         },
       },
@@ -463,8 +457,8 @@ begin
 end
 
 /- Left rotations preserve pre-existing keys -/
-lemma rotate_left_keys (t : btree α) (k : nat):
-  bound k t ↔ bound k (rotate_left t) :=
+lemma rotate_left_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = x ↔ bound k (rotate_left t) = x :=
 begin
   cases t,
   case empty {
@@ -487,7 +481,7 @@ begin
           case node : trll trlk trla trlr {
             simp [simple_right],
             simp [bound] at h₁ ⊢,
-            tauto,
+            finish,
           },
         },
         { intro h₁, 
@@ -497,7 +491,7 @@ begin
           case node : trll trlk trla trlr {
             simp [simple_right, bound] at h₁,
             simp [bound],
-            tauto,
+            finish,
           }
         },
       },

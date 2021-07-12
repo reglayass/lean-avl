@@ -1,16 +1,10 @@
-import definitions
-import rotations
-import forall_keys
-import tactic.linarith
-import tactic.induction
+import definitions rotations forall_keys tactic.linarith tactic.induction
 set_option pp.generalized_field_notation false
 
 universe u
 
 namespace shrink_lemmas 
-open btree
-open rotation_lemmas
-open forall_keys_lemmas
+open btree rotation_lemmas forall_keys_lemmas
 
 variables {α : Type u}
 

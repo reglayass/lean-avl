@@ -1,16 +1,10 @@
-import definitions
-import rotations
-import forall_keys
-import tactic.linarith
-import tactic.omega
+import definitions rotations forall_keys tactic.linarith tactic.omega
 set_option pp.generalized_field_notation false
 
 universe u
 
 namespace insertion_balanced_lemmas
-open btree
-open rotation_lemmas
-open forall_keys_lemmas
+open btree rotation_lemmas forall_keys_lemmas
 
 variables {α : Type u}
 
@@ -205,7 +199,7 @@ begin
 end
 
 lemma insert_bound (t : btree α) (k : nat) (v : α) :
-  bound k (insert k v t) :=
+  bound k (insert k v t) = tt :=
 begin
   induction t,
   case empty {
@@ -217,7 +211,7 @@ begin
     { simp only [if_pos c₁], 
       by_cases c₂ : ↥(left_heavy (insert k v tl)),
       { simp only [if_pos c₂], 
-        apply rotate_right_keys,
+        rw ← rotate_right_keys,
         simp [bound],
         tauto,
       },
@@ -231,7 +225,7 @@ begin
       { simp only [if_pos c₂], 
         by_cases c₃ : ↥(right_heavy (insert k v tr)),
         { simp only [if_pos c₃], 
-          apply rotate_left_keys,
+          rw ← rotate_left_keys,
           simp [bound],
           tauto,
         },
@@ -246,7 +240,7 @@ begin
 end
 
 lemma insert_diff_bound (t : btree α) (k x : nat) (v : α) :
-  bound x t → bound x (insert k v t) :=
+  bound x t = tt → bound x (insert k v t) = tt :=
 begin
   intro h₁,
   induction t,
@@ -261,7 +255,7 @@ begin
     { simp only [if_pos c₁], 
       by_cases c₂ : ↥(left_heavy (insert k v tl)),
       { simp only [if_pos c₂], 
-        apply rotate_right_keys,
+        rw ← rotate_right_keys,
         simp [bound],
         simp [bound] at h₁,
         tauto,
@@ -277,7 +271,7 @@ begin
       { simp only [if_pos c₂], 
         by_cases c₃ : ↥(right_heavy (insert k v tr)),
         { simp only [if_pos c₃], 
-          apply rotate_left_keys,
+          rw ← rotate_left_keys,
           simp [bound],
           simp [bound] at h₁,
           tauto,
@@ -314,7 +308,7 @@ begin
     { simp only [if_pos c₁],
       by_cases c₂ : ↥(left_heavy (insert k v tl)),
       { simp only [if_pos c₂], 
-        apply rotate_right_keys,
+        rw ← rotate_right_keys,
         simp [bound] at *,
         tauto,
       },
@@ -328,7 +322,7 @@ begin
       { simp only [if_pos c₂], 
         by_cases c₃ : ↥(right_heavy (insert k v tr)),
         { simp only [if_pos c₃],
-          apply rotate_left_keys,
+          rw ← rotate_left_keys,
           simp [bound] at *,
           tauto, 
         },

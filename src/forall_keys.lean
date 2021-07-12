@@ -1,13 +1,10 @@
-import definitions
-import rotations
-import tactic.linarith
+import definitions tactic.linarith
 set_option pp.generalized_field_notation false
 
 universe u
 
 namespace forall_keys_lemmas
 open btree
-open rotation_lemmas
 
 variables {α : Type u}
 

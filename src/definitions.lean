@@ -195,7 +195,7 @@ def shrink : btree α → option (nat × α × btree α)
   If the left subtree is empty, the node is replaced with the right subtree
   Otherwise, the left subtree is shrunk until an empty subtree is found.
 -/
-def del_root : btree α → btree α
+def del_node : btree α → btree α
 | btree.empty := btree.empty
 | (btree.node l k v r) :=
   match shrink l with 
