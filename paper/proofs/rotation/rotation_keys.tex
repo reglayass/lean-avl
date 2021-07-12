@@ -1,11 +1,12 @@
-The lemma for rotations preserving keys is written as so.
+% The lemma for rotations preserving keys is written as so.
+We first prove that rotations preserve keys.
 
 \begin{lstlisting}
 lemma rotate_right_keys (t : btree α) (k : nat) (x : bool) :
   bound k t ↔ bound k (rotate_right t) := ...
 \end{lstlisting}
 
-The first step with proof statements with rotations is to look at their definitions. The definition for \lstinline{rotate_right} uses the \lstinline{simple_right} and \lstinline{simple_left} definitions, so proofs about them preserving order need to be constructed too.
+As done with proofs for ordering, lemmas about simple rotations preserving keys are constructed as well.
 
 \begin{lstlisting}
 lemma simple_right_keys (t : btree α) (k : nat) (x : bool) :
@@ -15,8 +16,8 @@ lemma simple_left_keys (t : btree α) (k : nat) (x : bool) :
   bound k t ↔ bound k (simple_left t) := ...
 \end{lstlisting}
 
-The proofs were written to be bi-implications. If we just take the left side into account, showing that if a key is bound in a tree then it is still bound in a simple left rotation, there is no guarantee that after a simple left rotation, the keys all remain the same (the right side of the bi-implication). The bi-implication also was used in future proofs, as bi-implications can be applied to hypotheses in Lean, not just to goals. 
+The proofs were written to be bi-implications. If we just take the left side into account -- if a key is bound in a tree then it is still bound in a simple left rotation -- there is no guarantee that after a simple left rotation, the keys all remain the same -- the right side of the bi-implication.  
 
-It was during the construction of these proofs where the first problem with the definition of \lstinline{bound} was discovered. Previously, the definition for \lstinline{bound} was similar to that of \lstinline{lookup}, recursively searching the tree until the key was found, returning true.
+It was during the construction of these proofs where the first problem with the definition of \lstinline{bound} was discovered. Previously, the definition for \lstinline{bound} was similar to that of \lstinline{lookup}, recursively searching the tree until the key was found.
 
-This definition would make it very difficult to write the proofs needed. There would be an assumption that the key is bound in the same subtree after a rotation, which is not the case after a rotation. The definition was then changed to the one shown in Section \ref{sec:bst}, which made the proofs easier because then the definition didn't take into account the placement of the key, just whether or not it exists. This fits better into the purpose of the proofs for rotation retaining keys - we want to make sure that some key is still present in the tree after a rotation, and not that the key is present in the same area of the tree.
+This definition made it difficult to write the proofs needed. There would be an assumption that the key is bound in the same subtree after a rotation, which is not the case after a rotation. The definition was then changed to the one shown in Section \ref{sec:bst}, which made the proofs easer because then the definition did not take into account the placement of the key, just whether or not it exists. This fits better into the purpose of the proofs for rotation retaining keys -- we want to make sure that some key is still present in the tree after a rotation, and not that the key is present in the same area of the tree.

@@ -1,4 +1,4 @@
-All lemmas based on rotations preserving order follow the same structure for the statement: assuming that a tree \lstinline{t} is ordered, \lstinline{t} remainds ordered after a rotation. Since AVL trees are based on binary search trees, and binary search trees must be ordered, a rotation cannot violate this. 
+All lemmas based on rotation assume that a tree \lstinline{t} is ordered, and conclude that \lstinline{t} remains ordered after a rotation. Since AVL trees are based on BSTs, and BSTs must be ordered, a rotation cannot violate this.
 
 \begin{lstlisting}
 lemma rotate_right_ordered (t : btree α) :
@@ -15,9 +15,9 @@ lemma simple_left_ordered (t : btree α) :
   ordered t → ordered (simple_left t) := ...
 \end{lstlisting}
 
-All of the above proofs were done by case splitting on the tree \lstinline{t}. Induction hypotheses wasn't needed since the definition for \lstinline{ordered} already splits on the left and right subtree, and the goal of the proof is to match the \lstinline{ordered} and \lstinline{forall_keys} subtrees of the hypothesis to the goal. 
+All of the above proofs were done by case splits on the tree \lstinline{t}. Induction hypothesis are not needed since the rotation definitions are not recursive. 
 
-To achieve this, a lemma for transitivity of keys is required, and this lemma is applied in both the lemmas for compound rotations and simple rotations.
+A lemma for the transitivity of \lstinline{forall_keys} is written, and is applied in both the lemmas for compound rotations and simple rotations.
 
 \begin{lstlisting}
 lemma forall_keys_trans (t : btree α) (p : nat → nat → Prop) 
@@ -25,4 +25,4 @@ lemma forall_keys_trans (t : btree α) (p : nat → nat → Prop)
   forall_keys p z t → forall_keys p x t := ...
 \end{lstlisting}
 
-For example, if we have a key \lstinline{trk} and \lstinline{tk}, and the goal is to show that \lstinline{trk} is greater than all of the keys in a tree \lstinline{tl}, applying the lemma will yield three goals: one for \lstinline{trk > tk}, transivity (which is completed by a simple tactic \lstinline{apply trans}) and a goal \lstinline{forall_keys tk tl}. The two goals for the exception of transitivity should be available in the proof hypotheses. 
+During a rotation, the placement of a key may change but its relation to its ancestor and its children does not change. In this situation, \lstinline{forall_keys_trans} is applied. For example, if we have a key \lstinline{trk} and \lstinline{tk}, and the goal is to show that \lstinline{trk} is greater than all of the keys in a tree \lstinline{tl}, applying the lemma will yield three goals: one for \lstinline{trk > tk}, one for the transivity statement \lstinline{h₂}, and a goal for \lstinline{forall_keys tk tl}. The two goals for the exception of transivity are available in the proof hypothesis, and a simple tactic is applied to prove transitivity, the second goal.

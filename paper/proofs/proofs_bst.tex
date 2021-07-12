@@ -1,11 +1,11 @@
-Since AVL trees are based on BSTs, and the \lstinline{lookup} and \lstinline{bound} definitions can be used on AVL trees without any additional rotations unlike with insertion, some proofs about these two operations were constructed.
+First, we prove two lemmas related to boundedness and lookup in a tree, since \lstinline{lookup} and \lstinline{bound} are identical for both BSTs and AVL trees.
 
 \begin{lstlisting}
 lemma bound_false (k : nat) (t : btree α) :
   bound k t = ff → lookup k t = none := ...
 
-lemma bound_lookup (t : btree α) (k : nat) :
+lemma bound_lookup (k : nat) (t : btree α) :
   bound k t → ∃ (v : α), lookup k t = some v := ...
 \end{lstlisting}
 
-The two definitions were used together in these proofs, as they are linked to each other by their purpose. If a key is not bound in a tree, then lookup will not result in any node data being returned. If a key is bound in a tree, then some data will be returned.
+Both of the proofs were constructed by induction on the tree \lstinline{t}. The lemma \lstinline{bound_false} states that if a key is not bound in a tree, then lookup will not result in any node data being returned. The lemma \lstinline{bound_lookup} states that if a key is bound in a tree, then some data will be returned.

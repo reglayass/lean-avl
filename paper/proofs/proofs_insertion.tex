@@ -1,8 +1,8 @@
-For insertion, we want to show that keys and order and balance are preserved.
+For insertion, we want to show that keys, order and balance are preserved.
 
-For balance, there was some trouble constructing a proof for \lstinline{insert_balanced}, as the goal of this lemma is that balance is preserved, while the lemmas for rotations are about restoring balance. The two definitions are not very compatible with each other.
+% For balance, there was some trouble constructing a proof for \lstinline{insert_balanced}, as the goal of this lemma is that balance is preserved, while the lemmas for rotations are about restoring balance. The two definitions are not very compatible with each other.
 
-\subsection*{Keys}
+\subsection*{Key Preservation}
 There are three different lemmas in relation to key preservation.
 
 \begin{lstlisting}
@@ -16,9 +16,9 @@ lemma insert_nbound (t : btree α) (k x : nat) (v : α) :
   (bound x t = ff ∧ x ≠ k) → bound x (insert k v t) = ff := ...
 \end{lstlisting}
 
-For \lstinline{insert_bound}, the goal is to show that a key can be found as soon as it is inserted into a tree. This lemma verifies that \lstinline{insert} does what it is intended to do. For \lstinline{insert_diff_bound} and \lstinline{insert_nbound}, the goal is to show that no keys are lost or no keys that were not previously there do not get added, for the exception of the input key to be added. The proofs are completed by induction on \lstinline{t}. 
+For \lstinline{insert_bound}, the goal is to show that a key can be found as soon as it is inserted into a tree. For \lstinline{insert_diff_bound} and \lstinline{insert_nbound}, the goal is to show that the keys already existing in a tree do not get lost during insertion, and if a key does not exist in a tree, unless it is the new key, it does not exist after insertion. The proofs are completed by induction on the tree \lstinline{t}.
 
-Since \lstinline{insert} uses rotations, previously constructed proofs about rotations preserving keys can be applied in this proof. The tactic \lstinline{tauto} was used frequently, as the tactic is able to split goals and assumptions that are disjunctions. Due to the bound definition using disjunction, this tactic does a lot of the heavy work of breaking down these forms, and then completing the separate goals based on reflexivity or elimination.
+Since \lstinline{insert} uses rotations, previously constructed proofs about rotations preserving keys are applied in these proofs. The tactic \lstinline{tauto} is used frequently, as the tactic is a decisional procedure for propositional logic and is able to split goals and assumptions that are disjunctions. Due to the \lstinline{bound} definition using disjunction, this tactic does a lot of the heavy work of breaking down these forms, and then completing the separate foals based on reflexivity.
 
 \subsection*{Order}
 Lemma statements for insertion preserving order have the same structure as lemmas for rotations preserving order.
@@ -28,9 +28,9 @@ lemma insert_ordered (t : btree α) (k : nat) (v : α) :
   ordered t → ordered (insert k v t) := ...
 \end{lstlisting}
 
-This proof was fairly easy to construct, as previous lemmas for rotations preserving order were applied, with the \lstinline{bound} definition simplified and \lstinline{tauto} applied.
+This proof is constructed by induction on the tree \lstinline{t} and previous lemmas for rotations preserving order are applied. 
 
-A new proof that was constructed was \lstinline{forall_insert}. To bring an example from the proof construction of \lstinline{insert_ordered} -- if a key \lstinline{tk} is greater than all of the keys in the tree \lstinline{tl} even after insertion, then it follows that \lstinline{tk > k} and that \lstinline{tk} is greater than all the keys in \lstinline{tl}. These are also the two sub-goals that come out after applying the lemma.
+A new proof is constructed for \lstinline{forall_insert}, as during the proof construction above, we want to show that previously existing keys in a tree preserve their relation with the tree after insertion. To bring an example from the proof construction of \lstinline{insert_ordered} -- if a key \lstinline{tk} is greater than all of the keys in the tree \lstinline{tl} even after insertion, then it follows that \lstinline{tk > k} and that \lstinline{tk} is greater than all of the keys in \lstinline{tl}. These are also the sub-goals that come out after applying the lemma.
 
 \begin{lstlisting}
 lemma forall_insert (k x : nat) (t : btree α) (a : α) 
@@ -51,3 +51,5 @@ lemma forall_rotate_right (x k : nat) (l r : btree α) (a : α)
   forall_keys p x (btree.node l k a r) → 
     forall_keys p x (simple_right (btree.node l k a r)) := ...
 \end{lstlisting}
+
+The three proofs above were constructed by induction on \lstinline{t}.
