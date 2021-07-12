@@ -11,7 +11,7 @@ This may also be described by the \textit{balancing factor}.
   The balancing factor of any node is defined to be the height difference of its two child subtrees.
 \end{definition}
 
-In Lean, the definitions \lstinline{height} and \lstinline{balanced} are done per Definitions \ref{def:height} and \ref{def:balancing_factor}.
+In Lean, the definitions \lstinline{height} and \lstinline{balanced} are done per Definitions \ref{def:height} and \ref{def:bst_property}.
 
 \begin{lstlisting}
 def height : btree α → nat
@@ -92,12 +92,29 @@ def rotate_right : btree α → btree α
   | btree.empty := (btree.node l k a r)
   | (btree.node ll lk la lr) :=
     if height ll < height lr 
-    then simple_right (btree.node (simple_left l) k a r)
-    else simple_right (btree.node l k a r)
+      then simple_right (btree.node (simple_left l) k a r)
+      else simple_right (btree.node l k a r)
   end 
 \end{lstlisting}
 
 With simple rotations, only the height of the right (or left) child subtree matters. If the subtrees of the child are also too tall, i.e. too tall on the \enquote{inside}, a compound rotation needs to be applied. In the definition \lstinline{rotate_right}, the children of the left child are compared. If the left subtree of the child is smaller, a compound rotation is done as the tree is too heavy on the "inside". Otherwise, just a simple right rotation is done.
+
+The insertion definition makes use of the definitions of heaviness and rotations to insert a node into a tree while retaining balance. If insertion creates a left-heavy tree, then a right rotation is done, and if it creates a right-heavy tree, then a left rotation is done.
+
+\begin{lstlisting}
+def insert (x : nat) (v : α) : btree α → btree α
+| btree.empty := btree.node btree.empty x v btree.empty
+| (btree.node l k a r) :=
+  if x < k then 
+    if left_heavy (insert l) 
+      then rotate_right (btree.node (insert l) k a r)
+      else btree.node (insert l) k a r
+  else if x > k then
+    if right_heavy (insert r) 
+      then rotate_left (btree.node l k a (insert r))
+      else btree.node l k a (insert r)
+  else btree.node l x v r
+\end{lstlisting}
 
 Deletion is more complicated, and depends on the placement of the node within the tree. If the left subtree is empty, then the node can be safely replaced by the right subtree.  If the left subtree has children, it can be of any height, so re-balancing has to be taken into account. In this case, the same philosophy can be followed as for deletion when the left subtree is empty, but traveling down the right subtree and looking for an empty right child. If a node \lstinline{n} is found with an empty right child, the key and data value of \lstinline{n} is returned, and \lstinline{n} is replaced by its left child subtree, with right rotations performed to restore balance. 
 

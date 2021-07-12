@@ -34,15 +34,6 @@ def forall_keys (p : nat → nat → Prop) (k : nat) (t : btree α) : Prop :=
   ∀ k', bound k' t → p k k'
 \end{lstlisting}
 
-An additional definition \lstinline{forall_keys_unfolded} was also written to be able to use the above definition but separate a tree into its separate children so that the relationship between the key and the two children can be seen as well. 
-
-\begin{lstlisting}
-def forall_keys_unfolded (p : nat → nat → Prop) : nat → btree α → Prop
-| x btree.empty := tt
-| x (btree.node l k a r) :=
-  forall_keys_unfolded x l ∧ (p x k) ∧ forall_keys_unfolded x r
-\end{lstlisting}
-
 The definition for \lstinline{ordered} formalizes the binary search property. A tree is ordered if the children are ordered and the \lstinline{forall_keys} relationship holds.
 
 \begin{lstlisting}
