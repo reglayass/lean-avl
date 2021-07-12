@@ -32,7 +32,7 @@ begin
           apply forall_rotate_left,
           rw ← forall_keys_intro,
           unfold forall_keys at *,
-          repeat { split };
+          repeat { split },
           { apply ihl, 
             intros k' h₂,
             apply h₁,
