@@ -1,4 +1,4 @@
-universe u
+universe u 
 
 /--
   Inductive type for a binary tree
@@ -12,10 +12,16 @@ inductive btree (α : Type u)
 namespace btree
 variables {α : Type u}
 
-/- Definition for an empty tree -/
+/--
+ Definition for an empty tree 
+-/
 def empty_tree : btree α := btree.empty
 
-/- Retrieving an item from a binary tree -/
+/--
+  Lookup a value in a tree
+  A recursive function that traverses the left or right
+  subtree depending on the key
+-/
 def lookup (x : nat) : btree α → option α
 | btree.empty := none
 | (btree.node l k a r) :=
@@ -33,22 +39,23 @@ def bound (x : nat) : btree α → bool
 | (btree.node l k a r) :=
   x = k ∨ bound l ∨ bound r
 
-/-
+/--
   An "unfolded" definition of forall_keys
-  Rather than the first forall_keys definition which gives the relationship
-  between the tree and the key, the unfolded definition describes the relationship between 
-  the key and the child subtrees
+  Used to verify that the forall_keys definition is equivalent 
+  to this one, as forall_keys_unfolded was the previously used one
 -/
 def forall_keys_unfolded (p : nat → nat → Prop) : nat → btree α → Prop
 | x btree.empty := tt
 | x (btree.node l k a r) :=
   forall_keys_unfolded x l ∧ (p x k) ∧ forall_keys_unfolded x r
 
-/- For all keys in some tree, the key needs to exist in the tree and have either a > or < relation -/
+/--
+  For all keys in some tree, the key needs to exist in the tree and have either a > or < relation 
+-/
 def forall_keys (p : nat → nat → Prop) (k : nat) (t : btree α) : Prop :=
   ∀ k', bound k' t → p k k'
 
-/-
+/--
   Binary search property
   For any node in a tree, all of the keys to the left must be smaller and
   all of the keys to the right must be larger, and both of the right and 
@@ -59,7 +66,7 @@ def ordered : btree α → Prop
 | (btree.node l k a r) :=
   ordered l ∧ ordered r ∧ (forall_keys (>) k l) ∧ (forall_keys (<) k r)
 
-/-
+/--
   Definition for the height of a tree
   The height is the longest path from the root node
   To some leaf node
@@ -69,16 +76,19 @@ def height : btree α → nat
 | (btree.node l k a r) :=
   1 + (max (height l) (height r))
 
-/-
+/--
   Definition for a tree to be balanced
 -/
 def balanced : btree α → bool
 | btree.empty := tt
 | (btree.node l k a r) :=
-  if height l ≥ height r then height l ≤ height r + 1
-  else height r ≤ height l + 1
+  if height l ≥ height r 
+    then height l ≤ height r + 1
+    else height r ≤ height l + 1
 
-/- Definition of a tree being left-heavy -/
+/-- 
+  Definition of a tree being left-heavy 
+-/
 def left_heavy : btree α → bool
 | btree.empty := ff
 | (btree.node btree.empty k a r) := ff
@@ -86,7 +96,9 @@ def left_heavy : btree α → bool
   (height ll ≥ height lr) ∧ (height ll ≤ height lr + 1) ∧
   (height lr ≥ height r) ∧ (height r + 1 = height ll)
 
-/- Definition of a tree being right-heavy -/
+/-- 
+  Definition of a tree being right-heavy 
+-/
 def right_heavy : btree α → bool
 | btree.empty := ff
 | (btree.node l k a btree.empty) := ff
@@ -94,22 +106,29 @@ def right_heavy : btree α → bool
   (height rr ≥ height rl) ∧ (height rr ≤ height rl + 1) ∧
   (height rl ≤ height l) ∧ (height l + 1 = height rr)
 
-/- Simple right rotation -/
+/-- 
+  Simple right rotation 
+-/
 def simple_right : btree α → btree α
 | btree.empty := btree.empty
 | (btree.node (btree.node ll lk la lr) k a r) := btree.node ll lk la (btree.node lr k a r)
 | (btree.node l k a r) := btree.node l k a r
 
-/- Simple right rotation -/
+/-- 
+  Simple left rotation 
+-/
 def simple_left : btree α → btree α
 | btree.empty := btree.empty
 | (btree.node l k a (btree.node rl rk ra rr)) := (btree.node (btree.node l k a rl) rk ra rr)
 | (btree.node l k a r) := btree.node l k a r
 
-/-
+/--
   Definition of a right rotation
-  If the left subtree is larger than the right subtree, then compound rotation is done
-  Otherwise, just a simple right rotation
+  If the left child tree is empty, no rotation is done
+  If the left child subtree is taller than the right child subtree, 
+  a compound rotation is done by first a left rotation on the left tree 
+  then a right rotation on the whole tree. 
+  Otherwise, a simple right rotation is done.
 -/
 def rotate_right : btree α → btree α
 | btree.empty := btree.empty
@@ -118,11 +137,14 @@ def rotate_right : btree α → btree α
   | btree.empty := (btree.node l k a r)
   | (btree.node ll lk la lr) :=
     if height ll < height lr 
-    then simple_right (btree.node (simple_left l) k a r)
-    else simple_right (btree.node l k a r)
+      then simple_right (btree.node (simple_left l) k a r)
+      else simple_right (btree.node l k a r)
   end 
 
-/-  Definition of a left rotation -/
+/--  
+  Definition of a left rotation 
+  A mirror definition to rotate_right
+-/
 def rotate_left : btree α → btree α
 | btree.empty := btree.empty
 | (btree.node l k a r) :=
@@ -130,18 +152,15 @@ def rotate_left : btree α → btree α
   | btree.empty := (btree.node l k a r)
   | (btree.node rl rk ra rr) :=
     if height rr < height rl 
-    then simple_left (btree.node l k a (simple_right r))
-    else simple_left (btree.node l k a r)
+      then simple_left (btree.node l k a (simple_right r))
+      else simple_left (btree.node l k a r)
   end
 
 /- 
   Definition of a balanced insertion
-  Works the same as insertion but checks for height differences
-  and rotates as necessary.
-  If insertion is done in the left subtree and this causes a disbalance, then 
-  a right rotation is done.
-  If insertion is done in the right subtree and this causes a disbalance, then
-  a left rotation is done.
+  Traverses the tree by comparing keys similar to lookup.
+  If the tree is left- or right-heavy after insertion, a rotation
+  is done.   
 -/
 def insert (x : nat) (v : α) : btree α → btree α
 | btree.empty := btree.node btree.empty x v btree.empty
@@ -156,9 +175,9 @@ def insert (x : nat) (v : α) : btree α → btree α
 
 /- 
   "Shrinking" the right subtree of a three
-  Returns a key x, which is the largest key in the right subtree, 
-  the data of the node key x and the shrunken tree.
-  Rotations may be done to re-balance
+  Returns x, which the key of the node in r with an empty right subtree
+  Return a, which is the node value the node with key x
+  Returns sh, the "shrunken" tree 
 -/
 def shrink : btree α → option (nat × α × btree α)
 | btree.empty := none
@@ -171,12 +190,12 @@ def shrink : btree α → option (nat × α × btree α)
       else (x, a, btree.node l k v sh)
   end
 
-/- 
-  Deleting a node from a tree
+/-- 
+  Deleting the root of a tree
   If the left subtree is empty, the node is replaced with the right subtree
   Otherwise, the left subtree is shrunk until an empty subtree is found.
 -/
-def del_node : btree α → btree α
+def del_root : btree α → btree α
 | btree.empty := btree.empty
 | (btree.node l k v r) :=
   match shrink l with 
@@ -186,22 +205,26 @@ def del_node : btree α → btree α
     else node sh x a r
   end
 
-/- 
+/-- 
   Deleting a key from a tree 
+  If the input key is the same as the current node key, 
+  the node is deleted
+  Otherwise deletion is recursively called on either the right or left subtree,
+  rotations completed as necessary.
 -/
 def delete (x : nat) : btree α → btree α
 | btree.empty := btree.empty
 | (btree.node l k a r) :=
   let dl := delete l in
   let dr := delete r in
-  if x = k then del_node (btree.node l k a r)
+  if x = k then del_root (btree.node l k a r)
   else if x < k then
     if height r > height dl + 1 then rotate_left (btree.node dl k a r)
     else btree.node dl k a r
   else if height l > height dr + 1 then rotate_right (btree.node l k a dr)
   else (btree.node l k a dr)
 
-/- 
+/-- 
   View inductive definition for shrink
 -/
 inductive shrink_view {α} : btree α → option (nat × α × btree α) → Sort*
@@ -219,7 +242,7 @@ inductive shrink_view {α} : btree α → option (nat × α × btree α) → Sor
   height l ≤ height sh + 1 →
   shrink_view (node l k v r) (some (x, a, node l k v sh))
 
-/- 
+/-- 
   View inductive definition for del_node
 -/
 inductive del_node_view {α} : btree α → btree α → Sort*
