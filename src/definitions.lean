@@ -217,7 +217,7 @@ def delete (x : nat) : btree α → btree α
 | (btree.node l k a r) :=
   let dl := delete l in
   let dr := delete r in
-  if x = k then del_root (btree.node l k a r)
+  if x = k then del_node (btree.node l k a r)
   else if x < k then
     if height r > height dl + 1 then rotate_left (btree.node dl k a r)
     else btree.node dl k a r
