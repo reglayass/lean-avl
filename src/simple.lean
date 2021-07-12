@@ -1,14 +1,13 @@
-import definitions
-import tactic.linarith
-import tactic.omega
+import definitions tactic.linarith tactic.omega
 set_option pp.generalized_field_notation false
 
 universe u
 
-namespace simple_lemmas
 open btree
 
 variables {α : Type u}
+
+/- # Simple reflexive lemmas # -/
 
 /- If we lookup empty btree then return none -/
 lemma lookup_empty (k : nat) :
@@ -21,6 +20,9 @@ lemma bound_empty (k : nat) :
 /- If you insert into an empty tree, then you just have one node -/
 lemma insert_empty (k : nat) (v : α) :
   insert k v (@empty_tree α) = btree.node btree.empty k v btree.empty := by refl
+
+
+/- # Bound and lookup correctness # -/
 
 /- If bound returns false, then the key is not in the tree therefore
   The lookup will return none -/
@@ -87,5 +89,3 @@ begin
     },
   },
 end
-
-end simple_lemmas
