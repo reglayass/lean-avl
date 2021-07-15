@@ -25,4 +25,4 @@ lemma forall_keys_trans (t : btree α) (p : nat → nat → Prop)
   forall_keys p z t → forall_keys p x t := ...
 \end{lstlisting}
 
-During a rotation, the placement of a key may change but its relation to its ancestor and its children does not change. In this situation, \lstinline{forall_keys_trans} is applied. For example, if we have a key \lstinline{trk} and \lstinline{tk}, and the goal is to show that \lstinline{trk} is greater than all of the keys in a tree \lstinline{tl}, applying the lemma will yield three goals: one for \lstinline{trk > tk}, one for the transivity statement \lstinline{h₂}, and a goal for \lstinline{forall_keys tk tl}. The two goals for the exception of transivity are available in the proof hypothesis, and a simple tactic is applied to prove transitivity, the second goal.
+During a rotation, the placement of a key may change but its relation to its ancestor and its children does not change. In this situation, \lstinline{forall_keys_trans} is applied. 

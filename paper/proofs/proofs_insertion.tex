@@ -1,5 +1,6 @@
 For insertion, we want to show that keys, order and balance are preserved.
 
+% MOVE SOMEWHERE ELSE, OR FIX %
 % For balance, there was some trouble constructing a proof for \lstinline{insert_balanced}, as the goal of this lemma is that balance is preserved, while the lemmas for rotations are about restoring balance. The two definitions are not very compatible with each other.
 
 \subsection*{Key Preservation}
@@ -30,7 +31,7 @@ lemma insert_ordered (t : btree α) (k : nat) (v : α) :
 
 This proof is constructed by induction on the tree \lstinline{t} and previous lemmas for rotations preserving order are applied. 
 
-A new proof is constructed for \lstinline{forall_insert}, as during the proof construction above, we want to show that previously existing keys in a tree preserve their relation with the tree after insertion. To bring an example from the proof construction of \lstinline{insert_ordered} -- if a key \lstinline{tk} is greater than all of the keys in the tree \lstinline{tl} even after insertion, then it follows that \lstinline{tk > k} and that \lstinline{tk} is greater than all of the keys in \lstinline{tl}. These are also the sub-goals that come out after applying the lemma.
+To complete the proof, an auxiliary proof \lstinline{forall_insert} is written. In the process of completing \lstinline{insert_ordered}, we need to show that previously existing keys in a tree preserve their relation with the tree after insertion. To bring an example from the proof -- if a key \lstinline{tk} is greater than all of the keys in the tree \lstinline{tl} even after insertion, then it follows that \lstinline{tk > k} and that \lstinline{tk} is greater than all of the keys in \lstinline{tl}. These are also the sub-goals that come out after applying the lemma. 
 
 \begin{lstlisting}
 lemma forall_insert (k x : nat) (t : btree α) (a : α) 
@@ -38,7 +39,7 @@ lemma forall_insert (k x : nat) (t : btree α) (a : α)
   forall_keys p x t → forall_keys p x (insert k a t) := ...
 \end{lstlisting}
 
-As insertion uses rotation, similar lemmas were written for both compound and simple rotations.
+Auxiliary proofs for rotation and \lstinline{forall_keys} are also written since insertion uses rotations.
 
 \begin{lstlisting}
 lemma forall_rotate_right (x k : nat) (l r : btree α) (a : α) 
