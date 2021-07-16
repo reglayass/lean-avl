@@ -1,5 +1,5 @@
 An AVL tree \cite{avl:original} is a self-balancing binary search tree, where the absolute value of the height difference between two child subtrees is no more than one. 
-This may also be described by the \textit{balancing factor}.
+This may also be described by the \textit{balancing factor}.\todo{citation needed?}
 
 \begin{definition}[Tree height]
   \label{def:height}
@@ -12,6 +12,8 @@ This may also be described by the \textit{balancing factor}.
 \end{definition}
 
 In Lean, the definitions \lstinline{height} and \lstinline{balanced} are done per Definitions \ref{def:height} and \ref{def:balancing_factor}.
+
+The easiest way to write the definition for \lstinline{balanced} would be to write it in terms of absolute value. This would create a problem, as height is defined with a natural number and absolute values in Lean use real numbers, either coercion or casting would need to be used which would cause difficulties when writing proofs. The current definition compares the two children with each other to determine balance instead. 
 
 \begin{lstlisting}
 def height : btree α → nat
@@ -123,35 +125,33 @@ def insert (x : nat) (v : α) : btree α → btree α
 | btree.empty := btree.node btree.empty x v btree.empty
 | (btree.node l k a r) :=
   if x < k then 
-    if left_heavy (insert l) 
-      then rotate_right (btree.node (insert l) k a r)
-      else btree.node (insert l) k a r
+    if left_heavy (btree.node (insert l) k a r) then rotate_right (btree.node (insert l) k a r)
+    else btree.node (insert l) k a r
   else if x > k then
-    if right_heavy (insert r) 
-      then rotate_left (btree.node l k a (insert r))
-      else btree.node l k a (insert r)
+    if right_heavy (btree.node l k a (insert r)) then rotate_left (btree.node l k a (insert r))
+    else btree.node l k a (insert r)
   else btree.node l x v r
 \end{lstlisting}  
 
 Deleting a node is more complicated, and depends on the its children. If its left child is empty, then the node can be removed and replaced by its right child. If the left subtree is not empty, we need to \lstinline{shrink} it. The process of shrinking is simple -- we travel the tree recursively along its right subtrees, looking for a node whose right child is empty. During this process, if the tree becomes imbalanced a right rotation is completed. Once the node is found, the \lstinline{shrink} function returns its key, value, and the resulting shrunken tree. Since shrinking an empty tree is impossible, \lstinline{shrink} returns an \lstinline{option}.
 
 \begin{lstlisting}[escapeinside={*}{*}]
-  def shrink : btree α → option (nat × α × btree α)
-  | btree.empty := none
-  | (btree.node l k v r) := some *\$*
-    match shrink r with
-    | none := (k, v, l)
-    | some (x, a, sh) :=
-      if height l > height sh + 1
-        then (x, a, rotate_right (btree.node l k v sh))
-        else (x, a, btree.node l k v sh)
-    end
-  \end{lstlisting}
+def shrink : btree α → option (nat × α × btree α)
+| btree.empty := none
+| (btree.node l k v r) := some *\$*
+  match shrink r with
+  | none := (k, v, l)
+  | some (x, a, sh) :=
+    if height l > height sh + 1
+      then (x, a, rotate_right (btree.node l k v sh))
+      else (x, a, btree.node l k v sh)
+  end
+\end{lstlisting}
 
 After defining shriking, the next step is to define the function \lstinline{del_node}. After the shrinking process is complete, a left rotation may be completed to re-balance the tree, and the key and node values of the tuple result of \lstinline{shrink} replace the key and value of the node to delete.
 
 \begin{lstlisting}
-def del_node : btree α → btree α
+def del_root : btree α → btree α
 | btree.empty := btree.empty
 | (btree.node l k v r) :=
   match shrink l with 
@@ -172,7 +172,7 @@ def delete (x : nat) : btree α → btree α
   let dl := delete l in
   let dr := delete r in
   if x = k 
-    then del_node (btree.node l k a r)
+    then del_root (btree.node l k a r)
     else if x < k then
       if height r > height dl + 1 
         then rotate_left (btree.node dl k a r)
