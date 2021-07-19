@@ -25,9 +25,11 @@ def empty_tree : btree α := btree.empty
 def lookup (x : nat) : btree α → option α
 | btree.empty := none
 | (btree.node l k a r) :=
-  if x < k then lookup l
-  else if x > k then lookup r
-  else a
+  if x < k 
+    then lookup l
+    else if x > k 
+      then lookup r
+    else a
 
 /-
   Checking if a key exists in a tree.
@@ -155,13 +157,15 @@ def rotate_left : btree α → btree α
 def insert (x : nat) (v : α) : btree α → btree α
 | btree.empty := btree.node btree.empty x v btree.empty
 | (btree.node l k a r) :=
-  if x < k then 
-    if left_heavy (btree.node (insert l) k a r) then rotate_right (btree.node (insert l) k a r)
-    else btree.node (insert l) k a r
-  else if x > k then
-    if right_heavy (btree.node l k a (insert r)) then rotate_left (btree.node l k a (insert r))
-    else btree.node l k a (insert r)
-  else btree.node l x v r
+  if x < k 
+    then if left_heavy (btree.node (insert l) k a r) 
+      then rotate_right (btree.node (insert l) k a r)
+      else btree.node (insert l) k a r
+    else if x > k 
+      then if right_heavy (btree.node l k a (insert r)) 
+        then rotate_left (btree.node l k a (insert r))
+        else btree.node l k a (insert r)
+    else btree.node l x v r
 
 /- 
   "Shrinking" the right subtree of a three
@@ -191,8 +195,9 @@ def del_root : btree α → btree α
   match shrink l with 
   | none := r
   | some (x, a, sh) :=
-    if height r > height sh + 1 then rotate_left (node sh x a r)
-    else node sh x a r
+    if height r > height sh + 1 
+      then rotate_left (node sh x a r)
+      else node sh x a r
   end
 
 /-- 
@@ -207,12 +212,15 @@ def delete (x : nat) : btree α → btree α
 | (btree.node l k a r) :=
   let dl := delete l in
   let dr := delete r in
-  if x = k then del_root (btree.node l k a r)
-  else if x < k then
-    if height r > height dl + 1 then rotate_left (btree.node dl k a r)
-    else btree.node dl k a r
-  else if height l > height dr + 1 then rotate_right (btree.node l k a dr)
-  else (btree.node l k a dr)
+  if x = k 
+    then del_root (btree.node l k a r)
+    else if x < k 
+      then if height r > height dl + 1 
+        then rotate_left (btree.node dl k a r)
+        else btree.node dl k a r
+    else if height l > height dr + 1 
+      then rotate_right (btree.node l k a dr)
+    else (btree.node l k a dr)
 
 /-- 
   View inductive definition for shrink
