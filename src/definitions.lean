@@ -40,16 +40,6 @@ def bound (x : nat) : btree α → bool
   x = k ∨ bound l ∨ bound r
 
 /--
-  An "unfolded" definition of forall_keys
-  Used to verify that the forall_keys definition is equivalent 
-  to this one, as forall_keys_unfolded was the previously used one
--/
-def forall_keys_unfolded (p : nat → nat → Prop) : nat → btree α → Prop
-| x btree.empty := tt
-| x (btree.node l k a r) :=
-  forall_keys_unfolded x l ∧ (p x k) ∧ forall_keys_unfolded x r
-
-/--
   For all keys in some tree, the key needs to exist in the tree and have either a > or < relation 
 -/
 def forall_keys (p : nat → nat → Prop) (k : nat) (t : btree α) : Prop :=
