@@ -1,7 +1,0 @@
-This section details the steps taken to write a proof for deletion preserving order. Similar to proofs about rotations, if we want to prove deletion preserving order, any other definition that \lstinline{delete} uses will have a lemma regarding order as well. Due to the way that \lstinline{ordered} is defined with \lstinline{forall_keys}, lemmas about boundedness are involved as well. Just from writing one lemma about deletion preserving order, we receive lemmas about key preservation as well, that can be used for other proofs. First we follow the steps taken to write the lemmas for order, then lemmas about key preservation are discussed specifically. Lastly, any design changes or additions made during this process are presented.
-
-\subsection*{Order}
-\input{proofs/deletion/deletion_order.tex}
-
-\subsection*{Views}
-\input{proofs/deletion/deletion_views.tex}
