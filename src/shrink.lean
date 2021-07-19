@@ -39,7 +39,8 @@ begin
 end
 
 lemma shrink_keys {t sh : btree α} {x : nat} {a : α} :
-  ordered t ∧ shrink t = some (x, a, sh) → bound x t = tt ∧ (∀ k', bound k' sh = tt → bound k' t = tt) :=
+  ordered t ∧ shrink t = some (x, a, sh) → 
+    bound x t = tt ∧ (∀ k', bound k' sh = tt → bound k' t = tt) :=
 begin
   intro h₁,
   cases_matching*  (_ ∧ _),
