@@ -10,3 +10,4 @@ paper/thesis.run.xml
 paper/background/.DS_Store
 .gitignore
 paper/thesis.toc
+paper/thesis.out
