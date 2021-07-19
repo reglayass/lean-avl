@@ -16,7 +16,7 @@ lemma insert_nbound (t : btree α) (k x : nat) (v : α) :
 
 For \lstinline{insert_bound}, the goal is to show that a key can be found as soon as it is inserted into a tree. For \lstinline{insert_diff_bound} and \lstinline{insert_nbound}, the goal is to show that the keys already existing in a tree do not get lost during insertion, and if a key does not exist in a tree, unless it is the new key, it does not exist after insertion. The proofs are completed by induction on the tree \lstinline{t}.
 
-Since \lstinline{insert} uses rotations, previously constructed proofs about rotations preserving keys are applied in these proofs. The tactic \lstinline{tauto} is used frequently, as the tactic is a decisional procedure for propositional logic and is able to split goals and assumptions that are disjunctions. Due to the \lstinline{bound} definition using disjunction, this tactic does a lot of the heavy work of breaking down these forms, and then completing the separate foals based on reflexivity.
+Since \lstinline{insert} uses rotations, previously constructed proofs about rotations preserving keys are applied in these proofs. The tactic \lstinline{tauto} is used frequently, as the tactic is a decisional procedure for propositional logic and is able to split goals and assumptions that are disjunctions. Due to the \lstinline{bound} definition using disjunction, this tactic does a lot of the heavy work of breaking down these forms, and then completing the separate goals based on reflexivity.
 
 \subsection*{Order}
 Lemma statements for insertion preserving order have the same structure as lemmas for rotations preserving order.
@@ -36,7 +36,7 @@ lemma forall_insert (k x : nat) (t : btree α) (a : α)
   forall_keys p x t → forall_keys p x (insert k a t) := ...
 \end{lstlisting}
 
-Auxiliary proofs for rotation and \lstinline{forall_keys} are also written since insertion uses rotations.
+Auxiliary proofs for rotation and \lstinline{forall_keys} are also written since insertion uses rotations, and were completed with induction on the tree \lstinline{t}.
 
 \begin{lstlisting}
 lemma forall_rotate_right (x k : nat) (l r : btree α) (a : α) 
@@ -44,13 +44,11 @@ lemma forall_rotate_right (x k : nat) (l r : btree α) (a : α)
   forall_keys p x (btree.node l k a r) → 
     forall_keys p x (rotate_right (btree.node l k a r)) := ...
 
-lemma forall_rotate_right (x k : nat) (l r : btree α) (a : α) 
+lemma forall_simple_right (x k : nat) (l r : btree α) (a : α) 
 (p : nat → nat → Prop) :
   forall_keys p x (btree.node l k a r) → 
     forall_keys p x (simple_right (btree.node l k a r)) := ...
 \end{lstlisting}
-
-The three proofs above were constructed by induction on \lstinline{t}.
 
 \subsection*{Balance}
 The lemma for insertion preserving balanced is formalized as such, and completed by induction on the tree \lstinline{t}.

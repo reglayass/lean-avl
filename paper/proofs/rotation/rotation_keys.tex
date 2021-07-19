@@ -8,16 +8,16 @@ lemma rotate_right_keys (t : btree α) (k : nat) :
 As done with proofs for ordering, lemmas about simple rotations preserving keys are constructed as well.
 
 \begin{lstlisting}
-lemma simple_right_keys (t : btree α) (k : nat) :
-  bound k t ↔ bound k (simple_right t) := ...
+lemma simple_right_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = x ↔ bound k (simple_right t) = x := ...
   
-lemma simple_left_keys (t : btree α) (k : nat) :
-  bound k t ↔ bound k (simple_left t) := ...
+lemma simple_left_keys (t : btree α) (k : nat) (x : bool) :
+  bound k t = x ↔ bound k (simple_left t) = x := ...
 \end{lstlisting}
 
-For the four lemmas above, opposite lemmas such as \lstinline{rotate_right_nbound} were written to show that rotations do not create new keys, but having \lstinline{bound} evaluate to false in the lemma statement.
+In the lemma statements, we can see that instead of using \lstinline{bound} as is, another parameter \lstinline{x} is used to signify whether a key is bound or not. This was done so that these lemmas can be applied in situations where we want to prove that a key is not bound and we want to prove that a key is bound.
 
-The proofs were written to be bi-implications. If we just take the left side into account -- if a key is bound in a tree then it is still bound in a simple left rotation -- there is no guarantee that after a simple left rotation, the keys all remain the same -- the right side of the bi-implication.  
+The proofs were written to be bi-implications. If we just take the left side into account -- if a key is bound in a tree then it is still bound in a simple left rotation -- there is no guarantee that after a simple left rotation, the keys all remain the same -- the right side of the bi-implication. 
 
 It was during the construction of these proofs where the problem with the definition of \lstinline{bound} was discovered. Previously, the definition for \lstinline{bound} was similar to that of \lstinline{lookup}, recursively searching the tree until the key was found.
 

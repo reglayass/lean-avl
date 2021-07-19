@@ -103,7 +103,7 @@ def simple_right : btree α → btree α
 | (btree.node l k a r) := btree.node l k a r
 \end{lstlisting}
 
-Compound rotations are performed when after a simple rotation the tree is still unbalanced. If after a left rotation, the tree is becomes left-heavy then a right rotation is done to fix the heaviness. The definition for \lstinline{rotate_left} is mirror. \todo{maybe add a figure here for compound rotations?}
+Compound rotations are performed when after a simple rotation the tree is still unbalanced. If after a left rotation, the tree is becomes left-heavy then a right rotation is done to fix the heaviness. The definition for \lstinline{rotate_left} is mirror.
 
 \begin{lstlisting}
 def rotate_right : btree α → btree α
@@ -124,13 +124,15 @@ The insertion definition makes use of the definitions of heaviness and rotations
 def insert (x : nat) (v : α) : btree α → btree α
 | btree.empty := btree.node btree.empty x v btree.empty
 | (btree.node l k a r) :=
-  if x < k then 
-    if left_heavy (btree.node (insert l) k a r) then rotate_right (btree.node (insert l) k a r)
-    else btree.node (insert l) k a r
-  else if x > k then
-    if right_heavy (btree.node l k a (insert r)) then rotate_left (btree.node l k a (insert r))
-    else btree.node l k a (insert r)
-  else btree.node l x v r
+  if x < k 
+    then if left_heavy (btree.node (insert l) k a r) 
+      then rotate_right (btree.node (insert l) k a r)
+      else btree.node (insert l) k a r
+    else if x > k 
+      then if right_heavy (btree.node l k a (insert r)) 
+        then rotate_left (btree.node l k a (insert r))
+        else btree.node l k a (insert r)
+    else btree.node l x v r
 \end{lstlisting}  
 
 Deleting a node is more complicated, and depends on the its children. If its left child is empty, then the node can be removed and replaced by its right child. If the left subtree is not empty, we need to \lstinline{shrink} it. The process of shrinking is simple -- we travel the tree recursively along its right subtrees, looking for a node whose right child is empty. During this process, if the tree becomes imbalanced a right rotation is completed. Once the node is found, the \lstinline{shrink} function returns its key, value, and the resulting shrunken tree. Since shrinking an empty tree is impossible, \lstinline{shrink} returns an \lstinline{option}.
@@ -173,11 +175,12 @@ def delete (x : nat) : btree α → btree α
   let dr := delete r in
   if x = k 
     then del_root (btree.node l k a r)
-    else if x < k then
-      if height r > height dl + 1 
+    else if x < k 
+      then if height r > height dl + 1 
         then rotate_left (btree.node dl k a r)
         else btree.node dl k a r
-    else if height l > height dr + 1 then rotate_right (btree.node l k a dr)
+    else if height l > height dr + 1 
+      then rotate_right (btree.node l k a dr)
     else (btree.node l k a dr)
 \end{lstlisting}
 

@@ -49,7 +49,9 @@ The lookup operation is done recursively. During traversal, it is possible to co
 def lookup (x : nat) : btree α → option α
 | btree.empty := none
 | (btree.node l k a r) :=
-  if x < k then lookup l
-  else if x > k then lookup r
-  else a
+  if x < k 
+    then lookup l
+    else if x > k 
+      then lookup r
+    else a
 \end{lstlisting}
