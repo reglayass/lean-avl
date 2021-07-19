@@ -136,38 +136,4 @@ begin
   },
 end
 
-lemma del_root_keys (t : btree α) (k : nat) :
-  ordered t ∧ bound k (del_root t) → bound k t :=
-begin
-  intro h₁,
-  cases_matching* (_ ∧ _),
-  cases t,
-  case empty {
-    simp [del_root] at h₁_right,
-    exact h₁_right,
-  },
-  case node : tl tk ta tr {
-    rw ordered at h₁_left,
-    simp [bound],
-    cases_matching* (_ ∧ _),
-    cases' del_root_del_root_view (node tl tk ta tr),
-    case nonempty_empty { tauto, },
-    case nonempty_nonempty₁ {
-      rw ← rotate_left_keys at h₁_right,
-      simp [bound] at h₁_right,
-      cases_matching* (_ ∨ _),
-      { sorry },
-      { sorry },
-      { tauto, },
-    },
-    case nonempty_nonempty₂ {
-      simp [bound] at h₁_right,
-      cases_matching* (_ ∨ _),
-      { sorry },
-      { sorry },
-      { tauto, },
-    },
-  },
-end
-
 end del_root_lemmas

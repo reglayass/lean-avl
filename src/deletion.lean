@@ -1,10 +1,10 @@
-import definitions rotations del_node forall_keys tactic.linarith tactic.induction
+import definitions rotations del_root forall_keys tactic.linarith tactic.induction
 set_option pp.generalized_field_notation false
 
 universe u
 
 namespace deletion_lemmas
-open btree rotation_lemmas del_node_lemmas forall_keys_lemmas
+open btree rotation_lemmas del_root_lemmas forall_keys_lemmas
 
 variables {α : Type u}
 

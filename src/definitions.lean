@@ -166,10 +166,10 @@ def insert (x : nat) (v : α) : btree α → btree α
 | btree.empty := btree.node btree.empty x v btree.empty
 | (btree.node l k a r) :=
   if x < k then 
-    if left_heavy (insert l) then rotate_right (btree.node (insert l) k a r)
+    if left_heavy (btree.node (insert l) k a r) then rotate_right (btree.node (insert l) k a r)
     else btree.node (insert l) k a r
   else if x > k then
-    if right_heavy (insert r) then rotate_left (btree.node l k a (insert r))
+    if right_heavy (btree.node l k a (insert r)) then rotate_left (btree.node l k a (insert r))
     else btree.node l k a (insert r)
   else btree.node l x v r
 
@@ -195,7 +195,7 @@ def shrink : btree α → option (nat × α × btree α)
   If the left subtree is empty, the node is replaced with the right subtree
   Otherwise, the left subtree is shrunk until an empty subtree is found.
 -/
-def del_node : btree α → btree α
+def del_root : btree α → btree α
 | btree.empty := btree.empty
 | (btree.node l k v r) :=
   match shrink l with 
@@ -217,7 +217,7 @@ def delete (x : nat) : btree α → btree α
 | (btree.node l k a r) :=
   let dl := delete l in
   let dr := delete r in
-  if x = k then del_node (btree.node l k a r)
+  if x = k then del_root (btree.node l k a r)
   else if x < k then
     if height r > height dl + 1 then rotate_left (btree.node dl k a r)
     else btree.node dl k a r
@@ -245,18 +245,18 @@ inductive shrink_view {α} : btree α → option (nat × α × btree α) → Sor
 /-- 
   View inductive definition for del_node
 -/
-inductive del_node_view {α} : btree α → btree α → Sort*
-| empty : del_node_view empty empty
+inductive del_root_view {α} : btree α → btree α → Sort*
+| empty : del_root_view empty empty
 | nonempty_empty : ∀ {l k v r},
   shrink l = none →
-  del_node_view (node l k v r) r
+  del_root_view (node l k v r) r
 | nonempty_nonempty₁ : ∀ {l k v r x a sh},
   shrink l = some (x, a, sh) →
   height r > height sh + 1 →
-  del_node_view (node l k v r) (rotate_left (node sh x a r))
+  del_root_view (node l k v r) (rotate_left (node sh x a r))
 | nonempty_nonempty₂ : ∀ {l k v r x a sh},
   shrink l = some (x, a, sh) →
   height r ≤ height sh + 1 →
-  del_node_view (node l k v r) (node sh x a r)
+  del_root_view (node l k v r) (node sh x a r)
 
 end btree

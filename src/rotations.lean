@@ -363,8 +363,8 @@ begin
 end
 
 /- Simple left rotations preserve pre-existing keys -/
-lemma simple_left_keys (t : btree α) (k : nat) (x : bool) :
-  bound k t = x ↔ bound k (simple_left t) = x :=
+lemma simple_left_keys (t : btree α) (k : nat) :
+  bound k t ↔ bound k (simple_left t) :=
 begin
   cases t,
   case empty {
@@ -382,9 +382,9 @@ begin
   },
 end
 
-/- Simple right rotations preserve pre-existing keys -/
-lemma simple_right_keys (t : btree α) (k : nat) (x : bool) :
-  bound k t = x ↔ bound k (simple_right t) = x :=
+-- /- Simple right rotations preserve pre-existing keys -/
+lemma simple_right_keys (t : btree α) (k : nat) :
+  bound k t ↔ bound k (simple_right t) :=
 begin
   cases t,
   case empty {
@@ -392,7 +392,7 @@ begin
   },
   case node : tl tk ta tr {
     cases tl,
-    case empty {
+    case empty { 
       split; simp [simple_right],
     },
     case node : tll tlk tla tlr {
@@ -403,8 +403,8 @@ begin
 end
 
 /- Right rotations preserve pre-existing keys -/
-lemma rotate_right_keys (t : btree α) (k : nat) (x : bool) :
-  bound k t = x ↔ bound k (rotate_right t) = x :=
+lemma rotate_right_keys (t : btree α) (k : nat) :
+  bound k t ↔ bound k (rotate_right t) :=
 begin
   cases t,
   case empty {
@@ -457,8 +457,8 @@ begin
 end
 
 /- Left rotations preserve pre-existing keys -/
-lemma rotate_left_keys (t : btree α) (k : nat) (x : bool) :
-  bound k t = x ↔ bound k (rotate_left t) = x :=
+lemma rotate_left_keys (t : btree α) (k : nat) :
+  bound k t ↔ bound k (rotate_left t) :=
 begin
   cases t,
   case empty {
