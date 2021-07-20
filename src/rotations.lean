@@ -9,7 +9,8 @@ open btree forall_keys_lemmas
 variables {α : Type u}
 
 lemma forall_simple_left (x k : nat) (l r : btree α) (a : α) (p : nat → nat → Prop) :
-  forall_keys p x (btree.node l k a r) → forall_keys p x (simple_left (btree.node l k a r)) :=
+  forall_keys p x (node l k a r) → 
+    forall_keys p x (simple_left (node l k a r)) :=
 begin
   intro h₁,
   cases r,
@@ -32,7 +33,8 @@ begin
 end
 
 lemma forall_simple_right (x k : nat) (l r : btree α) (a : α) (p : nat → nat → Prop) :
-  forall_keys p x (btree.node l k a r) → forall_keys p x (simple_right (btree.node l k a r)) :=
+  forall_keys p x (btree.node l k a r) → 
+    forall_keys p x (simple_right (node l k a r)) :=
 begin
   intro h₁,
   cases l,
@@ -55,7 +57,8 @@ begin
 end
 
 lemma forall_rotate_left (x k : nat) (l r : btree α) (a : α) (p : nat → nat → Prop) :
-  forall_keys p x (btree.node l k a r) → forall_keys p x (rotate_left (btree.node l k a r)) :=
+  forall_keys p x (node l k a r) → 
+    forall_keys p x (rotate_left (node l k a r)) :=
 begin
   intro h₁,
   cases r,
@@ -96,7 +99,8 @@ begin
 end
 
 lemma forall_rotate_right (x k : nat) (l r : btree α) (a : α) (p : nat → nat → Prop) :
-  forall_keys p x (btree.node l k a r) → forall_keys p x (rotate_right (btree.node l k a r)) :=
+  forall_keys p x (node l k a r) → 
+    forall_keys p x (rotate_right (node l k a r)) :=
 begin
   intro h₁,
   cases l,
