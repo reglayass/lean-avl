@@ -37,6 +37,7 @@ begin
   },
 end
 
+/- Auxiliary del_root lemma for forall_delete -/
 lemma forall_del_root (t : btree α) (k : nat) (p : nat → nat → Prop) :
   forall_keys p k t → forall_keys p k (del_root t) :=
 begin
@@ -95,6 +96,7 @@ begin
   },
 end
 
+/- Deleting a root of a tree preserves the tree order -/
 lemma del_root_ordered (t : btree α) :
   ordered t → ordered (del_root t) :=
 begin

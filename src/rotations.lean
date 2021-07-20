@@ -8,6 +8,13 @@ open btree forall_keys_lemmas
 
 variables {α : Type u}
 
+/- # Auxiliary lemmas # -/
+/- 
+  These auxiliary lemmas for rotations are used to show that the key relation of x to a tree doesn't change 
+  after a rotation if it previously exists.
+  The auxiliary lemmas are done for both the simple and compound rotations.
+-/
+
 lemma forall_simple_left (x k : nat) (l r : btree α) (a : α) (p : nat → nat → Prop) :
   forall_keys p x (node l k a r) → 
     forall_keys p x (simple_left (node l k a r)) :=
@@ -139,6 +146,8 @@ begin
     },
   },
 end
+
+/- # Rotations preserve order # -/
 
 /- Simple left rotations preserve order -/
 lemma simple_left_ordered (t : btree α) :
@@ -366,6 +375,8 @@ begin
   },
 end
 
+/- # Key Preservation # -/
+
 /- Simple left rotations preserve pre-existing keys -/
 lemma simple_left_keys (t : btree α) (k : nat) (x : bool) :
   bound k t = x ↔ bound k (simple_left t) = x :=
@@ -513,6 +524,8 @@ begin
     },
   },
 end
+
+/- # Balance restoration # -/
 
 /- If a tree is right-heavy, a simple left rotations restores balance -/
 lemma simple_left_balanced (t : btree α) :

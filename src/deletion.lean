@@ -8,6 +8,7 @@ open btree rotation_lemmas del_root_lemmas forall_keys_lemmas
 
 variables {α : Type u}
 
+/- Auxiliary lemma for deletion: a previously existing key's relation with a tree is the same after deletion -/
 lemma forall_keys_delete (t : btree α) (k x : nat) (p : nat → nat → Prop) (h : p k x) :
   forall_keys p k t → forall_keys p k (delete x t) :=
 begin
@@ -114,6 +115,7 @@ begin
   },
 end
 
+/- Deletion preserves tree order -/
 lemma delete_ordered (t : btree α) (k : nat) :
   ordered t → ordered (delete k t) :=
 begin

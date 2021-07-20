@@ -8,6 +8,7 @@ open btree rotation_lemmas forall_keys_lemmas
 
 variables {α : Type u}
 
+/- Auxilary lemma to show that a previously existing key has the same relation to the tree after insertion -/
 lemma forall_insert (k x : nat) (t : btree α) (a : α) (p : nat → nat → Prop) (h : p x k) :
   forall_keys p x t → forall_keys p x (insert k a t) :=
 begin
@@ -119,6 +120,7 @@ begin
   },
 end
 
+/- Insertion preserves tree order -/
 lemma insert_ordered (t : btree α) (k : nat) (v : α) :
   ordered t → ordered (insert k v t) :=
 begin
@@ -198,6 +200,7 @@ begin
   },
 end
 
+/- A key is bound to the tree immediately after insertion -/
 lemma insert_bound (t : btree α) (k : nat) (v : α) :
   bound k (insert k v t) = tt :=
 begin
@@ -239,6 +242,7 @@ begin
   },
 end
 
+/- Insertion does not lose any other keys after insertion -/
 lemma insert_diff_bound (t : btree α) (k x : nat) (v : α) :
   bound x t = tt → bound x (insert k v t) = tt :=
 begin
@@ -293,6 +297,7 @@ begin
   },
 end
 
+/- Insertion doesn't create any new keys except the ones specified -/
 lemma insert_nbound (t : btree α) (k x : nat) (v : α) :
   (bound x t = ff ∧ x ≠ k) → bound x (insert k v t) = ff :=
 begin
@@ -339,6 +344,7 @@ begin
   },
 end
 
+/- Insertion preserves balance -/
 lemma insert_balanced (t : btree α) (k : nat) (v : α) :
   balanced t = tt → balanced (insert k v t) = tt :=
 begin

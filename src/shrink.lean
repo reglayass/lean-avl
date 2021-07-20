@@ -38,6 +38,7 @@ begin
  },
 end
 
+/- All the keys in a tree after shrinking are all keys that came from the original tree -/
 lemma shrink_keys {t sh : btree α} {x : nat} {a : α} :
   ordered t ∧ shrink t = some (x, a, sh) → 
     bound x t = tt ∧ (∀ k', bound k' sh = tt → bound k' t = tt) :=
@@ -91,6 +92,7 @@ begin
   },
 end
 
+/- Two auxiliary lemmas for easy usage -/
 lemma shrink_keys_aux_1 {t sh : btree α} {x : nat} {a : α} :
   ordered t ∧ shrink t = some (x, a, sh) → bound x t :=
 begin
@@ -105,6 +107,10 @@ begin
   apply and.right (shrink_keys h₁),
 end
 
+/- 
+  After shrinking, if k has a certain relation with a tree, then 
+  that is preserved with the shrunken tree
+-/
 lemma forall_shrink {t sh : btree α} {k x : nat} {a : α} {p : nat → nat → Prop} :
   forall_keys p k t ∧ shrink t = some (x, a, sh) → forall_keys p k sh ∧ p k x :=
 begin
@@ -159,6 +165,8 @@ begin
   },
 end
 
+/- Auxiliary lemmas for easy usage  -/
+
 lemma forall_shrink_aux_1 {t sh : btree α} {k x : nat} {a : α} {p : nat → nat → Prop} :
   forall_keys p k t ∧ shrink t = some (x, a, sh) → forall_keys p k sh :=
 begin
@@ -173,6 +181,10 @@ begin
   apply and.right (forall_shrink h₁),
 end
 
+/- 
+  Shrink preserves order: if a tree is ordered, the resulting of shrinking the tree is also ordered, with 
+  x being larger than all the keys in the shrunken tree
+-/
 lemma shrink_ordered {t sh : btree α} {x : nat} {a : α} :
   ordered t ∧ shrink t = some (x, a, sh) → ordered sh ∧ forall_keys gt x sh :=
 begin
@@ -246,6 +258,7 @@ begin
   },
 end
 
+/- Auxiliary lemmas for easy usage -/
 lemma shrink_ordered_aux_1 {t sh : btree α} {x : nat} {a : α} :
   ordered t ∧ shrink t = some (x, a, sh) → ordered sh :=
 begin
