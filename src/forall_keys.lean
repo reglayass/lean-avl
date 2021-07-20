@@ -20,7 +20,7 @@ begin
 end
 
 /- Characterization lemma to unfold forall_keys into two different children  -/
-lemma forall_keys_unfolded {l r : btree α} {k x : nat} {v : α} {p : nat → nat → Prop} :
+lemma forall_keys_char {l r : btree α} {k x : nat} {v : α} {p : nat → nat → Prop} :
   (forall_keys p k l ∧ p k x ∧ forall_keys p k r) ↔ forall_keys p k (node l x v r) :=
 begin
   split,
