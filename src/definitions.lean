@@ -159,17 +159,17 @@ def rotate_left : btree α → btree α
 def insert (x : nat) (v : α) : btree α → btree α
 | empty := node empty x v empty
 | (node l k a r) :=
-  if x < k 
-    then let inl := insert l in let t := (node inl k a r) in 
-    if left_heavy t
-      then rotate_right t
-      else t
-  else if x > k 
-    then let inr := insert r in let t := (node l k a inr) in 
-    if right_heavy t 
-      then rotate_left t 
-      else t 
-  else node l x v r
+  if x < k
+    then let inl := insert l in let t := (node inl k a r) in
+      if left_heavy t 
+        then rotate_right t
+        else t
+    else if x > k
+      then let inr := insert r in let t := (node l k a inr) in
+        if right_heavy t
+          then rotate_left t
+          else t 
+      else node l x v r 
 
 /- 
   "Shrinking" the right subtree of a three
@@ -215,16 +215,16 @@ def delete (x : nat) : btree α → btree α
 | empty := empty
 | (node l k a r) :=
   if x = k 
-    then del_root (node l k a r)
+    then del_root (node l k a r) 
     else if x < k 
-      then let dl := delete l in
-      if height r > height dl + 1 
-        then rotate_left (node dl k a r)
-        else node dl k a r
-    else let dr := delete r in
-      if height l > height dr + 1 
-      then rotate_right (node l k a dr)
-      else (node l k a dr)
+      then let dl := delete l in 
+        if height r > height dl + 1 
+          then rotate_left (node dl k a r)
+          else node dl k a r 
+      else let dr := delete r in 
+        if height l > height dr + 1
+          then rotate_right (node l k a dr)
+          else (node l k a dr)
 
 /-- 
   View inductive definition for shrink
