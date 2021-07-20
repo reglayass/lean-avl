@@ -157,7 +157,7 @@ def rotate_left : btree α → btree α
   is done.   
 -/
 def insert (x : nat) (v : α) : btree α → btree α
-| empty := empty
+| empty := node empty x v empty
 | (node l k a r) :=
   if x < k 
     then let inl := insert l in let t := (node inl k a r) in 
