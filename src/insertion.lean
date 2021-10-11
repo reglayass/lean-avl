@@ -328,45 +328,48 @@ begin
 end
 
 /- Insertion preserves balance -/
--- lemma insert_balanced (t : btree α) (k : nat) (v : α) :
---   balanced t = tt → balanced (insert k v t) = tt :=
--- begin
---   intros h₁,
---   cases t,
---   case empty {
---     simp [btree.insert, balanced],
---   },
---   case node : tl tk ta tr {
---     simp only [btree.insert],
---     by_cases c₁ : (k < tk),
---     { simp only [if_pos c₁], 
---       by_cases c₂ : ↥(left_heavy (node (insert k v tl) tk ta tr)),
---       { simp only [if_pos c₂], 
---         apply rotate_right_balanced,
---         exact c₂,
---       },
---       { simp only [if_neg c₂],
---         simp [balanced, height] at h₁ ⊢, 
---         sorry,
---       },
---     },
---     { simp only [if_neg c₁],  
---       by_cases c₂ : (k > tk),
---       { simp only [if_pos c₂], 
---         by_cases c₃ : ↥(right_heavy (node tl tk ta (insert k v tr))),
---         { simp only [if_pos c₃], 
---           apply rotate_left_balanced,
---           exact c₃,
---         },
---         { sorry },
---       },
---       { simp only [if_neg c₂], 
---         have h : k = tk := by linarith,
---         subst h,
---         exact h₁,
---       },
---     },
---   },
--- end
+lemma insert_balanced (t : btree α) (k : nat) (v : α) :
+  balanced t = tt → balanced (insert k v t) = tt :=
+begin
+  intro h₁,
+  cases t,
+  case empty {
+    simp [btree.insert, balanced],
+  },
+  case node : tl tk ta tr {
+    simp only [btree.insert],
+    by_cases c₁ : (k < tk),
+    { simp only [if_pos c₁], 
+      by_cases c₂ : (height (insert k v tl) > height tr + 1),
+      { simp only [if_pos c₂], 
+        apply rotate_right_balanced,
+        sorry,
+      },
+      { simp only [if_neg c₂], 
+        simp [balanced, height] at h₁ ⊢,
+        sorry,
+      },
+    },
+    { simp only [if_neg c₁], 
+      by_cases c₂ : (k > tk),
+      { simp only [if_pos c₂], 
+        by_cases c₃ : (height (insert k v tr) > height tl + 1),
+        { simp only [if_pos c₃], 
+          apply rotate_left_balanced,
+          sorry,
+        },
+        { simp only [if_neg c₃],
+          simp [balanced],
+          sorry, 
+        },
+      },
+      { simp only [if_neg c₂], 
+        have h : k = tk := by linarith,
+        subst h,
+        exact h₁,
+      },
+    },
+  },
+end
 
 end insertion_balanced_lemmas
