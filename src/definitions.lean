@@ -159,17 +159,17 @@ def rotate_left : btree α → btree α
 def insert (x : nat) (v : α) : btree α → btree α
 | empty := node empty x v empty
 | (node l k a r) :=
-  if x < k
-    then let inl := insert l in let t := (node inl k a r) in
-      if left_heavy t 
+  if x < k 
+    then let inl := insert l in let t := (node inl k a r) in 
+      if height inl > height r + 1
         then rotate_right t
         else t
     else if x > k
       then let inr := insert r in let t := (node l k a inr) in
-        if right_heavy t
+        if height inr > height l + 1
           then rotate_left t
           else t 
-      else node l x v r 
+      else node l x v r
 
 /- 
   "Shrinking" the right subtree of a three
