@@ -1,13 +1,7 @@
 *.olean
 /_target
 /leanpkg.path
-paper/thesis-blx.bib
-paper/thesis.aux
-paper/thesis.bbl
-paper/thesis.blg
-paper/thesis.log
-paper/thesis.run.xml
-paper/background/.DS_Store
 .gitignore
 paper/thesis.toc
 paper/thesis.out
+src/draft
